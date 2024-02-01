@@ -1,3 +1,5 @@
+import Header from "~/components/UI/Header";
+
 const HOW_SECTIONS = [
     {
         imgSrc: '/assets/images/you-how.png',
@@ -20,9 +22,7 @@ export default function Index() {
   const currentYear = new Date().getFullYear();
   return (
     <div className='w-screen h-screen bg-[#fbfbfc]'>
-        <header className='w-full border-t-[3px] border-[#070707] px-4 md:px-[55px] pt-[27px]'>
-            <img src='/assets/images/logo.png' alt='logo' className='h-7' />
-        </header>
+        <Header />
         <section className='px-4 flex flex-col items-center my-[70px] md:my-[126px] text-[#070707]'>
             <h3 className='text-xl sm:text-2xl md:text-4xl font-medium py-5 text-center'>A simple path to feeling better today.</h3>
             <p className='text-4xl md:text-6xl font-bold'>How it Works</p>
