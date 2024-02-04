@@ -10,13 +10,11 @@ import {
 } from "@remix-run/react";
 import stylesheet from "~/styles/tailwind.css";
 import {MetaFunction} from "@remix-run/node";
+import {getSeoMeta} from "~/utils/seo";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Ask Gram" },
-    { name: "description", content: "Welcome to Ask Gram!" },
-  ];
-};
+export const meta: MetaFunction = () => ([
+  ...getSeoMeta({}),
+]);
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
