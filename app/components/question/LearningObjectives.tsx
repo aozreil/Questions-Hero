@@ -2,7 +2,7 @@ export default function LearningObjectives() {
     return (
         <div className='hidden lg:block w-full lg:w-[317px]'>
             <div className='w-full bg-[#eaf1fa] text-sm font-medium text-[#344f60] p-3 border border-[#e0e0e0] rounded-lg flex flex-col items-center'>
-                <img src='/assets/images/objectives.svg' alt='objectives' className='w-[71px] mb-[26px]' />
+                <img src='/assets/images/objectives.svg' alt='objectives' className='w-[71px] h-[71px] mb-[26px]' />
                 <h2 className='text-[#002237] text-[21px] font-semibold mb-[9px]'>Learning Objectives</h2>
                 <p>While working in a community mental health treatment center, a nurse overhears one of the
                     receptionists saying that one of the clients is "really psycho." Later in the day, the
