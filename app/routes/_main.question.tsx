@@ -3,6 +3,8 @@ import {MetaFunction} from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
+import {useState} from "react";
+import ExpandImage from "~/components/question/ExpandImage";
 
 export const meta: MetaFunction = () => ([
     ...getStructuredData(),
@@ -77,8 +79,11 @@ const getStructuredData = () => {
 };
 
 export default function QuestionPage() {
+    const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined)
+
     return (
-        <div className='w-screen h-screen bg-[#f7f8fa] overflow-x-hidden'>
+        <div className='relative w-screen h-screen bg-[#f7f8fa] overflow-x-hidden'>
+            <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
             <Header className='bg-white  border-b-[3px] border-[#ebf2f6]' />
             <div className='w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
                 <div className='max-lg:max-w-[540px] flex-shrink lg:w-fit'>
@@ -105,7 +110,12 @@ export default function QuestionPage() {
                                         the nurse talks with the receptionist about the comment. This action by the nurse demonstrates
                                         an attempt to address which issue?
                                     </p>
-                                    <img src='/assets/images/question-image.png' alt='question-image' />
+                                    <img
+                                        src='/assets/images/question-image.png'
+                                        alt='question-image'
+                                        className='cursor-pointer max-sm:pointer-events-none'
+                                        onClick={() => setExpandedImage('/assets/images/question-image.png')}
+                                    />
                                 </div>
                                 <QuestionSection
                                     title='Definitions'
