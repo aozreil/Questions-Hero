@@ -88,7 +88,7 @@ export default function QuestionPage() {
             <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
             <Header className='bg-white  border-b-[3px] border-[#ebf2f6]' />
             <div className='w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
-                <div className='max-lg:max-w-[540px] flex-shrink lg:w-fit'>
+                <div className='w-full max-lg:max-w-[540px] flex-shrink lg:w-fit'>
                     <p className='w-fit text-[#002237] text-sm pl-4 pb-[14px]'>
                         Computing
                         <span className='mx-2'>|</span>
