@@ -28,6 +28,28 @@ const getStructuredData = (data: LoaderData) => {
         ? `The Answer is ${data?.answers?.[0]?.text}`
         : `The Answer of ${questionTitle}`;
 
+    const Educational = {
+        "@context": "https://schema.org/",
+        "@type": "Quiz",
+        "about": {
+            "@type": "Thing",
+            "name": questionTitle
+        },
+        "hasPart": [
+            {
+                "@context": "https://schema.org/",
+                "@type": "Question",
+                "eduQuestionType": "Flashcard",
+                "text": questionBody,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": answer,
+                    "url": data?.canonical,
+                }
+            },
+        ]
+    }
+
     const QAPage = ({
         "@context": "https://schema.org",
         "@type": "QAPage",
@@ -50,6 +72,7 @@ const getStructuredData = (data: LoaderData) => {
 
     return [
         { "script:ld+json": QAPage },
+        { "script:ld+json": Educational },
     ];
 };
 
