@@ -1,6 +1,7 @@
 import {Answer, Question, User} from "~/models/questionModel";
+import {getBaseUrl} from "~/utils/main.server";
 
-const BASE_URL = 'https://askgramdev.work';
+const BASE_URL = getBaseUrl();
 
 export async function getQuestionById(id: string): Promise<Question> {
     try {

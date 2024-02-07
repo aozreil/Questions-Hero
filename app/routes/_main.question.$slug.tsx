@@ -10,6 +10,7 @@ import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
 import {Answer, Question, Users} from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
+import {getBaseUrl} from "~/utils/main.server";
 
 export const meta: MetaFunction = ({ data }) => {
     const { canonical } = data as LoaderData;
@@ -100,7 +101,7 @@ export async function loader ({ params }: LoaderFunctionArgs) {
     if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
     const users = userIds?.length ? await getUsersInfo(userIds) : [];
 
-    const canonical = `https://askgramdev.work/question/${slug}`
+    const canonical = `${getBaseUrl()}/question/${slug}`
 
     return json({
         question,
