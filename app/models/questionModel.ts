@@ -14,6 +14,17 @@ export class Question {
             created_at_string: answer?.created_at ? moment(answer?.created_at).format('MM/DD/YYYY') : undefined,
         }
     }
+
+    static usersExtraction (users: User[]): Users {
+        let usersObject: Users = {};
+        for (const user of users) {
+            if (user?.user_id && user?.view_name) {
+                usersObject[user.user_id] = user.view_name
+            }
+        }
+
+        return usersObject;
+    }
 }
 
 export interface Answer {
@@ -45,4 +56,13 @@ export interface Question {
 
     // derived props
     created_at_string?: string,
+}
+
+export interface User {
+    view_name: string,
+    user_id: number
+}
+
+export interface Users {
+    [user_id: number]: string,
 }

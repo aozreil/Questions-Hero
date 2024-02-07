@@ -1,4 +1,4 @@
-import {Answer, Question} from "~/models/questionModel";
+import {Answer, Question, User} from "~/models/questionModel";
 
 const BASE_URL = 'https://askgramdev.work';
 
@@ -23,3 +23,16 @@ export async function getAnswerById(id: string) {
         return [];
     }
 }
+
+export async function getUsersInfo(ids: number[]) {
+    try {
+        const response = await fetch(`${BASE_URL}/api/users/users/public?ids=${ids?.join()}`);
+        const data: User[] = await response.json();
+        return Question.usersExtraction(data);
+    } catch (e) {
+        console.log(e);
+        return [];
+    }
+}
+
+

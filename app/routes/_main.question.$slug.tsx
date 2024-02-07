@@ -5,9 +5,9 @@ import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
 import {useState} from "react";
 import ExpandImage from "~/components/question/ExpandImage";
-import {getAnswerById, getQuestionById} from "~/apis/questionsAPI.server";
+import {getAnswerById, getQuestionById, getUsersInfo} from "~/apis/questionsAPI.server";
 import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
-import {Answer, Question} from "~/models/questionModel";
+import {Answer, Question, Users} from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
 
@@ -79,6 +79,7 @@ const getStructuredData = (data: LoaderData) => {
 interface LoaderData {
     question: Question;
     answers: Answer[];
+    users: Users;
     canonical: string;
 }
 
@@ -93,18 +94,25 @@ export async function loader ({ params }: LoaderFunctionArgs) {
     ]);
 
     if (question?.error) return redirect('/');
+
+    const userIds = [];
+    if (question?.user_id) userIds.push(question.user_id);
+    if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
+    const users = userIds?.length ? await getUsersInfo(userIds) : [];
+
     const canonical = `https://askgramdev.work/question/${slug}`
 
     return json({
         question,
         answers,
+        users,
         canonical,
     });
 }
 
 export default function QuestionPage() {
     const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined);
-    const {question, answers} = useLoaderData() as LoaderData;
+    const {question, answers, users} = useLoaderData() as LoaderData;
 
     return (
         <div className='relative w-screen h-screen bg-[#f7f8fa] overflow-x-hidden'>
@@ -121,7 +129,10 @@ export default function QuestionPage() {
                     <div className='flex flex-col lg:flex-row justify-center gap-4'>
                         <div className='w-full sm:max-w-[540px] lg:w-[540px] flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
                             <div className='flex flex-col items-center w-full rounded-b-2xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
-                                <QuestionContent question={question} />
+                                <QuestionContent
+                                    question={question}
+                                    userName={question?.user_id ? users[question.user_id] : undefined}
+                                />
                                 {!!question?.concepts?.length && (
                                     <QuestionSection
                                         title='Definitions'
@@ -151,9 +162,14 @@ export default function QuestionPage() {
                                     />
                                 )}
                             </div>
-                            <div className='mb-2 px-[13px] flex flex-col items-center'>
-                                <AnswerCard answer={answers[0]} />
-                            </div>
+                            {answers?.length && (
+                                <div className='mb-2 px-[13px] flex flex-col items-center'>
+                                    <AnswerCard
+                                        answer={answers[0]}
+                                        userName={answers[0]?.user_id ? users[answers[0]?.user_id] : undefined}
+                                    />
+                                </div>
+                            )}
                         </div>
                         {!!question?.learning_objectives && <LearningObjectives text={question.learning_objectives} />}
                     </div>
