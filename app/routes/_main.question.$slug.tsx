@@ -9,97 +9,74 @@ import {getAnswerById, getQuestionById} from "~/apis/questionsAPI.server";
 import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
 import {Answer, Question} from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
+import {getSeoMeta} from "~/utils/seo";
 
-export const meta: MetaFunction = () => ([
-    ...getStructuredData(),
-]);
+export const meta: MetaFunction = ({ data }) => {
+    const { canonical } = data as LoaderData;
+    return [
+        ...getSeoMeta({ canonical }),
+        ...getStructuredData(data as LoaderData),
+    ];
+};
 
-const getStructuredData = () => {
+const getStructuredData = (data: LoaderData) => {
+    const questionBody = data?.question?.text;
+    const questionTitle = questionBody;
+    if (!questionBody) return [];
+
+    const answer = data?.answers?.[0]?.text
+        ? `The Answer is ${data?.answers?.[0]?.text}`
+        : `The Answer of ${questionTitle}`;
+
     const QAPage = ({
         "@context": "https://schema.org",
         "@type": "QAPage",
-        "name": `[[[[[[[[[[[question.title]]]]]]]]]]]`,
-        description: `[[[[[[[[[[description]]]]]]]]]]`,
+        "name": questionTitle,
+        description: questionBody,
         "mainEntity": {
             "@type": "Question",
-            "name": `[[[[[[[[[[question.title]]]]]]]]]]`,
-            "text": `[[[[[[[[[[description]]]]]]]]]]`,
+            "name": questionTitle,
+            "text": questionBody,
             "answerCount": 1,
             "upvoteCount": 2,
             acceptedAnswer: {
                 "@type": "Answer",
-                text: `[[[[[[question.answer]]]]]]`,
+                text: answer,
                 upvoteCount: 1,
-                url: `[[[[[[[question.bioBase/questions/]]]]]]]`,
+                url: data?.canonical,
             },
         }
     });
 
-    const Quiz = ({
-        "@context": "https://schema.org",
-        "@type": "Quiz",
-        about: {
-            "@type": "Thing",
-            name: '[[[[[[[question.title]]]]]]]',
-        },
-        educationalAlignment: [
-            {
-                "@type": "AlignmentObject",
-                alignmentType: "educationalSubject",
-                targetName: "Biology",
-            },
-            {
-                "@type": "AlignmentObject",
-                alignmentType: "educationalSubject",
-                targetName: `[[[[[[[[question.courseTitle]]]]]]]]`,
-            },
-            {
-                "@type": "AlignmentObject",
-                alignmentType: "educationalSubject",
-                targetName: `[[[[[[[[question.studySetTitle]]]]]]]]`,
-            },
-        ],
-        hasPart: [
-            {
-                "@context": "https://schema.org/",
-                "@type": "Question",
-                eduQuestionType: "Flashcard",
-                text: `[[[[[[[[[[description]]]]]]]]]]`,
-                upvoteCount: 1,
-                acceptedAnswer: {
-                    "@type": "Answer",
-                    text: `[[[[[[[[[[question.answer]]]]]]]]]]`,
-                    upvoteCount: 1,
-                    url: `[[[[[[[question.bioBase/questions/]]]]]]]`,
-                },
-            },
-        ],
-    });
-
     return [
         { "script:ld+json": QAPage },
-        { "script:ld+json": Quiz },
     ];
 };
 
 interface LoaderData {
     question: Question;
     answers: Answer[];
-    createdAt: string;
+    canonical: string;
 }
 
 export async function loader ({ params }: LoaderFunctionArgs) {
-    const { id } = params;
-    if (!id) throw 'ID Is Required';
+    const { slug } = params;
+    if (!slug) throw 'ID Is Required';
 
+    const id = slug.split('-').pop() || slug;
     let [question, answers] = await Promise.all([
         getQuestionById(id),
         getAnswerById(id),
     ]);
 
     if (question?.error) return redirect('/');
+    const canonical = `https://askgramdev.work/question/${slug}`
 
-    return json({ question, answers });
+    return json({
+        question,
+        answers,
+        canonical,
+    });
 }
 
 export default function QuestionPage() {
