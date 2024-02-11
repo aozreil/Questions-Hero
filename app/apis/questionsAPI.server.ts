@@ -1,7 +1,6 @@
-import {Answer, Question, User} from "~/models/questionModel";
-import {getBaseUrl} from "~/utils/main.server";
-
-const BASE_URL = getBaseUrl();
+import {Answer, IInternalAnswer, IInternalQuestion, Question, User} from "~/models/questionModel";
+import AxiosInstance, {RequestConfigCustomize} from "~/interceptors/http-interceptors";
+import { BASE_URL } from "~/utils/enviroment.server";
 
 export async function getQuestionById(id: string): Promise<Question> {
     try {
@@ -36,4 +35,59 @@ export async function getUsersInfo(ids: number[]) {
     }
 }
 
+export async function getInternalQuestion (
+    questionId: string,
+    config?: RequestConfigCustomize,
+) {
+    if (!global.BASIC_AUTH_VALUE) {
+        return {}
+    }
+    try {
+        const response = await AxiosInstance.get<IInternalQuestion>(
+            `${BASE_URL}/api/content/internal/questions/${questionId}`,
+            {
+                ...config,
+                headers: {
+                    ...config?.headers,
+                    "web-version": global.WEB_VERSION,
+                },
+                auth: {
+                    username: 'askgram',
+                    password: global.BASIC_AUTH_VALUE,
+                },
+            });
+        return response.data;
+    } catch (e) {
+        console.log(e);
+        return {}
+    }
+}
+
+export async function getInternalAnswers (
+    questionId: string,
+    config?: RequestConfigCustomize,
+) {
+    if (!global.BASIC_AUTH_VALUE) {
+        return [];
+    }
+    try {
+        const response = await AxiosInstance.get<IInternalAnswer[]>(
+            `${BASE_URL}/api/content/internal/questions/${questionId}/answer`,
+            {
+                ...config,
+                headers: {
+                    ...config?.headers,
+                    "web-version": global.WEB_VERSION,
+                },
+                auth: {
+                    username: 'askgram',
+                    password: global.BASIC_AUTH_VALUE,
+                },
+            });
+        return response.data;
+    } catch (e) {
+        console.log(e);
+        return [];
+    }
+}
 

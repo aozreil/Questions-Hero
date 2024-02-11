@@ -5,75 +5,25 @@ import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
 import {useState} from "react";
 import ExpandImage from "~/components/question/ExpandImage";
-import {getAnswerById, getQuestionById, getUsersInfo} from "~/apis/questionsAPI.server";
+import {
+    getAnswerById,
+    getInternalAnswers,
+    getInternalQuestion,
+    getQuestionById,
+    getUsersInfo
+} from "~/apis/questionsAPI.server";
 import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
-import {Answer, Question, Users} from "~/models/questionModel";
+import {Answer, IInternalAnswer, Question, Users} from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
-import {getBaseUrl} from "~/utils/main.server";
+import {getUser} from "~/utils";
+import { BASE_URL } from "~/utils/enviroment.server";
 
 export const meta: MetaFunction = ({ data }) => {
-    const { canonical } = data as LoaderData;
+    const { canonical, question } = data as LoaderData;
     return [
-        ...getSeoMeta({ canonical }),
+        ...getSeoMeta({ title: question?.text ,canonical }),
         ...getStructuredData(data as LoaderData),
-    ];
-};
-
-const getStructuredData = (data: LoaderData) => {
-    const questionBody = data?.question?.text;
-    const questionTitle = questionBody;
-    if (!questionBody) return [];
-
-    const answer = data?.answers?.[0]?.text
-        ? `The Answer is ${data?.answers?.[0]?.text}`
-        : `The Answer of ${questionTitle}`;
-
-    const Educational = {
-        "@context": "https://schema.org/",
-        "@type": "Quiz",
-        "about": {
-            "@type": "Thing",
-            "name": questionTitle
-        },
-        "hasPart": [
-            {
-                "@context": "https://schema.org/",
-                "@type": "Question",
-                "eduQuestionType": "Flashcard",
-                "text": questionBody,
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": answer,
-                    "url": data?.canonical,
-                }
-            },
-        ]
-    }
-
-    const QAPage = ({
-        "@context": "https://schema.org",
-        "@type": "QAPage",
-        "name": questionTitle,
-        description: questionBody,
-        "mainEntity": {
-            "@type": "Question",
-            "name": questionTitle,
-            "text": questionBody,
-            "answerCount": 1,
-            "upvoteCount": 2,
-            acceptedAnswer: {
-                "@type": "Answer",
-                text: answer,
-                upvoteCount: 1,
-                url: data?.canonical,
-            },
-        }
-    });
-
-    return [
-        { "script:ld+json": QAPage },
-        { "script:ld+json": Educational },
     ];
 };
 
@@ -82,32 +32,43 @@ interface LoaderData {
     answers: Answer[];
     users: Users;
     canonical: string;
+    structuredQuestion?: string;
+    internalAnswers?: IInternalAnswer[];
 }
 
-export async function loader ({ params }: LoaderFunctionArgs) {
+export async function loader ({ params, request }: LoaderFunctionArgs) {
     const { slug } = params;
     if (!slug) throw 'ID Is Required';
 
     const id = slug.split('-').pop() || slug;
-    let [question, answers] = await Promise.all([
+    let [question, answers, internalQuestion, internalAnswers] = await Promise.all([
         getQuestionById(id),
         getAnswerById(id),
+        getInternalQuestion(id, { req: request }),
+        getInternalAnswers(id, { req: request }),
     ]);
 
     if (question?.error) return redirect('/');
+
+    let structuredQuestion = '';
+    if (internalQuestion?.text) {
+        structuredQuestion = internalQuestion?.text;
+    }
 
     const userIds = [];
     if (question?.user_id) userIds.push(question.user_id);
     if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
     const users = userIds?.length ? await getUsersInfo(userIds) : [];
 
-    const canonical = `${getBaseUrl()}/question/${slug}`
+    const canonical = `${BASE_URL}/question/${slug}`
 
     return json({
         question,
         answers,
         users,
         canonical,
+        structuredQuestion,
+        internalAnswers,
     });
 }
 
@@ -179,3 +140,109 @@ export default function QuestionPage() {
         </div>
     )
 }
+
+const getStructuredData = (data: LoaderData) => {
+    const {
+        structuredQuestion,
+        question,
+        answers,
+        internalAnswers,
+        canonical,
+        users,
+    } = data;
+
+    const questionBody = structuredQuestion ?? question?.text;
+    const questionTitle = questionBody;
+    if (!questionBody) return [];
+
+    const askedBy = getUser(question?.user_id, users);
+    const answerCount = internalAnswers?.length ?? answers?.length;
+
+    const getAnswer = (index: number) => {
+        return internalAnswers?.[index] ?? answers?.[index];
+    }
+
+    const getAnswerText = (index: number) => {
+        const answer = getAnswer(index);
+        return answer?.text || `The Answer of ${questionTitle}`
+    }
+
+    const Educational = {
+        "@context": "https://schema.org/",
+        "@type": "Quiz",
+        "about": {
+            "@type": "Thing",
+            "name": questionTitle
+        },
+        "hasPart": [
+            {
+                "@context": "https://schema.org/",
+                "@type": "Question",
+                "eduQuestionType": "Flashcard",
+                "text": questionBody,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": getAnswerText(0),
+                    "url": canonical,
+                }
+            },
+        ]
+    }
+
+    const getSuggestedAnswers = () => {
+        let suggestedAnswers = internalAnswers || answers;
+        if (suggestedAnswers?.length > 1) {
+            suggestedAnswers = suggestedAnswers?.slice(1, suggestedAnswers?.length);
+            return {
+                "suggestedAnswer": [
+                    suggestedAnswers?.map(answer => ({
+                        "@type": "Answer",
+                        "text": answer?.text,
+                        "datePublished": answer?.created_at,
+                        "author": {
+                            "@type": "Person",
+                            "name": getUser(answer?.user_id, users),
+                        },
+                    }))
+                ]
+            }
+        }
+
+        return {};
+    }
+
+    // note: this can also include profile link and upvotes
+    const QAPage = {
+        "@context": "https://schema.org",
+        "@type": "QAPage",
+        name: questionTitle,
+        description: questionBody,
+        "mainEntity": {
+            "@type": "Question",
+            "name": questionTitle,
+            "text": questionBody,
+            "answerCount": answerCount,
+            "datePublished": question?.created_at,
+            "author": {
+                "@type": "Person",
+                "name": askedBy,
+            },
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": getAnswerText(0),
+                "url": `${canonical}#acceptedAnswer`,
+                "datePublished": getAnswer(0)?.created_at,
+                "author": {
+                    "@type": "Person",
+                    "name": getUser(getAnswer(0)?.user_id, users),
+                }
+            },
+            ...getSuggestedAnswers(),
+        }
+    }
+
+    return [
+        { "script:ld+json": QAPage },
+        { "script:ld+json": Educational },
+    ];
+};
