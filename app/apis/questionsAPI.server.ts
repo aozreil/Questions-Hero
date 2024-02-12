@@ -1,10 +1,10 @@
 import {IAnswer, IInternalAnswer, IInternalQuestion, IQuestion, IUser, QuestionClass} from "~/models/questionModel";
 import AxiosInstance, {RequestConfigCustomize} from "~/interceptors/http-interceptors";
-import { BASE_URL } from "~/utils/enviroment.server";
+import {CONTENT_CLUSTER, USERS_CLUSTER} from "~/utils/enviroment.server";
 
 export async function getQuestionById(id: string): Promise<IQuestion> {
     try {
-        const response = await AxiosInstance.get<IQuestion>(`${BASE_URL}/api/content/questions/${id}`);
+        const response = await AxiosInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
         return QuestionClass.questionExtraction(response?.data);
     } catch (e) {
         console.log(e);
@@ -14,7 +14,7 @@ export async function getQuestionById(id: string): Promise<IQuestion> {
 
 export async function getAnswerById(id: string) {
     try {
-        const response = await AxiosInstance.get<IAnswer[]>(`${BASE_URL}/api/content/answers/question/${id}`);
+        const response = await AxiosInstance.get<IAnswer[]>(`${CONTENT_CLUSTER}/answers/question/${id}`);
         return response?.data?.map(answer => QuestionClass.answerExtraction(answer));
     } catch (e) {
         console.log(e);
@@ -24,7 +24,7 @@ export async function getAnswerById(id: string) {
 
 export async function getUsersInfo(ids: number[]) {
     try {
-        const response = await AxiosInstance.get<IUser[]>(`${BASE_URL}/api/users/users/public?ids=${ids?.join()}`);
+        const response = await AxiosInstance.get<IUser[]>(`${USERS_CLUSTER}/users/public?ids=${ids?.join()}`);
         return QuestionClass.usersExtraction(response?.data);
     } catch (e) {
         console.log(e);
@@ -41,7 +41,7 @@ export async function getInternalQuestion (
     }
     try {
         const response = await AxiosInstance.get<IInternalQuestion>(
-            `${BASE_URL}/api/content/internal/questions/${questionId}`,
+            `${CONTENT_CLUSTER}/internal/questions/${questionId}`,
             {
                 ...config,
                 headers: {
@@ -69,7 +69,7 @@ export async function getInternalAnswers (
     }
     try {
         const response = await AxiosInstance.get<IInternalAnswer[]>(
-            `${BASE_URL}/api/content/internal/questions/${questionId}/answer`,
+            `${CONTENT_CLUSTER}/internal/questions/${questionId}/answer`,
             {
                 ...config,
                 headers: {

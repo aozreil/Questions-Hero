@@ -1,5 +1,3 @@
-import Header from "~/components/UI/Header";
-
 const HOW_SECTIONS = [
     {
         imgSrc: '/assets/images/you-how.png',

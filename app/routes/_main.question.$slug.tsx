@@ -122,7 +122,7 @@ export default function QuestionPage() {
                                     />
                                 )}
                             </div>
-                            {answers?.length && (
+                            {!!answers?.length && (
                                 <div className='mb-2 px-[13px] flex flex-col items-center'>
                                     <AnswerCard
                                         answer={answers[0]}
