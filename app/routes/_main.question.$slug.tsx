@@ -77,9 +77,8 @@ export default function QuestionPage() {
     const {question, answers, users} = useLoaderData() as LoaderData;
 
     return (
-        <div className='relative w-screen h-screen bg-[#f7f8fa] overflow-x-hidden'>
+        <div className='relative w-screen'>
             <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
-            <Header className='bg-white  border-b-[3px] border-[#ebf2f6]' />
             <div className='w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
                 <div className='w-full max-lg:max-w-[540px] flex-shrink lg:w-fit'>
                     <p className='w-fit text-[#002237] text-sm pl-4 pb-[14px]'>
@@ -103,7 +102,7 @@ export default function QuestionPage() {
                                                 {question.concepts.map((concept) => (
                                                     !concept?.definition ? null : (
                                                         <div key={concept?.concept} className='text-[13px] mt-4'>
-                                                            <p className='mb-1 font-extrabold'>{concept?.concept}</p>
+                                                            <p className='mb-1 font-bold'>{concept?.concept}</p>
                                                             <p className='text-[#4d6473]'>{concept?.definition}</p>
                                                         </div>
                                                     )

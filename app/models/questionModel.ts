@@ -4,14 +4,14 @@ export class Question {
     static questionExtraction (question?: Question) {
         return {
             ...question,
-            created_at_string: question?.created_at ? moment(question?.created_at).format('Do MMM YYYY') : undefined,
+            created_at_string: question?.created_at ? moment(question?.created_at).format('MMM Do, YYYY') : undefined,
         }
     }
 
     static answerExtraction (answer?: Answer) {
         return {
             ...answer,
-            created_at_string: answer?.created_at ? moment(answer?.created_at).format('MM/DD/YYYY') : undefined,
+            created_at_string: answer?.created_at ? getAnswerDate(answer.created_at) : undefined,
         }
     }
 
@@ -24,6 +24,24 @@ export class Question {
         }
 
         return usersObject;
+    }
+}
+
+const getAnswerDate = (createdAt: string) => {
+    const selectedDate = moment(createdAt);
+    const today = moment();
+    const difference = today.diff(selectedDate, 'days');
+
+    if (difference <= 7) {
+        return selectedDate.fromNow();
+    } else if (difference <= 14) {
+        return 'week ago';
+    } else if (difference <= 21) {
+        return '2 weeks ago';
+    } else if (difference <= 28) {
+        return '3 weeks ago';
+    } else {
+        return selectedDate.format('MMM Do, YYYY')
     }
 }
 
