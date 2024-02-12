@@ -18,6 +18,7 @@ export const meta: MetaFunction = () => ([
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+  { rel: "preload", href: stylesheet, as: "style"},
   { rel: "stylesheet", href: stylesheet },
 ];
 
