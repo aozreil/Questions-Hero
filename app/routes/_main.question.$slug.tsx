@@ -1,4 +1,3 @@
-import Header from "~/components/UI/Header";
 import {json, MetaFunction} from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
@@ -13,7 +12,7 @@ import {
     getUsersInfo
 } from "~/apis/questionsAPI.server";
 import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
-import {Answer, IInternalAnswer, Question, Users} from "~/models/questionModel";
+import {IAnswer, IInternalAnswer, IQuestion, IUsers} from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
 import {getUser} from "~/utils";
@@ -28,9 +27,9 @@ export const meta: MetaFunction = ({ data }) => {
 };
 
 interface LoaderData {
-    question: Question;
-    answers: Answer[];
-    users: Users;
+    question: IQuestion;
+    answers: IAnswer[];
+    users: IUsers;
     canonical: string;
     structuredQuestion?: string;
     internalAnswers?: IInternalAnswer[];
@@ -62,7 +61,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
 
     const canonical = `${BASE_URL}/question/${slug}`
 
-    return json({
+    return json<LoaderData>({
         question,
         answers,
         users,

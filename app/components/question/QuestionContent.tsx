@@ -1,19 +1,22 @@
-import {Question} from "~/models/questionModel";
+import {IQuestion} from "~/models/questionModel";
+import {format} from "date-fns";
+import {useState} from "react";
 
 interface Props {
-    question?: Question;
+    question?: IQuestion;
     userName?: string;
 }
 
 export default function QuestionContent({ question, userName }: Props) {
+    const [createdAt] = useState(() => getCreatedAtDate(question));
     return (
         <div className='flex flex-col w-full p-4'>
             <div className='w-full flex flex-col-reverse sm:flex-row flex-wrap sm:justify-between sm:items-center mb-3'>
-                {(question?.created_at_string || userName) && (
+                {(question?.created_at || userName) && (
                     <p className='text-[#667a87] text-[13px]'>
                         {`Asked by `}
                         <span className='font-bold'>
-                            {getAskedBy(question, userName)}
+                            {getAskedBy(createdAt, userName)}
                         </span>
                     </p>
                 )}
@@ -29,10 +32,14 @@ export default function QuestionContent({ question, userName }: Props) {
     )
 }
 
-const getAskedBy = (question?: Question, userName?: string) => {
-    if (question?.created_at_string) {
-        return userName ?`${userName} on ${question.created_at_string}` : `User on ${question.created_at_string}`;
+const getAskedBy = (createdAt?: string, userName?: string) => {
+    if (createdAt) {
+        return userName ?`${userName} on ${createdAt}` : `User on ${createdAt}`;
     } else {
         return userName;
     }
 }
+
+const getCreatedAtDate = (question?: IQuestion) => (
+    question?.created_at ? format(question.created_at, 'MMM dd, y') : undefined
+)

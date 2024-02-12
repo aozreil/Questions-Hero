@@ -1,12 +1,11 @@
-import {Answer, IInternalAnswer, IInternalQuestion, Question, User} from "~/models/questionModel";
+import {IAnswer, IInternalAnswer, IInternalQuestion, IQuestion, IUser, QuestionClass} from "~/models/questionModel";
 import AxiosInstance, {RequestConfigCustomize} from "~/interceptors/http-interceptors";
 import { BASE_URL } from "~/utils/enviroment.server";
 
-export async function getQuestionById(id: string): Promise<Question> {
+export async function getQuestionById(id: string): Promise<IQuestion> {
     try {
-        const response = await fetch(`${BASE_URL}/api/content/questions/${id}`);
-        const data: Question = await response.json();
-        return Question.questionExtraction(data);
+        const response = await AxiosInstance.get<IQuestion>(`${BASE_URL}/api/content/questions/${id}`);
+        return QuestionClass.questionExtraction(response?.data);
     } catch (e) {
         console.log(e);
         return {};
@@ -15,9 +14,8 @@ export async function getQuestionById(id: string): Promise<Question> {
 
 export async function getAnswerById(id: string) {
     try {
-        const response = await fetch(`${BASE_URL}/api/content/answers/question/${id}`);
-        const data: Answer[] = await response.json();
-        return data?.map(answer => Question.answerExtraction(answer));
+        const response = await AxiosInstance.get<IAnswer[]>(`${BASE_URL}/api/content/answers/question/${id}`);
+        return response?.data?.map(answer => QuestionClass.answerExtraction(answer));
     } catch (e) {
         console.log(e);
         return [];
@@ -26,9 +24,8 @@ export async function getAnswerById(id: string) {
 
 export async function getUsersInfo(ids: number[]) {
     try {
-        const response = await fetch(`${BASE_URL}/api/users/users/public?ids=${ids?.join()}`);
-        const data: User[] = await response.json();
-        return Question.usersExtraction(data);
+        const response = await AxiosInstance.get<IUser[]>(`${BASE_URL}/api/users/users/public?ids=${ids?.join()}`);
+        return QuestionClass.usersExtraction(response?.data);
     } catch (e) {
         console.log(e);
         return [];
