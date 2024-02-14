@@ -27,7 +27,7 @@ export default function Index() {
                 {HOW_SECTIONS.map((section) => (
                     <div key={section.title} className='flex flex-col items-center group'>
                         <div className='relative flex justify-center items-end w-[380px] h-[160px] border-b-[3px] border-[#d8d8d8] mb-6'>
-                            <div className='absolute w-[287px] h-[144px] bg-[#f3f4f4] group-hover:bg-[#070707] rounded-t-full' />
+                            <div className='absolute w-[287px] h-[144px] bg-[#f3f4f4] rounded-t-full' />
                             <img src={section.imgSrc} alt='they-how' className='absolute h-[144px] group-hover:h-[160px] flex-shrink-0 bottom-0' />
                         </div>
                         <p className='w-[305px] text-4xl md:text-6xl font-semibold group-hover:font-bold mb-[9px]'>{section.title}</p>
