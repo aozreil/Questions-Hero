@@ -23,7 +23,7 @@ import { BASE_URL } from "~/utils/enviroment.server";
 export const meta: MetaFunction = ({ data }) => {
     const { canonical, question } = data as LoaderData;
     return [
-        ...getSeoMeta({ title: question?.text ,canonical }),
+        ...getSeoMeta({ title: question?.title ?? question?.text ,canonical }),
         ...getStructuredData(data as LoaderData),
     ];
 };
@@ -167,7 +167,7 @@ const getStructuredData = (data: LoaderData) => {
     } = data;
 
     const questionBody = structuredQuestion ?? question?.text;
-    const questionTitle = questionBody;
+    const questionTitle = question?.title ?? questionBody;
     if (!questionBody) return [];
 
     const askedBy = getUser(question?.user_id, users);
@@ -179,7 +179,13 @@ const getStructuredData = (data: LoaderData) => {
 
     const getAnswerText = (index: number) => {
         const answer = getAnswer(index);
-        return answer?.text || `The Answer of ${questionTitle}`
+        let answerText = answer?.text ?? `The Answer of ${questionTitle}`;
+        if (answer?.answer_steps) {
+            for (const step of answer.answer_steps) {
+                answerText = answerText + ' ' + step?.text;
+            }
+        }
+        return answerText;
     }
 
     const Educational = {

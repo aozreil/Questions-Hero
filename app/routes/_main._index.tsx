@@ -45,7 +45,7 @@ export default function Index() {
                 className="flex flex-col items-center group"
               >
                 <div className="relative flex justify-center items-end w-[380px] h-[160px] border-b-[3px] border-[#d8d8d8] mb-6">
-                  <div className="absolute w-[287px] h-[144px] bg-[#f3f4f4] group-hover:bg-[#070707] rounded-t-full transition" />
+                  <div className="absolute w-[287px] h-[144px] bg-[#f3f4f4] rounded-t-full transition" />
                   <img
                     src={section.imgSrc}
                     alt="they-how"
