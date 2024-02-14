@@ -6,7 +6,7 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev --manual",
-    "run-local": "set IS_LOCAL=true && remix dev --manual",
+    "dev:local": "set IS_LOCAL=true && remix dev --manual",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc"
@@ -37,6 +37,7 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "3.2.5",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.1.6"
   },
