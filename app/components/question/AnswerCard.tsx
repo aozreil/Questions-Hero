@@ -22,9 +22,20 @@ export default function AnswerCard({ answer, userName }: Props) {
                 <div className='flex flex-col text-[13px] text-black'>
                     {!!userName && <p className='text-[13px] font-bold'>{userName}</p>}
                     {!!createdAt && <p className='mt-[5px] mb-[15px] text-xs'>{createdAt}</p>}
-                    <p className='text-[17px] font-medium'>
-                        {answer?.text}
-                    </p>
+                    {answer?.text && (
+                      <p className='text-[17px] font-medium' dangerouslySetInnerHTML={{ __html: answer?.text }} />
+                    )}
+                    {!!answer?.answer_steps?.length && (
+                      answer.answer_steps.map((step, index) => (
+                        step?.text ? (
+                          <p
+                              className='text-[17px] font-medium mt-2'
+                              key={index}
+                              dangerouslySetInnerHTML={{ __html: step?.text }}
+                          />
+                        ) :null
+                      ))
+                    )}
                 </div>
             </div>
         </div>

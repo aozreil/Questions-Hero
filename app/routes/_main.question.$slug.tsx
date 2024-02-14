@@ -14,11 +14,20 @@ import {
     getUsersInfo
 } from "~/apis/questionsAPI.server";
 import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
-import {IAnswer, IConcept, IInternalAnswer, IObjective, IQuestion, IUsers} from "~/models/questionModel";
+import {
+    IAnswer,
+    IConcept,
+    IInternalAnswer,
+    IInternalQuestion,
+    IObjective,
+    IQuestion,
+    IUsers
+} from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
 import {getUser} from "~/utils";
 import { BASE_URL } from "~/utils/enviroment.server";
+import { isbot } from "isbot";
 
 export const meta: MetaFunction = ({ data }) => {
     const { canonical, question } = data as LoaderData;
@@ -35,7 +44,7 @@ interface LoaderData {
     concepts: IConcept[];
     objectives: IObjective[];
     canonical: string;
-    structuredQuestion?: string;
+    internalQuestion?: IInternalQuestion;
     internalAnswers?: IInternalAnswer[];
 }
 
@@ -46,6 +55,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
         statusText: "Not Found",
     });
 
+    const isBot = isbot(request.headers.get("user-agent"));
     const id = slug.split('-').pop() || slug;
     try{
         const [
@@ -60,21 +70,16 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             getAnswerById(id),
             getQuestionConcepts(id),
             getQuestionObjectives(id),
-            getInternalQuestion(id, { req: request }),
-            getInternalAnswers(id, { req: request }),
+            getInternalQuestion(id, isBot, { req: request }),
+            getInternalAnswers(id, isBot, { req: request }),
         ]);
 
         if (question?.error) return redirect('/');
 
-        let structuredQuestion = '';
-        if (internalQuestion?.text) {
-            structuredQuestion = internalQuestion?.text;
-        }
-
         const userIds = [];
-        if (question?.user_id) userIds.push(question.user_id);
-        if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
-        const users = userIds?.length ? await getUsersInfo(userIds) : [];
+    if (question?.user_id) userIds.push(question.user_id);
+    if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
+    const users = userIds?.length ? await getUsersInfo(userIds) : [];
 
         const canonical = `${BASE_URL}/question/${question?.slug}-${id}`
 
@@ -85,7 +90,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             objectives,
             users,
             canonical,
-            structuredQuestion,
+            internalQuestion,
             internalAnswers,
         });
     }catch (e) {
@@ -95,7 +100,6 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             statusText: "Not Found",
         });
     }
-
 }
 
 export default function QuestionPage() {
@@ -107,12 +111,6 @@ export default function QuestionPage() {
             <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
             <main className='w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
                 <div className='w-full max-lg:max-w-[540px] flex-shrink lg:w-fit'>
-                    <p className='w-fit text-[#002237] text-sm pl-4 pb-[14px]'>
-                        Computing
-                        <span className='mx-2'>|</span>
-                        Viewed
-                        <span className='ml-1 font-bold'>7,889</span>
-                    </p>
                     <div className='flex flex-col lg:flex-row justify-center gap-4'>
                         <div className='w-full h-fit sm:max-w-[540px] lg:w-[540px] flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
                             <div className='flex flex-col items-center w-full rounded-b-2xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
@@ -144,7 +142,7 @@ export default function QuestionPage() {
                                         content={(
                                             <div className='text-[13px] mt-4'>
                                                 <ul className='list-disc ml-4 text-[#4d6473]'>
-                                                    {objectives?.map(objective => <li key={objective.text} className='mb-2'>{objective?.text}</li>)}
+                                                    {objectives?.map((objective, index) => <li key={index} className='mb-2'>{objective?.text}</li>)}
                                                 </ul>
                                             </div>
                                         )}
@@ -170,7 +168,7 @@ export default function QuestionPage() {
 
 const getStructuredData = (data: LoaderData) => {
     const {
-        structuredQuestion,
+        internalQuestion,
         question,
         answers,
         internalAnswers,
@@ -178,7 +176,7 @@ const getStructuredData = (data: LoaderData) => {
         users,
     } = data;
 
-    const questionBody = structuredQuestion ?? question?.text;
+    const questionBody = internalQuestion?.text ?? question?.text;
     const questionTitle = question?.title ?? questionBody;
     if (!questionBody) return [];
 

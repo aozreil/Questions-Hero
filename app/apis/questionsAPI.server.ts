@@ -57,9 +57,10 @@ export async function getUsersInfo(ids: number[]) {
 
 export async function getInternalQuestion (
     questionId: string,
+    isBot: boolean,
     config?: RequestConfigCustomize,
 ) {
-    if (!global.BASIC_AUTH_VALUE) {
+    if (!global.BASIC_AUTH_VALUE || !isBot) {
         return {}
     }
     try {
@@ -85,9 +86,10 @@ export async function getInternalQuestion (
 
 export async function getInternalAnswers (
     questionId: string,
+    isBot: boolean,
     config?: RequestConfigCustomize,
 ) {
-    if (!global.BASIC_AUTH_VALUE) {
+    if (!global.BASIC_AUTH_VALUE || !isBot) {
         return [];
     }
     try {

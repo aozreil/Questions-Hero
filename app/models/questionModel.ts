@@ -16,6 +16,10 @@ export class QuestionClass {
         return {
             ...answer,
             text: getTextFormatted(answer?.text),
+            answer_steps: answer?.answer_steps?.map(step => ({
+                ...step,
+                text: getTextFormatted(step?.text)
+            }))
         }
     }
 
