@@ -1,13 +1,21 @@
+import {
+    getTextFormatted,
+    title
+} from "~/utils/text-formatting-utils.server";
+
 export class QuestionClass {
-    static questionExtraction (question?: QuestionClass) {
+    static questionExtraction (question?: IQuestion): IQuestion {
         return {
             ...question,
+            text: getTextFormatted(question?.text, question?.type),
+            title: title(question?.text),
         }
     }
 
-    static answerExtraction (answer?: IAnswer) {
+    static answerExtraction (answer?: IAnswer): IAnswer {
         return {
             ...answer,
+            text: getTextFormatted(answer?.text),
         }
     }
 
@@ -39,13 +47,20 @@ export interface IQuestion {
     text?: string,
     type?: string,
     slug?: string,
-    learning_objectives?: string,
-    concepts?: {
-        concept?: string,
-        definition?: string,
-    }[],
     created_at?: string,
     error?: string;
+
+    // Derived Props
+    title?: string;
+}
+
+export interface IConcept {
+    concept?: string,
+    definition?: string,
+}
+
+export interface IObjective {
+    text?: string;
 }
 
 export interface IUser {

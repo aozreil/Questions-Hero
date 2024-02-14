@@ -9,10 +9,12 @@ import {
     getInternalAnswers,
     getInternalQuestion,
     getQuestionById,
+    getQuestionConcepts,
+    getQuestionObjectives,
     getUsersInfo
 } from "~/apis/questionsAPI.server";
 import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
-import {IAnswer, IInternalAnswer, IQuestion, IUsers} from "~/models/questionModel";
+import {IAnswer, IConcept, IInternalAnswer, IObjective, IQuestion, IUsers} from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
 import {getUser} from "~/utils";
@@ -30,6 +32,8 @@ interface LoaderData {
     question: IQuestion;
     answers: IAnswer[];
     users: IUsers;
+    concepts: IConcept[];
+    objectives: IObjective[];
     canonical: string;
     structuredQuestion?: string;
     internalAnswers?: IInternalAnswer[];
@@ -40,9 +44,18 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
     if (!slug) throw 'ID Is Required';
 
     const id = slug.split('-').pop() || slug;
-    let [question, answers, internalQuestion, internalAnswers] = await Promise.all([
+    let [
+        question,
+        answers,
+        concepts,
+        objectives,
+        internalQuestion,
+        internalAnswers,
+    ] = await Promise.all([
         getQuestionById(id),
         getAnswerById(id),
+        getQuestionConcepts(id),
+        getQuestionObjectives(id),
         getInternalQuestion(id, { req: request }),
         getInternalAnswers(id, { req: request }),
     ]);
@@ -59,11 +72,13 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
     if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
     const users = userIds?.length ? await getUsersInfo(userIds) : [];
 
-    const canonical = `${BASE_URL}/question/${slug}`
+    const canonical = `${BASE_URL}/question/${question?.slug}-${id}`
 
     return json<LoaderData>({
         question,
         answers,
+        concepts,
+        objectives,
         users,
         canonical,
         structuredQuestion,
@@ -73,7 +88,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
 
 export default function QuestionPage() {
     const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined);
-    const {question, answers, users} = useLoaderData() as LoaderData;
+    const {question, answers, users, concepts, objectives} = useLoaderData() as LoaderData;
 
     return (
         <div className='relative w-screen'>
@@ -87,18 +102,18 @@ export default function QuestionPage() {
                         <span className='ml-1 font-bold'>7,889</span>
                     </p>
                     <div className='flex flex-col lg:flex-row justify-center gap-4'>
-                        <div className='w-full sm:max-w-[540px] lg:w-[540px] flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
+                        <div className='w-full h-fit sm:max-w-[540px] lg:w-[540px] flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
                             <div className='flex flex-col items-center w-full rounded-b-2xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
                                 <QuestionContent
                                     question={question}
                                     userName={question?.user_id ? users[question.user_id] : undefined}
                                 />
-                                {!!question?.concepts?.length && (
+                                {!!concepts?.length && (
                                     <QuestionSection
                                         title='Definitions'
                                         content={(
                                             <>
-                                                {question.concepts.map((concept) => (
+                                                {concepts.map((concept) => (
                                                     !concept?.definition ? null : (
                                                         <div key={concept?.concept} className='text-[13px] mt-4'>
                                                             <p className='mb-1 font-bold'>{concept?.concept}</p>
@@ -110,13 +125,15 @@ export default function QuestionPage() {
                                         )}
                                     />
                                 )}
-                                {!!question?.learning_objectives && (
+                                {!!objectives?.length && (
                                     <QuestionSection
                                         title='Learning Objectives'
                                         className='lg:hidden'
                                         content={(
                                             <div className='text-[13px] mt-4'>
-                                                <p className='text-[#4d6473]'>{question.learning_objectives}</p>
+                                                <ul className='list-disc ml-4 text-[#4d6473]'>
+                                                    {objectives?.map(objective => <li className='mb-2'>{objective?.text}</li>)}
+                                                </ul>
                                             </div>
                                         )}
                                     />
@@ -131,7 +148,7 @@ export default function QuestionPage() {
                                 </div>
                             )}
                         </div>
-                        {!!question?.learning_objectives && <LearningObjectives text={question.learning_objectives} />}
+                        {!!objectives?.length && <LearningObjectives objectives={objectives} />}
                     </div>
                 </div>
             </div>

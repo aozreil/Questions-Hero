@@ -25,9 +25,12 @@ export default function QuestionContent({ question, userName }: Props) {
                     <p>Verified</p>
                 </div>
             </div>
-            <p className='text-[15px] lg:text-[19px] font-medium mb-3'>
-                {question?.text}
-            </p>
+            {question?.text && (
+                <p
+                    className='text-[15px] lg:text-[19px] font-medium mb-3'
+                    dangerouslySetInnerHTML={{ __html: question.text }}
+                />
+            )}
         </div>
     )
 }
