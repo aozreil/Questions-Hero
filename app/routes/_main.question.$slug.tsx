@@ -103,7 +103,7 @@ export default function QuestionPage() {
     const {question, answers, users, concepts, objectives} = useLoaderData() as LoaderData;
 
     return (
-        <div className='relative w-screen'>
+        <>
             <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
             <div className='w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
                 <div className='w-full max-lg:max-w-[540px] flex-shrink lg:w-fit'>
@@ -164,7 +164,7 @@ export default function QuestionPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
