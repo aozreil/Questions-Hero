@@ -1,8 +1,8 @@
-import {useState} from "react";
+import { ReactNode, useState } from "react";
 
 interface Props {
     title: string;
-    content: React.ReactNode;
+    content: ReactNode;
     defaultExpanded?: boolean;
     className?: string;
 }
@@ -11,7 +11,7 @@ export default function QuestionSection({title, content, defaultExpanded, classN
     const [expanded, setExpanded] = useState<boolean>(defaultExpanded || true);
 
     return (
-        <div className={`w-full flex flex-col p-4 border-t-[3px] border-[#ebf2f6] py-[15px] ${className}`}>
+        <div className={`w-full flex flex-col p-4 border-t-[3px] border-[#ebf2f6] py-[15px] ${className ?? ''}`}>
             <div className='cursor-pointer w-full flex justify-between items-center' onClick={() => setExpanded(!expanded)}>
                 <h3 className='text-[17px] font-medium mb-1'>{title}</h3>
                 <img

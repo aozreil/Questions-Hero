@@ -11,7 +11,7 @@ export default function LearningObjectives({ objectives }: Props) {
                 <img src='/assets/images/objectives.svg' alt='objectives' className='w-[71px] h-[71px] mb-[26px]' />
                 <h2 className='text-[#002237] text-[21px] font-semibold mb-[9px]'>Learning Objectives</h2>
                 <ul className='list-disc pl-4 w-full'>
-                    {objectives?.map(objective => <li className='mb-2'>{objective?.text}</li>)}
+                    {objectives?.map(objective => <li key={objective?.text} className='mb-2'>{objective?.text}</li>)}
                 </ul>
                 {/*<div className='w-full mb-[10px]  border-t-[1px] border-[#bedcff]' />*/}
                 {/*<div className='w-full py-3 bg-white text-[13px] text-[#070707] rounded-xl border border-[#e0e0e0] flex items-center justify-center'>*/}
