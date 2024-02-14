@@ -47,46 +47,55 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
     });
 
     const id = slug.split('-').pop() || slug;
-    const [
-        question,
-        answers,
-        concepts,
-        objectives,
-        internalQuestion,
-        internalAnswers,
-    ] = await Promise.all([
-        getQuestionById(id),
-        getAnswerById(id),
-        getQuestionConcepts(id),
-        getQuestionObjectives(id),
-        getInternalQuestion(id, { req: request }),
-        getInternalAnswers(id, { req: request }),
-    ]);
+    try{
+        const [
+            question,
+            answers,
+            concepts,
+            objectives,
+            internalQuestion,
+            internalAnswers,
+        ] = await Promise.all([
+            getQuestionById(id),
+            getAnswerById(id),
+            getQuestionConcepts(id),
+            getQuestionObjectives(id),
+            getInternalQuestion(id, { req: request }),
+            getInternalAnswers(id, { req: request }),
+        ]);
 
-    if (question?.error) return redirect('/');
+        if (question?.error) return redirect('/');
 
-    let structuredQuestion = '';
-    if (internalQuestion?.text) {
-        structuredQuestion = internalQuestion?.text;
+        let structuredQuestion = '';
+        if (internalQuestion?.text) {
+            structuredQuestion = internalQuestion?.text;
+        }
+
+        const userIds = [];
+        if (question?.user_id) userIds.push(question.user_id);
+        if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
+        const users = userIds?.length ? await getUsersInfo(userIds) : [];
+
+        const canonical = `${BASE_URL}/question/${question?.slug}-${id}`
+
+        return json<LoaderData>({
+            question,
+            answers,
+            concepts,
+            objectives,
+            users,
+            canonical,
+            structuredQuestion,
+            internalAnswers,
+        });
+    }catch (e) {
+        console.error(e)
+        throw new Response(null, {
+            status: 404,
+            statusText: "Not Found",
+        });
     }
 
-    const userIds = [];
-    if (question?.user_id) userIds.push(question.user_id);
-    if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
-    const users = userIds?.length ? await getUsersInfo(userIds) : [];
-
-    const canonical = `${BASE_URL}/question/${question?.slug}-${id}`
-
-    return json<LoaderData>({
-        question,
-        answers,
-        concepts,
-        objectives,
-        users,
-        canonical,
-        structuredQuestion,
-        internalAnswers,
-    });
 }
 
 export default function QuestionPage() {
@@ -135,7 +144,7 @@ export default function QuestionPage() {
                                         content={(
                                             <div className='text-[13px] mt-4'>
                                                 <ul className='list-disc ml-4 text-[#4d6473]'>
-                                                    {objectives?.map(objective => <li className='mb-2'>{objective?.text}</li>)}
+                                                    {objectives?.map(objective => <li key={objective.text} className='mb-2'>{objective?.text}</li>)}
                                                 </ul>
                                             </div>
                                         )}

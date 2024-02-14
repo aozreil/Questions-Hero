@@ -1,6 +1,5 @@
 import { MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
-import { BASE_URL } from "~/utils/enviroment.server";
 import Footer from "~/components/UI/Footer";
 
 const HOW_SECTIONS = [
@@ -24,7 +23,7 @@ const HOW_SECTIONS = [
 export const meta: MetaFunction = () => {
   return [
     ...getSeoMeta({
-      canonical: BASE_URL,
+
     }),
   ];
 };

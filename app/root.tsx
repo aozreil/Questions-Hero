@@ -14,6 +14,7 @@ import {MetaFunction} from "@remix-run/node";
 import {getSeoMeta} from "~/utils/seo";
 import NotFoundPage from "~/components/UI/NotFoundPage";
 import { ReactNode } from "react";
+import Header from "~/components/UI/Header";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({}),
@@ -57,6 +58,7 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     if(error.status === 404){
       return  <Document>
+        <Header/>
         <NotFoundPage/>
       </Document>;
     }

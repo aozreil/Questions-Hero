@@ -11,13 +11,8 @@ import AxiosInstance, {RequestConfigCustomize} from "~/interceptors/http-interce
 import {CONTENT_CLUSTER, USERS_CLUSTER} from "~/utils/enviroment.server";
 
 export async function getQuestionById(id: string): Promise<IQuestion> {
-    try {
-        const response = await AxiosInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
-        return QuestionClass.questionExtraction(response?.data);
-    } catch (e) {
-        console.error(e);
-        return {};
-    }
+   const response = await AxiosInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
+   return QuestionClass.questionExtraction(response?.data);
 }
 
 export async function getQuestionConcepts(id: string): Promise<IConcept[]> {
