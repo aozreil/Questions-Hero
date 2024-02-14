@@ -105,7 +105,7 @@ export default function QuestionPage() {
     return (
         <>
             <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
-            <div className='w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
+            <main className='w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
                 <div className='w-full max-lg:max-w-[540px] flex-shrink lg:w-fit'>
                     <p className='w-fit text-[#002237] text-sm pl-4 pb-[14px]'>
                         Computing
@@ -163,7 +163,7 @@ export default function QuestionPage() {
                         {!!objectives?.length && <LearningObjectives objectives={objectives} />}
                     </div>
                 </div>
-            </div>
+            </main>
         </>
     )
 }

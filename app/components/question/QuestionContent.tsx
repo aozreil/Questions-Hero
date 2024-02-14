@@ -26,7 +26,7 @@ export default function QuestionContent({ question, userName }: Props) {
                 </div>
             </div>
             {question?.text && (
-                <p
+                <h1
                     className='text-[15px] lg:text-[19px] font-medium mb-3'
                     dangerouslySetInnerHTML={{ __html: question.text }}
                 />
