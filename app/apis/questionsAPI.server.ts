@@ -15,7 +15,7 @@ export async function getQuestionById(id: string): Promise<IQuestion> {
         const response = await AxiosInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
         return QuestionClass.questionExtraction(response?.data);
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return {};
     }
 }
@@ -25,7 +25,7 @@ export async function getQuestionConcepts(id: string): Promise<IConcept[]> {
         const response = await AxiosInstance.get<IConcept[]>(`${CONTENT_CLUSTER}/questions/${id}/concepts`);
         return response?.data?.length ? response.data : [];
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return [];
     }
 }
@@ -35,7 +35,7 @@ export async function getQuestionObjectives(id: string): Promise<IObjective[]> {
         const response = await AxiosInstance.get<IObjective[]>(`${CONTENT_CLUSTER}/questions/${id}/objectives`);
         return response?.data?.length ? response.data : [];
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return [];
     }
 }
@@ -45,7 +45,7 @@ export async function getAnswerById(id: string) {
         const response = await AxiosInstance.get<IAnswer[]>(`${CONTENT_CLUSTER}/answers/question/${id}`);
         return response?.data?.map(answer => QuestionClass.answerExtraction(answer));
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return [];
     }
 }
@@ -55,7 +55,7 @@ export async function getUsersInfo(ids: number[]) {
         const response = await AxiosInstance.get<IUser[]>(`${USERS_CLUSTER}/users/public?ids=${ids?.join()}`);
         return QuestionClass.usersExtraction(response?.data);
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return [];
     }
 }
@@ -83,7 +83,7 @@ export async function getInternalQuestion (
             });
         return response.data;
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return {}
     }
 }
@@ -111,7 +111,7 @@ export async function getInternalAnswers (
             });
         return response.data;
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return [];
     }
 }

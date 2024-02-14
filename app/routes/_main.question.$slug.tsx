@@ -41,10 +41,13 @@ interface LoaderData {
 
 export async function loader ({ params, request }: LoaderFunctionArgs) {
     const { slug } = params;
-    if (!slug) throw 'ID Is Required';
+    if (!slug) throw new Response(null, {
+        status: 404,
+        statusText: "Not Found",
+    });
 
     const id = slug.split('-').pop() || slug;
-    let [
+    const [
         question,
         answers,
         concepts,
