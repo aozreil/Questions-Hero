@@ -10,26 +10,26 @@ interface Props {
 export default function AnswerCard({ answer, userName }: Props) {
     const [createdAt] = useState(() => getCreatedAt(answer));
     return (
-        <div className='w-full rounded-xl my-3 border border-[#aedbc8] bg-[#f4fbf8] overflow-hidden'>
-            <div className='flex items-center justify-center py-2 bg-[#25b680] font-bold text-white text-[15px] gap-[6px]'>
+        <div id='acceptedAnswer' className='w-full rounded-xl my-3 border border-[#aedbc8] bg-[#f4fbf8] overflow-hidden'>
+            <div className='flex items-center justify-center py-2 bg-[#25b680] font-bold text-white gap-1.5'>
                 <img src='/assets/images/verified-white.svg' alt='verifed' />
                 <p>Verified Answer</p>
             </div>
             <div className='flex gap-3 w-full p-5 mt-3'>
-                <div className='h-[44px] w-[44px] bg-[#002237] text-white twxt-xl flex items-center justify-center rounded-full border-2 border-[#5dc9a1] flex-shrink-0 font-semibold'>
+                <div className='h-11 w-11 bg-[#002237] text-white twxt-xl flex items-center justify-center rounded-full border-2 border-[#5dc9a1] flex-shrink-0 font-semibold'>
                     {getUserInitials(userName)}
                 </div>
-                <div className='flex flex-col text-[13px] text-black'>
-                    {!!userName && <p className='text-[13px] font-bold'>{userName}</p>}
-                    {!!createdAt && <p className='mt-[5px] mb-[15px] text-xs'>{createdAt}</p>}
+                <div className='flex flex-col text-sm text-black'>
+                    {!!userName && <p className='text-sm font-bold'>{userName}</p>}
+                    {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
                     {answer?.text && (
-                      <p className='text-[17px] font-medium' dangerouslySetInnerHTML={{ __html: answer?.text }} />
+                      <p className='font-medium' dangerouslySetInnerHTML={{ __html: answer?.text }} />
                     )}
                     {!!answer?.answer_steps?.length && (
                       answer.answer_steps.map((step, index) => (
                         step?.text ? (
                           <p
-                              className='text-[17px] font-medium mt-2'
+                              className='font-medium mt-2'
                               key={index}
                               dangerouslySetInnerHTML={{ __html: step?.text }}
                           />

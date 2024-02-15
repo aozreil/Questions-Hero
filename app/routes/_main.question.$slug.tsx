@@ -28,11 +28,24 @@ import {getSeoMeta} from "~/utils/seo";
 import {getUser} from "~/utils";
 import { BASE_URL } from "~/utils/enviroment.server";
 import { isbot } from "isbot";
+import invariant from "tiny-invariant";
 
 export const meta: MetaFunction = ({ data }) => {
-    const { canonical, question } = data as LoaderData;
+    const { canonical, question, answers } = data as LoaderData;
+    const answer = answers?.[0];
+    let answerText = answer?.text ?? `The Answer of ${question?.text}`;
+    if (answer?.answer_steps) {
+        for (const step of answer.answer_steps) {
+            answerText = answerText + ' ' + step?.text;
+        }
+    }
+
     return [
-        ...getSeoMeta({ title: question?.title ?? question?.text ,canonical }),
+        ...getSeoMeta({
+            title: question?.title ?? question?.text,
+            description: answerText,
+            canonical,
+        }),
         ...getStructuredData(data as LoaderData),
     ];
 };
@@ -50,14 +63,11 @@ interface LoaderData {
 
 export async function loader ({ params, request }: LoaderFunctionArgs) {
     const { slug } = params;
-    if (!slug) throw new Response(null, {
-        status: 404,
-        statusText: "Not Found",
-    });
+    invariant(slug, 'Not Found');
 
     const isBot = isbot(request.headers.get("user-agent"));
     const id = slug.split('-').pop() || slug;
-    try{
+    try {
         const [
             question,
             answers,
@@ -75,13 +85,14 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
         ]);
 
         if (question?.error) return redirect('/');
+        if (question?.slug?.includes('-') && question?.slug !== slug) return redirect(`/question/${question?.slug}`);
 
         const userIds = [];
-    if (question?.user_id) userIds.push(question.user_id);
-    if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
-    const users = userIds?.length ? await getUsersInfo(userIds) : [];
+        if (question?.user_id) userIds.push(question.user_id);
+        if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
+        const users = userIds?.length ? await getUsersInfo(userIds) : [];
 
-        const canonical = `${BASE_URL}/question/${question?.slug}-${id}`
+        const canonical = `${BASE_URL}/question/${question?.slug}`
 
         return json<LoaderData>({
             question,
@@ -92,8 +103,12 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             canonical,
             internalQuestion,
             internalAnswers,
+        }, {
+            headers: {
+                'Cache-Control': 'max-age=86400, public',
+            }
         });
-    }catch (e) {
+    } catch (e) {
         console.error(e)
         throw new Response(null, {
             status: 404,
@@ -109,10 +124,10 @@ export default function QuestionPage() {
     return (
         <>
             <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
-            <main className='w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
-                <div className='w-full max-lg:max-w-[540px] flex-shrink lg:w-fit'>
+            <main className='container max-xs:mx-0 w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
+                <div className='w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit'>
                     <div className='flex flex-col lg:flex-row justify-center gap-4'>
-                        <div className='w-full h-fit sm:max-w-[540px] lg:w-[540px] flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
+                        <div className='w-full h-fit sm:max-w-[34rem] lg:w-136 flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
                             <div className='flex flex-col items-center w-full rounded-b-2xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
                                 <QuestionContent
                                     question={question}
@@ -125,7 +140,7 @@ export default function QuestionPage() {
                                             <>
                                                 {concepts.map((concept) => (
                                                     !concept?.definition ? null : (
-                                                        <div key={concept?.concept} className='text-[13px] mt-4'>
+                                                        <div key={concept?.concept} className='text-sm mt-4'>
                                                             <p className='mb-1 font-bold'>{concept?.concept}</p>
                                                             <p className='text-[#4d6473]'>{concept?.definition}</p>
                                                         </div>
@@ -140,7 +155,7 @@ export default function QuestionPage() {
                                         title='Learning Objectives'
                                         className='lg:hidden'
                                         content={(
-                                            <div className='text-[13px] mt-4'>
+                                            <div className='text-sm mt-4'>
                                                 <ul className='list-disc ml-4 text-[#4d6473]'>
                                                     {objectives?.map((objective, index) => <li key={index} className='mb-2'>{objective?.text}</li>)}
                                                 </ul>
@@ -150,7 +165,7 @@ export default function QuestionPage() {
                                 )}
                             </div>
                             {!!answers?.length && (
-                                <div className='mb-2 px-[13px] flex flex-col items-center'>
+                                <div className='mb-2 px-3 flex flex-col items-center'>
                                     <AnswerCard
                                         answer={answers[0]}
                                         userName={answers[0]?.user_id ? users[answers[0]?.user_id] : undefined}
