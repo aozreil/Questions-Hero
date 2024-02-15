@@ -199,7 +199,6 @@ const getStructuredData = (data: LoaderData) => {
     if (!questionBody) return [];
 
     const askedBy = getUser(question?.user_id, users);
-    const answerCount = internalAnswers?.length ?? answers?.length;
 
     const getAnswer = (index: number) => {
         return internalAnswers?.[index] ?? answers?.[index];
@@ -270,7 +269,7 @@ const getStructuredData = (data: LoaderData) => {
             "@type": "Question",
             "name": questionTitle,
             "text": questionBody,
-            "answerCount": answerCount,
+            "answerCount": 1,
             "datePublished": question?.created_at,
             "author": {
                 "@type": "Person",
