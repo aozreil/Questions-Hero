@@ -20,7 +20,7 @@ export default function AnswerCard({ answer, userName }: Props) {
                     {getUserInitials(userName)}
                 </div>
                 <div className='flex flex-col text-sm text-black'>
-                    {!!userName && <p className='text-sm font-bold'>{userName}</p>}
+                    <p className='text-sm font-bold'>{userName ?? 'Answered By User'}</p>
                     {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
                     {answer?.text && (
                       <p className='font-medium' dangerouslySetInnerHTML={{ __html: answer?.text }} />

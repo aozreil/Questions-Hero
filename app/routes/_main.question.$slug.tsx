@@ -11,7 +11,8 @@ import {
     getQuestionById,
     getQuestionConcepts,
     getQuestionObjectives,
-    getUsersInfo
+    getUsersInfo,
+    handleError,
 } from "~/apis/questionsAPI.server";
 import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
 import {
@@ -77,9 +78,9 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             internalAnswers,
         ] = await Promise.all([
             getQuestionById(id),
-            getAnswerById(id),
-            getQuestionConcepts(id),
-            getQuestionObjectives(id),
+            getAnswerById(id).catch((e) => handleError(e, [])),
+            getQuestionConcepts(id).catch((e) => handleError(e, [])),
+            getQuestionObjectives(id).catch((e) => handleError(e, [])),
             getInternalQuestion(id, isBot, { req: request }),
             getInternalAnswers(id, isBot, { req: request }),
         ]);
@@ -90,7 +91,9 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
         const userIds = [];
         if (question?.user_id) userIds.push(question.user_id);
         if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
-        const users = userIds?.length ? await getUsersInfo(userIds) : [];
+        const users = userIds?.length
+          ? await getUsersInfo(userIds).catch((e) => handleError(e, []))
+          : [];
 
         const canonical = `${BASE_URL}/question/${question?.slug}`
 
@@ -128,7 +131,7 @@ export default function QuestionPage() {
                 <div className='w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit'>
                     <div className='flex flex-col lg:flex-row justify-center gap-4'>
                         <div className='w-full h-fit sm:max-w-[34rem] lg:w-136 flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
-                            <div className='flex flex-col items-center w-full rounded-b-2xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
+                            <div className='flex flex-col items-center w-full rounded-b-xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
                                 <QuestionContent
                                     question={question}
                                     userName={question?.user_id ? users[question.user_id] : undefined}
