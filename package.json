@@ -8,7 +8,7 @@
     "dev": "remix dev --manual",
     "dev:local": "set IS_LOCAL=true && remix dev --manual",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "NODE_ENV=development remix-serve ./build/index.js",
+    "start": "NODE_ENV=development && remix-serve ./build/index.js",
     "typecheck": "tsc"
   },
   "dependencies": {

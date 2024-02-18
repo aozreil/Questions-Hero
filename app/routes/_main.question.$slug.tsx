@@ -64,6 +64,8 @@ interface LoaderData {
     internalAnswers?: IInternalAnswer[];
     shouldLoadKatex: boolean;
     baseUrl: string;
+    nodeEnv?: string;
+    isDev?: boolean;
 }
 
 export async function loader ({ params, request }: LoaderFunctionArgs) {
@@ -112,6 +114,8 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             internalAnswers,
             shouldLoadKatex: !!question?.includesLatex,
             baseUrl: BASE_URL,
+            nodeEnv: process.env.NODE_ENV,
+            isDev: process.env.NODE_ENV === 'development',
         }, {
             headers: {
                 'Cache-Control': 'max-age=86400, public',
@@ -201,7 +205,7 @@ const getStructuredData = (data: LoaderData) => {
     } = data;
 
     const questionBody = internalQuestion?.text ?? question?.text;
-    const questionTitle = question?.title ?? questionBody;
+    const questionTitle = questionBody;
     if (!questionBody) return [];
 
     const askedBy = getUser(question?.user_id, users);
