@@ -16,5 +16,13 @@ export function getSeoMeta({ title, description, canonical } : { title?: string,
     { name: "robots", content: "index,follow" },
     { name: "googlebot", content: "index,follow" },
     ... canonical ? [{ tagName: "link", rel: "canonical", href: canonical }] : [],
+
+    // site names data structure
+    { "script:ld+json": {
+        "@context" : "https://schema.org",
+        "@type" : "WebSite",
+        "name" : DEFAULT_META_TITLE,
+        "url" : "https://askgram.work"
+    }},
   ];
 }

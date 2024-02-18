@@ -12,7 +12,7 @@ import {CONTENT_CLUSTER, USERS_CLUSTER} from "~/utils/enviroment.server";
 
 export async function getQuestionById(id: string): Promise<IQuestion> {
    const response = await AxiosInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
-   return QuestionClass.questionExtraction(response?.data);
+   return response?.data;
 }
 
 export async function getQuestionConcepts(id: string): Promise<IConcept[]> {
@@ -25,9 +25,9 @@ export async function getQuestionObjectives(id: string): Promise<IObjective[]> {
     return response?.data?.length ? response.data : [];
 }
 
-export async function getAnswerById(id: string) {
+export async function getAnswerById(id: string): Promise<IAnswer[]> {
     const response = await AxiosInstance.get<IAnswer[]>(`${CONTENT_CLUSTER}/answers/question/${id}`);
-    return response?.data?.map(answer => QuestionClass.answerExtraction(answer));
+    return response?.data;
 }
 
 export async function getUsersInfo(ids: number[]) {

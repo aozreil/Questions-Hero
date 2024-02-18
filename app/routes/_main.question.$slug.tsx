@@ -22,7 +22,8 @@ import {
     IInternalQuestion,
     IObjective,
     IQuestion,
-    IUsers
+    IUsers,
+    QuestionClass,
 } from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
@@ -31,27 +32,25 @@ import { BASE_URL } from "~/utils/enviroment.server";
 import { isbot } from "isbot";
 import invariant from "tiny-invariant";
 import { getKatexLink } from "~/utils/external-links";
+import { getCleanText } from "~/utils/text-formatting-utils.server";
 
 export const meta: MetaFunction = ({ data }) => {
-    const { canonical, question, answers, shouldLoadKatex, baseUrl } = data as LoaderData;
-    const answer = answers?.[0];
-    let answerText = answer?.text ?? `The Answer of ${question?.text}`;
-    if (answer?.answer_steps) {
-        for (const step of answer.answer_steps) {
-            answerText = answerText + ' ' + step?.text;
-        }
-    }
-
+    const { canonical, question, answers, baseUrl, structuredData } = data as LoaderData;
     return [
         ...getSeoMeta({
             title: question?.title ?? question?.text,
-            description: answerText,
+            description: structuredData?.verifiedAnswer,
             canonical,
         }),
         ...getStructuredData(data as LoaderData),
-        ...[ shouldLoadKatex ? getKatexLink(baseUrl) : {} ],
+        ...[ question?.includesLatex ? getKatexLink(baseUrl) : {} ],
     ];
 };
+
+interface StructuredData {
+    questionText?: string;
+    verifiedAnswer?: string;
+}
 
 interface LoaderData {
     question: IQuestion;
@@ -62,10 +61,10 @@ interface LoaderData {
     canonical: string;
     internalQuestion?: IInternalQuestion;
     internalAnswers?: IInternalAnswer[];
-    shouldLoadKatex: boolean;
     baseUrl: string;
     nodeEnv?: string;
     isDev?: boolean;
+    structuredData?: StructuredData;
 }
 
 export async function loader ({ params, request }: LoaderFunctionArgs) {
@@ -101,21 +100,33 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
           ? await getUsersInfo(userIds).catch((e) => handleError(e, []))
           : [];
 
-        const canonical = `${BASE_URL}/question/${question?.slug}`
+        const canonical = `${BASE_URL}/question/${question?.slug}`;
+
+        const answer = internalAnswers?.[0] ?? answers?.[0];
+        let answerText = answer?.text ?? `The Answer of ${question?.text}`;
+        if (answer?.answer_steps) {
+            for (const step of answer.answer_steps) {
+                answerText = answerText + ' ' + step?.text;
+            }
+        }
+        const structuredData: StructuredData = {
+            questionText: getCleanText(internalQuestion?.text ?? question?.text),
+            verifiedAnswer: getCleanText(answerText)
+        }
 
         return json<LoaderData>({
-            question,
-            answers,
+            question: QuestionClass.questionExtraction(question),
+            answers: answers?.map(answer => QuestionClass.answerExtraction(answer)),
             concepts,
             objectives,
             users,
             canonical,
             internalQuestion,
             internalAnswers,
-            shouldLoadKatex: !!question?.includesLatex,
             baseUrl: BASE_URL,
             nodeEnv: process.env.NODE_ENV,
             isDev: process.env.NODE_ENV === 'development',
+            structuredData,
         }, {
             headers: {
                 'Cache-Control': 'max-age=86400, public',
@@ -196,15 +207,15 @@ export default function QuestionPage() {
 
 const getStructuredData = (data: LoaderData) => {
     const {
-        internalQuestion,
         question,
         answers,
         internalAnswers,
         canonical,
         users,
+        structuredData
     } = data;
 
-    const questionBody = internalQuestion?.text ?? question?.text;
+    const questionBody = structuredData?.questionText;
     const questionTitle = questionBody;
     if (!questionBody) return [];
 
@@ -255,7 +266,7 @@ const getStructuredData = (data: LoaderData) => {
                 "suggestedAnswer": [
                     suggestedAnswers?.map(answer => ({
                         "@type": "Answer",
-                        "text": answer?.text,
+                        "text": structuredData?.verifiedAnswer,
                         "datePublished": answer?.created_at,
                         "author": {
                             "@type": "Person",
@@ -287,7 +298,7 @@ const getStructuredData = (data: LoaderData) => {
             },
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": getAnswerText(0),
+                "text": structuredData?.verifiedAnswer,
                 "url": `${canonical}#acceptedAnswer`,
                 "datePublished": getAnswer(0)?.created_at,
                 "author": {

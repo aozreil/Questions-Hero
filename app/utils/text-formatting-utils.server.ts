@@ -940,3 +940,8 @@ export function removeKatexFromString(text: string): string {
           return total + current;
       });
 }
+
+export function getCleanText(text?: string): string {
+    if (!text) return '';
+    return removeImage(text);
+}
