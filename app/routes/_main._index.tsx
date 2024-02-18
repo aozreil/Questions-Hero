@@ -7,17 +7,17 @@ const HOW_SECTIONS = [
   {
     imgSrc: "/assets/images/you-how.png",
     title: "YOU",
-    desc: "Ask inquire about any subject within your academic realm, our platform is here to assist you in obtaining the information you seek.",
+    desc: "Ask any question related to your academic subjects, and our platform is here to support you in finding the information you're looking for!",
   },
   {
     imgSrc: "/assets/images/they-how.png",
     title: "THEY",
-    desc: "Answer your question, since it contribute to a dynamic community of learners, fostering a collaborative environment where knowledge is shared and verified answers are readily available.",
+    desc: "Jump in and provide answers to your questions, as they help build a lively community of learners, creating a collaborative space.",
   },
   {
     imgSrc: "/assets/images/we-how.png",
     title: "WE",
-    desc: "Diligently verify all questions through our expert team, enhancing the reliability and credibility of the shared knowledge in our community.",
+    desc: "Work diligently to verify all questions with the help of our expert team, ensuring that the knowledge shared within our community is reliable and trustworthy.",
   },
 ];
 

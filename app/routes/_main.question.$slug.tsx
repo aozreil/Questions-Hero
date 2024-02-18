@@ -63,7 +63,7 @@ interface LoaderData {
     internalAnswers?: IInternalAnswer[];
     baseUrl: string;
     nodeEnv?: string;
-    isDev?: boolean;
+    isDev?: string;
     structuredData?: StructuredData;
 }
 
@@ -125,7 +125,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             internalAnswers,
             baseUrl: BASE_URL,
             nodeEnv: process.env.NODE_ENV,
-            isDev: process.env.NODE_ENV === 'development',
+            isDev: process.env.NODE_TEST,
             structuredData,
         }, {
             headers: {
