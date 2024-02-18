@@ -37,7 +37,7 @@ export default function QuestionContent({ question, userName }: Props) {
 
 const getAskedBy = (createdAt?: string, userName?: string) => {
     if (createdAt) {
-        return userName ?`${userName} on ${createdAt}` : `User on ${createdAt}`;
+        return userName ?`${userName} on ${createdAt}` : `Askgram User on ${createdAt}`;
     } else {
         return userName;
     }

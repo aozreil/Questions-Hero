@@ -3,7 +3,7 @@ import {differenceInDays, formatDistance, format} from "date-fns";
 
 export function getUser (userId?: number, users?: IUsers) {
     if (userId && users?.hasOwnProperty(userId)) return users[userId];
-    return 'User';
+    return 'Askgram User';
 }
 
 export function getTimesAgo (date: string) {

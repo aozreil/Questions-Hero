@@ -51,9 +51,9 @@ export default function Index() {
             {HOW_SECTIONS.map((section) => (
               <div
                 key={section.title}
-                className="flex flex-col items-center group"
+                className="flex flex-col items-center"
               >
-                <div className="relative flex justify-center items-end w-[95%] xs:w-96 h-40 border-b-[3px] border-[#d8d8d8] mb-6">
+                <div className="relative flex justify-center group peer items-end w-[95%] xs:w-96 h-40 border-b-[3px] border-[#d8d8d8] mb-6">
                   <div className="absolute w-[80%] xs:w-72 h-36 bg-[#f3f4f4] rounded-t-full transition" />
                   <img
                     src={section.imgSrc}
@@ -61,7 +61,7 @@ export default function Index() {
                     className="absolute h-36 group-hover:h-40 flex-shrink-0 bottom-0 transition"
                   />
                 </div>
-                <h3 className="w-76 text-4xl md:text-6xl font-semibold group-hover:font-bold mb-2 transition">
+                <h3 className="w-76 text-4xl md:text-6xl font-semibold peer-hover:font-bold mb-2 transition">
                   {section.title}
                 </h3>
                 <p className="max-lg:text-center w-76 text-sm">{section.desc}</p>
