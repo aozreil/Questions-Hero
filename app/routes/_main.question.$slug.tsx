@@ -30,9 +30,10 @@ import {getUser} from "~/utils";
 import { BASE_URL } from "~/utils/enviroment.server";
 import { isbot } from "isbot";
 import invariant from "tiny-invariant";
+import { getKatexLink } from "~/utils/external-links";
 
 export const meta: MetaFunction = ({ data }) => {
-    const { canonical, question, answers } = data as LoaderData;
+    const { canonical, question, answers, shouldLoadKatex, baseUrl } = data as LoaderData;
     const answer = answers?.[0];
     let answerText = answer?.text ?? `The Answer of ${question?.text}`;
     if (answer?.answer_steps) {
@@ -48,6 +49,7 @@ export const meta: MetaFunction = ({ data }) => {
             canonical,
         }),
         ...getStructuredData(data as LoaderData),
+        ...[ shouldLoadKatex ? getKatexLink(baseUrl) : {} ],
     ];
 };
 
@@ -60,6 +62,8 @@ interface LoaderData {
     canonical: string;
     internalQuestion?: IInternalQuestion;
     internalAnswers?: IInternalAnswer[];
+    shouldLoadKatex: boolean;
+    baseUrl: string;
 }
 
 export async function loader ({ params, request }: LoaderFunctionArgs) {
@@ -106,6 +110,8 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             canonical,
             internalQuestion,
             internalAnswers,
+            shouldLoadKatex: !!question?.includesLatex,
+            baseUrl: BASE_URL,
         }, {
             headers: {
                 'Cache-Control': 'max-age=86400, public',

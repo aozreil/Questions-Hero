@@ -704,6 +704,12 @@ export const isLatexTable = (text: string) => {
     }
 };
 
+export function isTextIncludingLatex (text?: string) {
+    if (!text) return false;
+    const segments = getLatexSegments(text);
+    return !(segments?.length === 1 && segments[0].type === "text");
+}
+
 export function getKatexHTML(text: string, isPreview: boolean): string {
     if (!text) {
         return "";

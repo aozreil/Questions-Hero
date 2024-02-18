@@ -1,5 +1,6 @@
 import {
     getTextFormatted,
+    isTextIncludingLatex,
     title
 } from "~/utils/text-formatting-utils.server";
 
@@ -9,6 +10,7 @@ export class QuestionClass {
             ...question,
             text: getTextFormatted(question?.text, question?.type),
             title: title(question?.text),
+            includesLatex: isTextIncludingLatex(question?.text),
         }
     }
 
@@ -56,6 +58,7 @@ export interface IQuestion {
 
     // Derived Props
     title?: string;
+    includesLatex?: boolean;
 }
 
 export interface IConcept {
