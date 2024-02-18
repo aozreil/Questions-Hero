@@ -40,7 +40,10 @@ export function replaceHTMLCodesByEmptyString(text: string) {
         text = text.replace(regex, "");
     });
 
-    return text;
+    return removeKatexFromString(text.replace(/"/g, '')
+      .replace(new RegExp('<br>', 'g'), ' ')
+      .replace(new RegExp('\n', 'g'), ' '))
+      .replace(/"/g, '');
 }
 
 /* eslint no-constant-condition:0 */
@@ -904,4 +907,30 @@ export const getTextFormatted = (text?: string, type?: string) => {
     }
 
     return newText;
+}
+
+export function removeKatexFromString(text: string): string {
+    if (!text) {
+        return '';
+    }
+    const segments = getLatexSegments(text);
+    if (segments.length === 1 && segments[0].type === 'text') {
+        return text;
+    }
+    return segments
+      .map((seg) => {
+          if (seg.type === 'math') {
+              latexDelimitersList.forEach((delimiter) => {
+                  seg.data = seg.data.replace(delimiter.right, '');
+                  seg.data = seg.data.replace(delimiter.left, '');
+              });
+              seg.data = seg.data.replace(/(?:<Br>|<br>|\n)/g, '');
+              return seg.data;
+          } else {
+              return ' ' + seg.data + ' ';
+          }
+      })
+      .reduce((total, current) => {
+          return total + current;
+      });
 }
