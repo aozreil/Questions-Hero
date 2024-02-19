@@ -6,7 +6,7 @@ export default function Footer() {
         All copyrights are reserved to{" "}
         <span className="font-bold">{`Askgram ® ${currentYear}`}</span>
       </p>
-      <div className="flex gap-7">
+      <div className="gap-7 hidden">
         <p>Help</p>
         <p>Privacy</p>
         <p>Terms</p>
