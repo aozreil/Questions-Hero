@@ -1,5 +1,5 @@
 import { SecretsManagerClient, GetSecretValueCommand  } from "@aws-sdk/client-secrets-manager";
-import { AWS_SECRET_ID } from "~/utils/enviroment.server";
+import { AWS_SECRET_ID } from "~/config/enviroment.server";
 
 declare global {
     var BASIC_AUTH_VALUE: string;

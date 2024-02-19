@@ -28,7 +28,7 @@ import {
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
 import {getUser} from "~/utils";
-import { BASE_URL } from "~/utils/enviroment.server";
+import { BASE_URL } from "~/config/enviroment.server";
 import { isbot } from "isbot";
 import invariant from "tiny-invariant";
 import { getKatexLink } from "~/utils/external-links";

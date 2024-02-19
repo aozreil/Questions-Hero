@@ -8,7 +8,7 @@ import {
     QuestionClass
 } from "~/models/questionModel";
 import AxiosInstance, {RequestConfigCustomize} from "~/interceptors/http-interceptors";
-import {CONTENT_CLUSTER, USERS_CLUSTER} from "~/utils/enviroment.server";
+import {CONTENT_CLUSTER, USERS_CLUSTER} from "~/config/enviroment.server";
 
 export async function getQuestionById(id: string): Promise<IQuestion> {
    const response = await AxiosInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
