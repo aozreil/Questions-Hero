@@ -124,7 +124,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             internalQuestion,
             internalAnswers,
             baseUrl: BASE_URL,
-            nodeEnv: process.env.NODE_ENV,
+            nodeEnv: process.env.NODE_TEST,
             isDev: process.env.NODE_TEST,
             structuredData,
         }, {
