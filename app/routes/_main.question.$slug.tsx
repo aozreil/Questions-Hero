@@ -247,7 +247,7 @@ const getStructuredData = (data: LoaderData) => {
                 "text": questionBody,
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": getAnswerText(0),
+                    "text": structuredData?.verifiedAnswer,
                     "url": canonical,
                 }
             },
