@@ -15,6 +15,7 @@ import {getSeoMeta} from "~/utils/seo";
 import NotFoundPage from "~/components/UI/NotFoundPage";
 import { ReactNode } from "react";
 import Header from "~/components/UI/Header";
+import FavIcon from "~/components/UI/FavIcon";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({}),
@@ -33,6 +34,7 @@ function Document({children}: {children: ReactNode}) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <Meta />
     <Links />
+    <FavIcon />
     <title>Ask Gram</title>
   </head>
   <body>
