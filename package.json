@@ -11,7 +11,7 @@
     "build:local": "remix build",
     "build:dev": "npm run copy:dev && remix build",
     "build:prod": "npm run copy:prod && remix build",
-    "start": "npm run start",
+    "start": "remix-serve ./build/index.js",
     "copy:dev": "copyfiles -u 3 app/config/dev/enviroment.server.ts app/config",
     "copy:prod": "copyfiles -u 3 app/config/prod/enviroment.server.ts app/config",
     "typecheck": "tsc"
