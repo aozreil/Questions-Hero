@@ -15,8 +15,8 @@
     "start:local": "remix-serve ./build/index.js",
     "start:dev": "NODE_ENV=development && remix-serve ./build/index.js",
     "start:prod": "NODE_ENV=production && remix-serve ./build/index.js",
-    "copy:dev": "cpx app/config/enviroment.dev.server.ts app/config/enviroment.server.ts",
-    "copy:prod": "cpx app/config/enviroment.prod.server.ts app/config/enviroment.server.ts",
+    "copy:dev": "move 'app/config/dev/enviroment.server.ts' './app/config/enviroment.server.ts'",
+    "copy:prod": "copyfiles 'app/config/prod/enviroment.server.ts' 'app/config/enviroment.server.ts'",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -40,6 +40,7 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "copyfiles": "^2.4.1",
     "cpx": "^1.5.0",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^9.0.0",
