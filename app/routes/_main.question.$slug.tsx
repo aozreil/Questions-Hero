@@ -1,4 +1,4 @@
-import {json, MetaFunction} from "@remix-run/node";
+import { HeadersFunction, json, MetaFunction } from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
@@ -136,6 +136,10 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
         });
     }
 }
+
+export const headers: HeadersFunction = () => ({
+    "Cache-Control": "max-age=86400, s-maxage=86400",
+});
 
 export default function QuestionPage() {
     const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined);
