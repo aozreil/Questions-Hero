@@ -5,3 +5,11 @@
 html {
     font-size: 16px;
 }
+
+.terms-link {
+    border-bottom: solid 4px #ccd3d7;
+}
+
+.terms-list {
+    list-style-type: disc;
+}

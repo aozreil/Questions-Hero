@@ -1,3 +1,6 @@
+import { Link } from "@remix-run/react";
+import { TERMS_NAVIGATION_LINKS } from "~/routes/_main.terms.$slug";
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   return (
@@ -6,11 +9,14 @@ export default function Footer() {
         All copyrights are reserved to{" "}
         <span className="font-bold">{`Askgram ® ${currentYear}`}</span>
       </p>
-      <div className="gap-7 hidden">
-        <p>Help</p>
-        <p>Privacy</p>
-        <p>Terms</p>
-        <p>About</p>
+      <div className="flex gap-7">
+        {TERMS_NAVIGATION_LINKS?.map(term =>
+          <Link
+            key={term.text}
+            to={term.link}
+            className='hover:text-[#070707]'
+          >{term.text}</Link>
+        )}
       </div>
     </footer>
   );
