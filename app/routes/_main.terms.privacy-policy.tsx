@@ -1,4 +1,24 @@
-{
+import Terms, { ITerms } from "~/components/UI/Terms";
+import { getSeoMeta } from "~/utils/seo";
+import { BASE_URL } from "~/config/enviromenet";
+
+export const meta = () => {
+  return [
+    ...getSeoMeta({
+      title: Data.title,
+      description: Data.pageDescription,
+      canonical: `${BASE_URL}/terms/privacy-policy`,
+    }),
+  ]
+}
+
+export default function PrivacyPolicy() {
+  return (
+    <Terms terms={Data} type='POINTS' />
+  )
+}
+
+const Data: ITerms = {
   "title": "Privacy Policy",
   "description": "Thank you for using Askgram! This Privacy Policy describes how Askgram (\"we,\" \"us,\" or \"our\") collects, uses, and shares your information when you use our website and any services provided therein (collectively, the \"Service\"). By accessing or using the Service, you agree to the terms of this Privacy Policy.",
   "pageDescription": "Thank you for using Askgram! This Privacy Policy describes how Askgram (\"we,\" \"us,\" or \"our\") collects, uses, and shares your information when you use our website and any services provided therein (collectively, the \"Service\"). By accessing or using the Service, you agree to the terms of this Privacy Policy.",

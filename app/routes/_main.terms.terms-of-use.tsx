@@ -1,4 +1,24 @@
-{
+import Terms, { ITerms } from "~/components/UI/Terms";
+import { getSeoMeta } from "~/utils/seo";
+import { BASE_URL } from "~/config/enviromenet";
+
+export const meta = () => {
+  return [
+    ...getSeoMeta({
+      title: Data.title,
+      description: Data.pageDescription,
+      canonical: `${BASE_URL}/terms/terms-of-use`,
+    }),
+  ]
+}
+
+export default function TermsOfUse() {
+  return (
+    <Terms terms={Data} type='POINTS' />
+  )
+}
+
+const Data: ITerms = {
   "title": "Terms of Use",
   "description": "Welcome to <b>Askgram!</b><br /> These terms of use govern your use of the Askgram website and any services provided therein (collectively, the \"Service\"). By accessing or using the Service, you agree to be bound by these terms of use. If you do not agree with any part of these terms, then you may not access the Service.\n",
   "pageDescription": "Welcome to Askgram!, These terms of use govern your use of the Askgram website and any services provided therein (collectively, the \"Service\"). By accessing or using the Service, you agree to be bound by these terms of use. If you do not agree with any part of these terms, then you may not access the Service.\n",

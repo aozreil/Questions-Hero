@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import { TERMS_NAVIGATION_LINKS } from "~/routes/_main.terms.$slug";
+import { TERMS_NAVIGATION_LINKS } from "~/components/UI/Terms";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();

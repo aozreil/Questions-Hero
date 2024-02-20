@@ -1,4 +1,24 @@
-{
+import Terms, { ITerms } from "~/components/UI/Terms";
+import { getSeoMeta } from "~/utils/seo";
+import { BASE_URL } from "~/config/enviromenet";
+
+export const meta = () => {
+  return [
+    ...getSeoMeta({
+      title: Data.title,
+      description: Data.pageDescription,
+      canonical: `${BASE_URL}/terms/honor-code`,
+    }),
+  ]
+}
+
+export default function HonorCode() {
+  return (
+    <Terms terms={Data} type='HIGHLIGHTED' />
+  )
+}
+
+const Data: ITerms = {
   "title": "Honor Code",
   "description": "Askgram is committed to fostering a community where users can seek knowledge, share information, and engage in meaningful discussions in a respectful and ethical manner. Our platform is designed to facilitate learning and collaboration while upholding the highest standards of academic integrity. By utilizing Askgram, you agree to abide by the following Honor Code:",
   "pageDescription": "Askgram is committed to fostering a community where users can seek knowledge, share information, and engage in meaningful discussions in a respectful and ethical manner. Our platform is designed to facilitate learning and collaboration while upholding the highest standards of academic integrity. By utilizing Askgram, you agree to abide by the following Honor Code:",
