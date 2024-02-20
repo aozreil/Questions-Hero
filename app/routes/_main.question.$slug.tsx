@@ -151,7 +151,7 @@ export default function QuestionPage() {
             <main className='container max-xs:mx-0 w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
                 <div className='w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit'>
                     <div className='flex flex-col lg:flex-row justify-center gap-4'>
-                        <div className='w-full h-fit sm:max-w-[34rem] lg:w-136 flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
+                        <div className='w-full h-fit sm:max-w-[34rem] lg:w-[34rem] flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
                             <div className='flex flex-col items-center w-full rounded-b-xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
                                 <QuestionContent
                                     question={question}
