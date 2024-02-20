@@ -35,7 +35,7 @@ import { getKatexLink } from "~/utils/external-links";
 import { getCleanText } from "~/utils/text-formatting-utils.server";
 
 export const meta: MetaFunction = ({ data }) => {
-    const { canonical, question, answers, baseUrl, structuredData } = data as LoaderData;
+    const { canonical, question, baseUrl, structuredData } = data as LoaderData;
     return [
         ...getSeoMeta({
             title: question?.title ?? question?.text,
@@ -223,17 +223,6 @@ const getStructuredData = (data: LoaderData) => {
 
     const getAnswer = (index: number) => {
         return internalAnswers?.[index] ?? answers?.[index];
-    }
-
-    const getAnswerText = (index: number) => {
-        const answer = getAnswer(index);
-        let answerText = answer?.text ?? `The Answer of ${questionTitle}`;
-        if (answer?.answer_steps) {
-            for (const step of answer.answer_steps) {
-                answerText = answerText + ' ' + step?.text;
-            }
-        }
-        return answerText;
     }
 
     const Educational = {
