@@ -1,3 +1,5 @@
+import { getWebSiteSchema } from "~/utils/seo-schema";
+
 const DEFAULT_META_TITLE = 'Askgram - Your Homework Help Community';
 const DEFAULT_META_DESCRIPTION = 'Askgram provides a platform for students, educators, and enthusiasts to collaborate, ask questions, and find answers in a supportive environment.';
 
@@ -18,11 +20,6 @@ export function getSeoMeta({ title, description, canonical } : { title?: string,
     ... canonical ? [{ tagName: "link", rel: "canonical", href: canonical }] : [],
 
     // site names data structure
-    { "script:ld+json": {
-        "@context" : "https://schema.org",
-        "@type" : "WebSite",
-        "name" : DEFAULT_META_TITLE,
-        "url" : "https://askgram.work"
-    }},
+    { "script:ld+json": getWebSiteSchema(), },
   ];
 }
