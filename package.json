@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "remix dev --manual",
-    "dev:local": "set IS_LOCAL=true && remix dev --manual",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "build": "npm run build:dev",
     "build:local": "remix build",
