@@ -1,4 +1,24 @@
-{
+import Terms, { ITerms } from "~/components/UI/Terms";
+import { getSeoMeta } from "~/utils/seo";
+import { BASE_URL } from "~/config/enviromenet";
+
+export const meta = () => {
+  return [
+    ...getSeoMeta({
+      title: Data.title,
+      description: Data.pageDescription,
+      canonical: `${BASE_URL}/terms/copyright-policy`,
+    }),
+  ]
+}
+
+export default function CopyrightPolicy() {
+  return (
+    <Terms terms={Data} type='HIGHLIGHTED' />
+  )
+}
+
+const Data: ITerms = {
   "title": "Copyright Policy",
   "description": "Askgram respects the intellectual property rights of others and expects its users to do the same. As such, we have implemented the following Copyright Policy and DMCA Notice to address claims of copyright infringement in accordance with the <a href='https://www.copyright.gov/512/' class='terms-link' target='blank'>Digital Millennium Copyright Act (DMCA).</a>",
   "pageDescription": "Askgram respects the intellectual property rights of others and expects its users to do the same. As such, we have implemented the following Copyright Policy and DMCA Notice to address claims of copyright infringement in accordance with the Digital Millennium Copyright Act (DMCA).",
