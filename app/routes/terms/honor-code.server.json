@@ -27,7 +27,7 @@
       "terms": [
         {
           "type": "NORMAL",
-          "text": "If you encounter any content on Askgram that violates this Honor Code or suspect any form of academic misconduct, please report it immediately to our support team at <a href='support@askgram.com' class='terms-link'>support@askgram.com</a>. We take misconduct allegations seriously and will promptly investigate and address reported violations."
+          "text": "If you encounter any content on Askgram that violates this Honor Code or suspect any form of academic misconduct, please report it immediately to our support team at <a href='mailto:support@askgram.com' class='terms-link'>support@askgram.com</a>. We take misconduct allegations seriously and will promptly investigate and address reported violations."
         },
         {
           "type": "NORMAL",
