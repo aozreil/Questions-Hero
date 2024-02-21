@@ -17,6 +17,7 @@ import { ReactNode } from "react";
 import Header from "~/components/UI/Header";
 import FavIcon from "~/components/UI/FavIcon";
 import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
+import AuthProvider from "~/context/AuthProvider";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({}),
@@ -49,7 +50,9 @@ function Document({children}: {children: ReactNode}) {
     </script>
   </head>
   <body>
-    {children}
+    <AuthProvider>
+      {children}
+    </AuthProvider>
   </body>
   </html>;
 }
