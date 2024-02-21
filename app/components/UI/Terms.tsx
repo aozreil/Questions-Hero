@@ -79,8 +79,8 @@ function TermsHighlightedRenderer({ sections }: { sections: ITerms["highlightedS
           <h2 className='text-2xl font-bold mb-5'>{section.title}</h2>
           {section.terms?.map(term =>
             term?.type === 'NORMAL'
-              ? <p className='mb-5' dangerouslySetInnerHTML={{ __html: term.text }} />
-              : <div className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
+              ? <p key={term.text} className='mb-5' dangerouslySetInnerHTML={{ __html: term.text }} />
+              : <div key={term.text} className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
                 <p dangerouslySetInnerHTML={{ __html: term.text }} />
               </div>
           )}
@@ -100,7 +100,7 @@ function TermsRenderer({ sections }: { sections: ITerms["sections"]; }) {
         </div>
         <div className='flex-1 mb-6 -mt-3'>
           <h2 className='text-2xl font-bold mb-5'>{section.title}</h2>
-          {section.terms?.map(term => <p className='mb-5 -indent-6 ml-6' dangerouslySetInnerHTML={{ __html: term }} />)}
+          {section.terms?.map(term => <p key={term} className='mb-5 -indent-6 ml-6' dangerouslySetInnerHTML={{ __html: term }} />)}
         </div>
       </section>
     )) : null
