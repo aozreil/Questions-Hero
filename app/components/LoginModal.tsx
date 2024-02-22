@@ -9,18 +9,18 @@ const SOCIAL_LINKS = [
     alt: 'google',
     className: 'text-[#344f60] border-2 border-[#99a7af]'
   },
-  {
-    text: 'APPLE',
-    logoSrc: '/assets/images/apple.svg',
-    alt: 'apple',
-    className: 'text-white bg-black'
-  },
-  {
-    text: 'FACEBOOK',
-    logoSrc: '/assets/images/facebook-icon.svg',
-    alt: 'facebook',
-    className: 'text-white bg-[#1a77f2]'
-  },
+  // {
+  //   text: 'APPLE',
+  //   logoSrc: '/assets/images/apple.svg',
+  //   alt: 'apple',
+  //   className: 'text-white bg-black'
+  // },
+  // {
+  //   text: 'FACEBOOK',
+  //   logoSrc: '/assets/images/facebook-icon.svg',
+  //   alt: 'facebook',
+  //   className: 'text-white bg-[#1a77f2]'
+  // },
 ]
 
 interface Props {
@@ -86,7 +86,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
                   width={22}
                   height={22}
                 />
-                <p>{`${socialButtonText}${social.text}`}</p>
+                <p>{`${socialButtonText} ${social.text}`}</p>
               </button>
             ))
           }
