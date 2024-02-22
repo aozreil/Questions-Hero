@@ -16,6 +16,7 @@ import NotFoundPage from "~/components/UI/NotFoundPage";
 import { ReactNode } from "react";
 import Header from "~/components/UI/Header";
 import FavIcon from "~/components/UI/FavIcon";
+import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({}),
@@ -36,6 +37,16 @@ function Document({children}: {children: ReactNode}) {
     <Links />
     <FavIcon />
     <title>Ask Gram</title>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_KEY}`}></script>
+    <script dangerouslySetInnerHTML={{
+      __html: `
+        window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '${GOOGLE_ANALYTICS_KEY}');`
+    }}>
+    </script>
   </head>
   <body>
     {children}
