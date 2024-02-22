@@ -36,7 +36,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
   const socialButtonText = type === 'LOGIN' ? 'LOGIN UP WITH' : 'SIGN UP WITH';
   const bottomText = type === 'LOGIN' ? 'Dont have an account?' : 'Already have an account?';
   return (
-    <Dialog.Panel className="w-screen min-h-[100vh] overflow-y-auto absolute bg-transparent sm:h-screen z-50 sm:top-0 bottom-0">
+    <Dialog.Panel className="w-screen h-screen sm:min-h-screen overflow-y-auto fixed sm:absolute bg-transparent sm:h-screen z-50 sm:top-0 bottom-0">
       <div
         className="sm:hidden fixed inset-0 bg-black/30 backdrop-blur-sm"
         aria-hidden="true"
