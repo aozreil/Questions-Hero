@@ -93,7 +93,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
         </section>
         <p className='max-sm:w-[90%] text-center sm:text-lg text-[#4d6473] mt-6 sm:mt-12'>
           By creating an account, you accept the Askgram
-          <Link to={'/terms/terms-of-use'} className='text-black font-medium ml-1'>Terms of Service &amp; Privacy Policy</Link>
+          <Link to='/terms/terms-of-use' target='_blank' className='text-black font-medium ml-1'>Terms of Service &amp; Privacy Policy</Link>
         </p>
         <section className='w-full pt-10 mt-auto bottom-0 flex flex-col items-center gap-4 sm:gap-6 pb-5'>
           <p className='text-lg text-[#4d6473] '>{bottomText}</p>
