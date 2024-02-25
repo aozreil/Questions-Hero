@@ -1,39 +1,17 @@
-import {useCallback, useRef, useState} from "react";
-
+import { Form } from "@remix-run/react";
 export default function ExpandableSearch() {
-    const [hasValue, setHasValue] = useState(false);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (hasValue && !e?.target?.textContent) setHasValue(false);
-        if (!hasValue && e?.target?.textContent) setHasValue(true);
-    }
-
-    const handleCancelClick = useCallback(() => {
-        setHasValue(false);
-        if (inputRef.current) inputRef.current.textContent = '';
-    }, []);
-
     return (
-        <div className='z-10 pt-4 pl-4 pr-3 bg-white border border-[#2b2b2b] min-h-[60px] h-fit w-[737px] rounded-[30px] flex items-start justify-between'>
-            <img src='/assets/images/search-icon.svg' alt='search' className='cursor-pointer' width={27} height={27} />
-            <span
-                ref={inputRef}
-                className='search-textarea text-left pt-0.5 flex-1 mx-3 max-h-[158px] bg-white outline-none text-xl'
-                role='textbox'
-                contentEditable={true}
-                onInput={handleChange}
-            />
-            {hasValue && (
-                <img
-                    src='/assets/images/big-search-cancel.svg'
-                    alt='cancel'
-                    className='cursor-pointer'
-                    width={30}
-                    height={30}
-                    onClick={handleCancelClick}
-                />
-            )}
+      <Form className='relative mt-2 h-fit w-full min-h-14'>
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-6">
+          <img src="/assets/images/search-icon.svg" alt="search" className="cursor-pointer" width={24}
+               height={24} />
         </div>
+        <input
+          type='search'
+          name='term'
+          placeholder='Search for acadmic answers...'
+          className='text-xl placeholder:text-xl min-h-14 w-full rounded-full border-0 py-1.5 pl-14 bg-[#f8f8f8] ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600  sm:leading-6 '
+        />
+      </Form>
     )
 }

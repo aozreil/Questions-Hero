@@ -11,9 +11,9 @@ export default function Header() {
             <Link to='/' className='block w-fit'>
                 <img src='/assets/images/logo.svg' alt='logo' className='h-5 sm:h-7' />
             </Link>
-          {location?.pathname?.includes('question') && <HeaderSearch />}
+          <HeaderSearch />
           <section className='text-[#1a384b] max-sm:text-sm font-medium flex items-center gap-3 sm:gap-5'>
-            <button onClick={openLoginModal}>Log in</button>
+            <button onClick={openLoginModal} className='hidden sm:block'>Log in</button>
             <button onClick={openSignUpModal} className='text-white px-5 py-2 rounded-2xl bg-[#070707]'>
               Join for free
             </button>

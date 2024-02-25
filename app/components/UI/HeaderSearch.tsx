@@ -1,33 +1,18 @@
-import {useCallback, useRef, useState} from "react";
+import { Form } from "@remix-run/react";
 
 export default function HeaderSearch() {
-    const [hasValue, setHasValue] = useState(false);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (hasValue && !e?.target?.value) setHasValue(false);
-        if (!hasValue && e?.target?.value) setHasValue(true);
-    }
-
-    const handleCancelClick = useCallback(() => {
-        setHasValue(false);
-        if (inputRef.current) inputRef.current.value = '';
-    }, []);
-
-    return (
-        <div className='ml-6 pl-4 pr-3 bg-[#f8f8f8] border border-[#99a7af] h-[38px] w-[543px] rounded-lg flex items-center justify-between'>
-            <img src='/assets/images/search-icon.svg' alt='search' className='cursor-pointer' width={18} height={18} />
-            <input ref={inputRef} className='flex-1 mx-2 bg-[#f8f8f8] outline-none' onChange={handleChange} />
-            {hasValue && (
-                <img
-                    src='/assets/images/search-cancel.svg'
-                    alt='cancel'
-                    className='cursor-pointer'
-                    width={16}
-                    height={16}
-                    onClick={handleCancelClick}
-                />
-            )}
-        </div>
-    )
+  return (
+    <Form action="/search" className="relative mt-2 rounded-md">
+      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+        <img src="/assets/images/search-icon.svg" alt="search" className="cursor-pointer" width={18}
+             height={18} />
+      </div>
+      <input
+        type="search"
+        name="term"
+        className="hidden sm:block w-full rounded-md border-0 py-1.5 pl-10 bg-[#f8f8f8] ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        placeholder="Search for acadmic answers..."
+      />
+    </Form>
+  );
 }
