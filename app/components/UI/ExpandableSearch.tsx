@@ -1,7 +1,7 @@
 import { Form } from "@remix-run/react";
 export default function ExpandableSearch() {
     return (
-      <Form className='relative mt-2 h-fit w-full min-h-14'>
+      <Form  action="/search" className='relative mt-2 h-fit w-full min-h-14'>
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-6">
           <img src="/assets/images/search-icon.svg" alt="search" className="cursor-pointer" width={24}
                height={24} />
