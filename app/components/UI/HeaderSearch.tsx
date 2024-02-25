@@ -10,7 +10,7 @@ export default function HeaderSearch() {
       <input
         type="search"
         name="term"
-        className="hidden sm:block w-full rounded-md border-0 py-1.5 pl-10 bg-[#f8f8f8] ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        className="hidden sm:block w-full rounded-md border-0 py-1.5 pl-10 pr-2 bg-[#f8f8f8] ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
         placeholder="Search for acadmic answers..."
       />
     </Form>
