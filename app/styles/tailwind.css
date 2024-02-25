@@ -14,3 +14,22 @@ html {
 .terms-list {
     list-style-type: disc;
 }
+
+.search-textarea {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    min-height: 40px;
+    resize: none;
+    line-height: 1.3;
+}
+
+.search-textarea:empty::before {
+    content: "Search for acadmic answers…";
+    color: #99a7af;
+}
+
+.radial {
+    background: radial-gradient(circle, rgba(170,220,253,1) 50%, rgba(247,248,250,1) 100%)
+}
