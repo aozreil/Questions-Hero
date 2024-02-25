@@ -37,7 +37,3 @@ input[type="search"]:focus::-webkit-search-cancel-button {
 .terms-list {
     list-style-type: disc;
 }
-
-.radial {
-    background: radial-gradient(circle, rgba(170,220,253,1) 50%, rgba(247,248,250,1) 100%)
-}
