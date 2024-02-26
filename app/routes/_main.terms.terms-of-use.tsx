@@ -29,7 +29,14 @@ const Data: ITerms = {
       "terms": [
         "1.1. <b>Eligibility:</b> You must be at least 13 years old to use the Service. If you are under the age of 18, you represent that you have obtained parental or legal guardian consent to use the Service.\n",
         "1.2. <b>Registration:</b> Some features of the Service may require you to register for an account. When registering, you agree to provide accurate and complete information. You are solely responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.",
-        "1.3. <b>Prohibited Activities:</b> You agree not to engage in any of the following prohibited activities:\n- Violating any applicable laws or regulations.\n- Interfering with or disrupting the Service or servers or networks connected to the Service.\n- Impersonating another person or entity or falsely stating or otherwise misrepresenting your affiliation with a person or entity.\n- Collecting or storing personal data about other users without their consent.\n- Posting or transmitting any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or otherwise objectionable.\n- Using the Service for any commercial purposes without our prior written consent.\n"
+        "1.3. <b>Prohibited Activities:</b> You agree not to engage in any of the following prohibited activities:<ul class='dashedList'>\n" +
+        "  <li>- Violating any applicable laws or regulations.</li>\n" +
+        "  <li>- Interfering with or disrupting the Service or servers or networks connected to the Service.</li>\n" +
+        "  <li>- Impersonating another person or entity or falsely stating or otherwise misrepresenting your affiliation with a person or entity.</li>\n" +
+        "  <li>- Collecting or storing personal data about other users without their consent.</li>\n" +
+        "  <li>- Posting or transmitting any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or otherwise objectionable.</li>\n" +
+        "  <li>- Using the Service for any commercial purposes without our prior written consent.</li>\n" +
+        "</ul>"
       ]
     },
     {
