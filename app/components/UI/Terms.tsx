@@ -14,6 +14,7 @@ export interface ITerms {
     terms: {
       type: string;
       text: string;
+      pointedList?: string[];
     }[];
   }[]
 }
@@ -26,10 +27,6 @@ export const TERMS_NAVIGATION_LINKS = [
   {
     text: 'Privacy Policy',
     link: '/terms/privacy-policy'
-  },
-  {
-    text: 'Copyright Policy',
-    link: '/terms/copyright-policy'
   },
   {
     text: 'Honor Code',
@@ -79,10 +76,19 @@ function TermsHighlightedRenderer({ sections }: { sections: ITerms["highlightedS
           <h2 className='text-2xl font-bold mb-5'>{section.title}</h2>
           {section.terms?.map(term =>
             term?.type === 'NORMAL'
-              ? <p className='mb-5' dangerouslySetInnerHTML={{ __html: term.text }} />
-              : <div className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
-                <p dangerouslySetInnerHTML={{ __html: term.text }} />
-              </div>
+              ? <p key={term?.text} className='mb-5' dangerouslySetInnerHTML={{ __html: term.text }} />
+              : term?.pointedList
+                ? (
+                  <div key={term?.text} className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
+                    <ul className='list-disc'>
+                      {term?.pointedList?.map(text => <li key={text} dangerouslySetInnerHTML={{ __html: text }} />)}
+                    </ul>
+                  </div>
+                ) : (
+                  <div key={term?.text} className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
+                    <p dangerouslySetInnerHTML={{ __html: term.text }} />
+                  </div>
+                )
           )}
         </div>
       </section>
@@ -102,7 +108,7 @@ function TermsRenderer({ sections }: { sections: ITerms["sections"]; }) {
           <h2 className='text-2xl font-bold mb-5'>{section.title}</h2>
           {section.terms?.map(term => {
             const isNumbered = term?.[0] && !isNaN(Number(term?.[0]));
-            return <p className={`mb-5 ${isNumbered ? '-indent-6 ml-6' : ''}`} dangerouslySetInnerHTML={{ __html: term }} />
+            return <p key={term} className={`mb-5 ${isNumbered ? '-indent-6 ml-6' : ''}`} dangerouslySetInnerHTML={{ __html: term }} />
           })}
         </div>
       </section>
