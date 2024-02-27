@@ -42,8 +42,7 @@ const Data: ITerms = {
     {
       "title": "Content",
       "terms": [
-        "2.1. <b>User Content:</b> You retain ownership of any content you submit or post to the Service (\"User Content\"). By submitting User Content, you grant us a non-exclusive, transferable, sub-licensable, royalty-free, worldwide license to use, reproduce, modify, adapt, publish, translate, create derivative works from, distribute, and display such User Content in any media.",
-        "Regarding Askgram’s right to moderate Askgram Services, any removal, screen or edit to your content or your account from Askgram Services may be done by Askgram, at our sole discretion and based on the Community Guidelines, in case you violate these terms, the Community Guidelines or any applicable law, at any time, with no prior notice to you.\n",
+        "2.1. <b>User Content:</b> You retain ownership of any content you submit or post to the Service (\"User Content\"). By submitting User Content, you grant us a non-exclusive, transferable, sub-licensable, royalty-free, worldwide license to use, reproduce, modify, adapt, publish, translate, create derivative works from, distribute, and display such User Content in any media. <br /><br /> Regarding Askgram’s right to moderate Askgram Services, any removal, screen or edit to your content or your account from Askgram Services may be done by Askgram, at our sole discretion and based on the Community Guidelines, in case you violate these terms, the Community Guidelines or any applicable law, at any time, with no prior notice to you.\n",
         "2.2. <b>Moderation:</b> We reserve the right to moderate or remove any User Content that violates these terms of use or is otherwise objectionable in our sole discretion."
       ]
     },
