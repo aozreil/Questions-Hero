@@ -18,6 +18,7 @@ import Header from "~/components/UI/Header";
 import FavIcon from "~/components/UI/FavIcon";
 import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
 import AuthProvider from "~/context/AuthProvider";
+import { useIsBot } from "~/context/IsBotContext";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({}),
@@ -58,11 +59,12 @@ function Document({children}: {children: ReactNode}) {
 }
 
 export default function App() {
+  const isBot = useIsBot();
   return (
     <Document>
       <Outlet />
       <ScrollRestoration />
-      <Scripts />
+      {isBot ? null : <Scripts />}
       <LiveReload />
     </Document>
   );
