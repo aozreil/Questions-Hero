@@ -4,7 +4,6 @@ import { axiosApiInstance } from "~/interceptors/client-interceptors";
 
 export async function loginWithGoogle(jwt_token: string) {
   const res = await axios.post<IUser>(
-    // `http://192.168.0.141:8082/login/google`,
     `${ASKGRAM_BASE}/api/users/login/google`,
     {
       id_token: jwt_token,
@@ -51,7 +50,8 @@ export async function refreshToken() {
 
 export async function logoutAPI() {
   const res = await axios.post(
-    `${ASKGRAM_BASE}/api/users/logout`,
+    `${ASKGRAM_BASE}/api/users/log-out`,
+    {},
     {
       withCredentials: true,
       headers: {
