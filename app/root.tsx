@@ -10,7 +10,7 @@ import {
   ScrollRestoration, useRouteError
 } from "@remix-run/react";
 import stylesheet from "~/styles/tailwind.css";
-import {MetaFunction} from "@remix-run/node";
+import { MetaFunction } from "@remix-run/node";
 import {getSeoMeta} from "~/utils/seo";
 import NotFoundPage from "~/components/UI/NotFoundPage";
 import { ReactNode } from "react";

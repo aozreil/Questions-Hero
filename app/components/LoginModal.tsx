@@ -1,27 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { Link } from "@remix-run/react";
 import clsx from "clsx";
-
-const SOCIAL_LINKS = [
-  {
-    text: 'GOOGLE',
-    logoSrc: '/assets/images/google-icon.svg',
-    alt: 'google',
-    className: 'text-[#344f60] border-2 border-[#99a7af]'
-  },
-  // {
-  //   text: 'APPLE',
-  //   logoSrc: '/assets/images/apple.svg',
-  //   alt: 'apple',
-  //   className: 'text-white bg-black'
-  // },
-  // {
-  //   text: 'FACEBOOK',
-  //   logoSrc: '/assets/images/facebook-icon.svg',
-  //   alt: 'facebook',
-  //   className: 'text-white bg-[#1a77f2]'
-  // },
-]
+import SignInWithGoogle from "~/components/UI/SignInWithGoogle";
 
 interface Props {
   closeModal: () => void;
@@ -33,7 +13,6 @@ interface Props {
 export default function LoginModal({ closeModal, openLoginModal, openSignupModal, type }: Props) {
   const pageTitle = type === 'LOGIN' ? 'Get answers within seconds' : 'Explore more';
   const pageDesc = type === 'LOGIN' ? 'Welcome Back' : 'Get your free answers now!';
-  const socialButtonText = type === 'LOGIN' ? 'LOGIN WITH' : 'SIGN UP WITH';
   const bottomText = type === 'LOGIN' ? "Don't have an account?" : 'Already have an account?';
   return (
     <Dialog.Panel className="w-screen h-screen sm:min-h-screen overflow-y-auto fixed sm:absolute bg-transparent sm:h-screen z-50 sm:top-0 bottom-0">
@@ -71,25 +50,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
           <p className='text-2xl sm:text-5xl font-bold'>{pageDesc}</p>
         </section>
         <section className='w-full mt-12 gap-4 flex flex-col items-center font-semibold text-xl'>
-          {
-            SOCIAL_LINKS.map(social => (
-              <button
-                key={social.text}
-                className={clsx('w-[90%] max-sm:text-sm sm:w-[40rem] h-[40px] sm:h-[60px] gap-4 rounded-full flex items-center justify-center cursor-pointer',
-                  social?.className
-                )}
-              >
-                <img
-                  src={social.logoSrc}
-                  alt={social.alt}
-                  className='w-5 sm:w-6 h-5 sm:h-6'
-                  width={22}
-                  height={22}
-                />
-                <p>{`${socialButtonText} ${social.text}`}</p>
-              </button>
-            ))
-          }
+          <SignInWithGoogle isSignUp={type === 'SIGNUP'} onSuccess={closeModal} />
         </section>
         <p className='max-sm:w-[90%] text-center sm:text-lg text-[#4d6473] mt-6 sm:mt-12'>
           By creating an account, you accept the Askgram
