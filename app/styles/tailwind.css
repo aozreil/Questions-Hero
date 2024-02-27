@@ -5,3 +5,12 @@
 html {
     font-size: 16px;
 }
+
+.terms-link {
+    border-bottom: solid 2px #0000EE;
+    color: #0000EE;
+}
+
+.dashedList {
+    margin-left: 15px;
+}
