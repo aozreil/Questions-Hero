@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { loginWithGoogle } from "~/apis/userAPI";
 import { GOOGLE_SIGN_IN_CLIENT_ID } from "~/config/enviromenet";
 import { useScript } from 'usehooks-ts';
-import { AuthContextType, useAuth } from "~/context/AuthProvider";
+import { AuthContextType } from "~/context/AuthProvider";
 
 interface Props {
   updateState: AuthContextType['updateState'],
@@ -16,12 +16,14 @@ export default function useGoogleOneTab({ updateState, isLoggedIn }: Props) {
 
   useEffect(() => {
     if (!isLoggedIn && status === 'ready') {
-      google.accounts.id.initialize({
-        client_id: GOOGLE_SIGN_IN_CLIENT_ID,
-        callback: handleGoogleLogin,
-      });
+      setTimeout(() => {
+        google.accounts.id.initialize({
+          client_id: GOOGLE_SIGN_IN_CLIENT_ID,
+          callback: handleGoogleLogin,
+        });
 
-      google.accounts.id.prompt();
+        google.accounts.id.prompt();
+      }, 7000);
     }
   }, [status, isLoggedIn]);
 

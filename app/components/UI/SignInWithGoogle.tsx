@@ -15,6 +15,8 @@ export default function SignInWithGoogle({ isSignUp, onSuccess }: Props) {
 
   useEffect(() => {
     if (googleSignInRef.current && window.google?.accounts) {
+      const isMobileScreen = window.screen.width <= 450;
+
       window.google.accounts.id.initialize({
         client_id: GOOGLE_SIGN_IN_CLIENT_ID,
         callback: handleGoogleLogin,
@@ -26,7 +28,7 @@ export default function SignInWithGoogle({ isSignUp, onSuccess }: Props) {
         type: "standard",
         shape: "pill",
         text: isSignUp ? "signup_with" : "signin_with",
-        width: "400",
+        width: isMobileScreen ? "340" : "400",
         locale: "en-US",
       });
     }
@@ -57,7 +59,7 @@ export default function SignInWithGoogle({ isSignUp, onSuccess }: Props) {
         <span className="sr-only">Loading...</span>
       </div>
       : <div className={`${isLoading ? 'hidden' : ''}`}>
-        <div ref={googleSignInRef} id="buttonDiv" className='scale-75 sm:scale-125' />
+        <div ref={googleSignInRef} id="buttonDiv" className='sm:scale-125' />
       </div>
   )
 }
