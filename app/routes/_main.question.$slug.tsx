@@ -114,7 +114,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
 
         return json<LoaderData>({
             question: QuestionClass.questionExtraction(question),
-            answers: answers?.map(answer => QuestionClass.answerExtraction(answer)),
+            answers: answers?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer)),
             concepts,
             objectives,
             users,
