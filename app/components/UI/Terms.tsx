@@ -78,6 +78,7 @@ export default function Terms({ terms, type }: Props) {
 
 function ScrollIndicator() {
   const [percentage, setPercentage] = useState(0);
+  const refCompleted = useRef(false);
   const refLastScroll = useRef(0);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -85,12 +86,17 @@ function ScrollIndicator() {
     if (window.screen.width <= 640) return;
 
     const onScroll = () => {
-      if (!ref.current) return;
+      if (!ref.current || refCompleted.current) return;
       const refOffsetTop = ref.current.offsetTop;
       let scrollTop = window.scrollY < refOffsetTop ? 0 : window.scrollY;
       let docHeight = document.body.offsetHeight;
       let winHeight = window.innerHeight;
       let scrollPercent = scrollTop / (docHeight - winHeight);
+      if (scrollPercent >= 0.9) {
+        setPercentage(100);
+        refCompleted.current = true;
+        return;
+      }
       if (scrollPercent <= 0.9 && scrollTop <= refLastScroll.current + 10) return;
       refLastScroll.current = scrollTop;
       let scrollPercentRounded = Math.round(scrollPercent * 100);
