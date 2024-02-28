@@ -35,8 +35,14 @@ export async function searchQuestionsDetailsAPI(term: string) {
     }
   }
   const questionDetails = await getQuestionsById(searchResponse.data.map(el => el.id).join(','))
+  let questionMapper: { [key: string]: string } = {};
+  questionDetails?.forEach((question) => questionMapper[question.id] = question.slug )
+
   return {
-    data: questionDetails.filter(el => el),
+    data: searchResponse.data.map(question => ({
+      ...question,
+      slug: questionMapper.hasOwnProperty(question.id) ? questionMapper[question.id] : question.id
+    })),
     count: searchResponse.count
   }
 }
