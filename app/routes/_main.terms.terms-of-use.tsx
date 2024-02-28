@@ -1,6 +1,7 @@
 import Terms, { ITerms } from "~/components/UI/Terms";
 import { getSeoMeta } from "~/utils/seo";
 import { BASE_URL } from "~/config/enviromenet";
+import { HeadersFunction } from "@remix-run/node";
 
 export const meta = () => {
   return [
@@ -11,6 +12,10 @@ export const meta = () => {
     }),
   ]
 }
+
+export const headers: HeadersFunction = () => ({
+  "Cache-Control": "max-age=86400, s-maxage=86400",
+});
 
 export default function TermsOfUse() {
   return (
@@ -29,14 +34,19 @@ const Data: ITerms = {
       "terms": [
         "1.1. <b>Eligibility:</b> You must be at least 13 years old to use the Service. If you are under the age of 18, you represent that you have obtained parental or legal guardian consent to use the Service.\n",
         "1.2. <b>Registration:</b> Some features of the Service may require you to register for an account. When registering, you agree to provide accurate and complete information. You are solely responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.",
-        "1.3. <b>Prohibited Activities:</b> You agree not to engage in any of the following prohibited activities:\n- Violating any applicable laws or regulations.\n- Interfering with or disrupting the Service or servers or networks connected to the Service.\n- Impersonating another person or entity or falsely stating or otherwise misrepresenting your affiliation with a person or entity.\n- Collecting or storing personal data about other users without their consent.\n- Posting or transmitting any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or otherwise objectionable.\n- Using the Service for any commercial purposes without our prior written consent.\n"
+        "1.3. <b>Prohibited Activities:</b> You agree not to engage in any of the following prohibited activities:" +
+        "<br />- Violating any applicable laws or regulations." +
+        "<br />- Interfering with or disrupting the Service or servers or networks connected to the Service.</li>" +
+        "<br />- Impersonating another person or entity or falsely stating or otherwise misrepresenting your affiliation with a person or entity.</li>" +
+        "<br />- Collecting or storing personal data about other users without their consent.</li>" +
+        "<br />- Posting or transmitting any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or otherwise objectionable.</li>" +
+        "<br />- Using the Service for any commercial purposes without our prior written consent.</li>",
       ]
     },
     {
       "title": "Content",
       "terms": [
-        "2.1. <b>User Content:</b> You retain ownership of any content you submit or post to the Service (\"User Content\"). By submitting User Content, you grant us a non-exclusive, transferable, sub-licensable, royalty-free, worldwide license to use, reproduce, modify, adapt, publish, translate, create derivative works from, distribute, and display such User Content in any media.",
-        "Regarding Askgram’s right to moderate Askgram Services, any removal, screen or edit to your content or your account from Askgram Services may be done by Askgram, at our sole discretion and based on the Community Guidelines, in case you violate these terms, the Community Guidelines or any applicable law, at any time, with no prior notice to you.\n",
+        "2.1. <b>User Content:</b> You retain ownership of any content you submit or post to the Service (\"User Content\"). By submitting User Content, you grant us a non-exclusive, transferable, sub-licensable, royalty-free, worldwide license to use, reproduce, modify, adapt, publish, translate, create derivative works from, distribute, and display such User Content in any media. <br /><br /> Regarding Askgram’s right to moderate Askgram Services, any removal, screen or edit to your content or your account from Askgram Services may be done by Askgram, at our sole discretion and based on the Community Guidelines, in case you violate these terms, the Community Guidelines or any applicable law, at any time, with no prior notice to you.\n",
         "2.2. <b>Moderation:</b> We reserve the right to moderate or remove any User Content that violates these terms of use or is otherwise objectionable in our sole discretion."
       ]
     },

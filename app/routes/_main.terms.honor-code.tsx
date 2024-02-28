@@ -1,6 +1,7 @@
 import Terms, { ITerms } from "~/components/UI/Terms";
 import { getSeoMeta } from "~/utils/seo";
 import { BASE_URL } from "~/config/enviromenet";
+import { HeadersFunction } from "@remix-run/node";
 
 export const meta = () => {
   return [
@@ -11,6 +12,10 @@ export const meta = () => {
     }),
   ]
 }
+
+export const headers: HeadersFunction = () => ({
+  "Cache-Control": "max-age=86400, s-maxage=86400",
+});
 
 export default function HonorCode() {
   return (
@@ -29,7 +34,12 @@ const Data: ITerms = {
       "terms": [
         {
           "type": "HIGHLIGHTED",
-          "text": "<ul class='terms-list'>\n  <li>Do not engage in cheating or any form of academic dishonesty. Askgram is intended for educational purposes, and users should refrain from seeking or providing unauthorized assistance that compromises the integrity of learning outcomes.</li>\n  <li>Avoid sharing copyrighted material or confidential information that could violate intellectual property rights or academic regulations.</li>\n  <li>Respect the academic policies and guidelines set forth by your educational institution. Be mindful of any restrictions regarding the sharing or dissemination of course-related materials online.</li>\n</ul>"
+          "pointedList": [
+            'Do not engage in cheating or any form of academic dishonesty. Askgram is intended for educational purposes, and users should refrain from seeking or providing unauthorized assistance that compromises the integrity of learning outcomes.',
+            'Avoid sharing copyrighted material or confidential information that could violate intellectual property rights or academic regulations.',
+            'Respect the academic policies and guidelines set forth by your educational institution. Be mindful of any restrictions regarding the sharing or dissemination of course-related materials online.',
+          ],
+          "text": "",
         }
       ]
     },
@@ -38,8 +48,14 @@ const Data: ITerms = {
       "terms": [
         {
           "type": "HIGHLIGHTED",
-          "text": "<ul class='terms-list'>\n  <li>Do not use Askgram to access or distribute unauthorized solutions to assignments, exams, or any other academic assessments.</li>\n  <li>Refrain from soliciting or providing direct answers to questions that are part of ongoing assessments, quizzes, or examinations.</li>\n  <li>Avoid sharing questions or solutions from assessments you have recently completed, as this may facilitate academic dishonesty.</li>\n  <li>Do not misuse the platform to gain unfair advantage or circumvent academic responsibilities.</li>\n</ul>"
-        }
+          "pointedList": [
+            'Do not use Askgram to access or distribute unauthorized solutions to assignments, exams, or any other academic assessments.',
+            'Refrain from soliciting or providing direct answers to questions that are part of ongoing assessments, quizzes, or examinations.',
+            'Avoid sharing questions or solutions from assessments you have recently completed, as this may facilitate academic dishonesty.',
+            'Do not misuse the platform to gain unfair advantage or circumvent academic responsibilities.',
+          ],
+          "text": '',
+          }
       ]
     },
     {

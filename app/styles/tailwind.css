@@ -35,3 +35,13 @@ input[type="search"]:focus::-webkit-search-cancel-button {
 .terms-list {
     list-style-type: disc;
 }
+
+
+.terms-link {
+    border-bottom: solid 2px #0000EE;
+    color: #0000EE;
+}
+
+.dashedList {
+    margin-left: 15px;
+}
