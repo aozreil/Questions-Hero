@@ -1,6 +1,7 @@
 import Terms, { ITerms } from "~/components/UI/Terms";
 import { getSeoMeta } from "~/utils/seo";
 import { BASE_URL } from "~/config/enviromenet";
+import { HeadersFunction } from "@remix-run/node";
 
 export const meta = () => {
   return [
@@ -11,6 +12,10 @@ export const meta = () => {
     }),
   ]
 }
+
+export const headers: HeadersFunction = () => ({
+  "Cache-Control": "max-age=86400, s-maxage=86400",
+});
 
 export default function PrivacyPolicy() {
   return (
