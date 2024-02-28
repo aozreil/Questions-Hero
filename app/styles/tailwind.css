@@ -14,3 +14,11 @@ html {
 .dashedList {
     margin-left: 15px;
 }
+
+.terms-line {
+    box-shadow: 7px -1px 0 1px #f7f8fa, -7px -1px 0 1px #f7f8fa;
+}
+
+.terms-line-circle {
+    box-shadow: 9px 0 0 1px #f7f8fa, -9px 0 0 1px #f7f8fa;
+}

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "@remix-run/react";
+import { useEffect, useRef, useState } from "react";
 
 export interface ITerms {
   title: string;
@@ -59,12 +60,55 @@ export default function Terms({ terms, type }: Props) {
           <p className='font-semibold sm:text-2xl mt-2' dangerouslySetInnerHTML={{ __html: terms.description }} />
         </section>
         <p className={`text-[#667a87] w-full mb-4 ${type === 'POINTS' ? 'sm:ml-8' : ''}`}>{terms.lastUpdated}</p>
-        {type === 'POINTS'
-          ? <TermsRenderer sections={terms.sections} />
-          : <TermsHighlightedRenderer sections={terms.highlightedSections} />
-        }
+        <section className='relative flex flex-col w-full'>
+          {type === 'POINTS'
+            ? (
+              <>
+                <ScrollIndicator />
+                <TermsRenderer sections={terms.sections} />
+              </>
+            )
+            : <TermsHighlightedRenderer sections={terms.highlightedSections} />
+          }
+        </section>
       </div>
     </div>
+  )
+}
+
+function ScrollIndicator() {
+  const [percentage, setPercentage] = useState(0);
+  const refLastScroll = useRef(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (window.screen.width <= 640) return;
+
+    const onScroll = () => {
+      if (!ref.current) return;
+      const refOffsetTop = ref.current.offsetTop;
+      let scrollTop = window.scrollY < refOffsetTop ? 0 : window.scrollY;
+      let docHeight = document.body.offsetHeight;
+      let winHeight = window.innerHeight;
+      let scrollPercent = scrollTop / (docHeight - winHeight);
+      if (scrollPercent <= 0.9 && scrollTop <= refLastScroll.current + 10) return;
+      refLastScroll.current = scrollTop;
+      let scrollPercentRounded = Math.round(scrollPercent * 100);
+      setPercentage(scrollPercentRounded);
+    }
+
+    addEventListener("scroll", onScroll);
+
+    return () => {
+      removeEventListener("scroll", onScroll);
+    }
+  }, []);
+
+  return (
+    <>
+      <div ref={ref} className={`hidden sm:flex absolute -mt-1 rounded-full w-5 left-0 bg-black z-10 transition-[height] ease-out duration-700`} style={{ height: `${percentage}%` }} />
+      <div ref={ref} className={`hidden sm:flex absolute -mt-1 bg-[#d7d8da] rounded-full h-full w-5 left-0 z-[1]`} />
+    </>
   )
 }
 
@@ -100,9 +144,13 @@ function TermsRenderer({ sections }: { sections: ITerms["sections"]; }) {
   return (
     sections?.length ? sections?.map((section) => (
       <section key={section?.title} className='flex w-full gap-3'>
-        <div className='hidden sm:flex flex-col items-center -mt-1'>
-          <div className='w-5 h-5 bg-black rounded-full flex-shrink-0' />
-          <div className='w-1.5 bg-black h-full rounded-b-full' />
+        <div className='hidden sm:flex flex-col items-center -mt-1 z-20 '>
+          <div className='w-5 h-5 overflow-y-hidden flex-shrink-0'>
+            <div className='w-5 h-5 bg-transparent terms-line-circle rounded-full flex-shrink-0' />
+          </div>
+          <div className='w-5 h-[calc(100%-22px)] overflow-y-hidden flex items-center justify-center'>
+            <div className='w-1.5 bg-transparent terms-line h-full rounded-b-full' />
+          </div>
         </div>
         <div className='flex-1 mb-6 -mt-3'>
           <h2 className='text-2xl font-bold mb-5'>{section.title}</h2>
