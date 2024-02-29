@@ -101,8 +101,9 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
         const canonical = `${BASE_URL}/question/${question?.slug}`;
 
         const answer = internalAnswers?.[0] ?? answers?.[0];
-        let answerText = answer?.text ?? `The Answer of ${question?.text}`;
-        if (answer?.answer_steps) {
+        let answerText = `Final Answer : ${answer?.text}` ?? `The Answer of ${question?.text}`;
+        if (answer?.answer_steps?.length) {
+            answerText = answerText + ', Explanation : ';
             for (const step of answer.answer_steps) {
                 answerText = answerText + ' ' + step?.text;
             }
