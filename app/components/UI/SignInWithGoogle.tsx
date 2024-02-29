@@ -39,7 +39,7 @@ export default function SignInWithGoogle({ isSignUp, onSuccess }: Props) {
       if (response?.credential) {
         setIsLoading(true);
         const userResponse = await loginWithGoogle(response.credential);
-        if (userResponse?.user_id) { updateState(userResponse) }
+        if (userResponse?.id) { updateState(userResponse) }
         onSuccess && onSuccess();
         setIsLoading(false);
       }
