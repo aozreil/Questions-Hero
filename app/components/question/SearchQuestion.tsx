@@ -1,10 +1,16 @@
 import { Popover } from "@headlessui/react";
+import { IAnswer, IQuestion } from "~/models/questionModel";
+import { Await } from "react-router";
+import { Suspense } from "react";
+import { Link } from "@remix-run/react";
 
 interface IProps {
   text: string;
+  answer: Promise<IAnswer[]>;
+  question: Promise<IQuestion>;
 }
 
-export default function SearchQuestion({ text }: IProps) {
+export default function SearchQuestion({ text, answer, question }: IProps) {
   return <>
     <Popover className="flex space-x-2">
       <div className="border-2 rounded-xl p-4 bg-white border-gray-300 shadow max-w-prose flex-shrink-0 h-fit">
@@ -21,7 +27,6 @@ export default function SearchQuestion({ text }: IProps) {
         </div>
         <hr className="mb-4" />
         {text}
-
       </div>
 
 
@@ -51,6 +56,15 @@ export default function SearchQuestion({ text }: IProps) {
                     <img src="/assets/images/verified.svg" alt="verifed" />
                     <p>Verified Answer</p>
                   </div>
+                  <Suspense>
+                    <Await resolve={answer}>
+                      {(answer) => (
+                        answer?.[0]?.text
+                        ? <p dangerouslySetInnerHTML={{ __html: answer?.[0]?.text }} />
+                        : null
+                      )}
+                    </Await>
+                  </Suspense>
                   <p>
 
                     Comparing poverty across racial lines, which of the following groups has the lowest percentage of
@@ -58,9 +72,17 @@ export default function SearchQuestion({ text }: IProps) {
                     relatively high class privileges and tend to work as professionals and managers?
                   </p>
                 </div>
-                <p className="text-sm mt-4 text-gray-500 text-center">
-                  Go to question page for more information
-                </p>
+                <Suspense>
+                  <Await resolve={question}>
+                    {(question: IQuestion) => (
+                      question?.slug
+                        ? <Link to={`/question/${question.slug}`} className="text-sm mt-4 text-gray-500 text-center">
+                          Go to question page for more information
+                        </Link>
+                        : null
+                    )}
+                  </Await>
+                </Suspense>
 
               </div>
             </div>

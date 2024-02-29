@@ -1,13 +1,17 @@
-import { LoaderFunctionArgs, useLoaderData } from "react-router";
+import { defer, LoaderFunctionArgs, useLoaderData } from "react-router";
 import { json } from "@remix-run/node";
 import { SearchQuestionResponse, searchQuestionsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
 import { useState } from "react";
 import SearchQuestion from "~/components/question/SearchQuestion";
+import { getAnswerById, getQuestionById } from "~/apis/questionsAPI.server";
+import { IAnswer, QuestionClass } from "~/models/questionModel";
 
 interface LoaderData {
   list: SearchQuestionResponse[],
   count: number,
+  questions: any;
+  answers: any;
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -16,45 +20,68 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (!query) {
     return json({ list: [], count: 0 });
   }
+
+  let list: SearchQuestionResponse[] = [];
+  let count = 0;
   try {
-    const list = await searchQuestionsAPI(query);
-    console.log(list);
-    return json({ list: list.data.data, count: list.data.count });
+    const searchRes = await searchQuestionsAPI(query);
+    list = searchRes?.data?.data;
+    count = searchRes?.data?.count;
   } catch (e) {
     console.log(e);
-    return json({
-      list: [{
-        "id": "string",
-        "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-        "user_id": "number"
-      }, {
-        "id": "string2",
-        "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-        "user_id": "number"
-      }, {
-        "id": "strin3g",
-        "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-        "user_id": "number"
-      }, {
-        "id": "st23ring",
-        "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-        "user_id": "number"
-      }, {
-        "id": "23234234",
-        "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-        "user_id": "number"
-      }, {
-        "id": "stri234234n3g",
-        "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-        "user_id": "number"
-      }], count: 1
-    });
+    list = [{
+      "id": "01HPYFXGA83R128HARX4VW42C4",
+      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
+      "user_id": 5,
+    }, {
+      "id": "01HPYFXGA857M2QJ9V5RCJ4XPN",
+      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
+      "user_id": 5,
+    }, {
+      "id": "01HPYFXGA81R18VGRY072ES1FJ",
+      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
+      "user_id": 5,
+    }, {
+      "id": "01HPYFXGA8MVKQRAM1H1NT6ZC0",
+      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
+      "user_id": 5,
+    }, {
+      "id": "01HPYFXGA85NMWN6J27K1FY9BM",
+      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
+      "user_id": 5,
+    }, {
+      "id": "01HPYFXGA8QFVYWFQXMMETDRFW",
+      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
+      "user_id": 5,
+    }];
+    count = 6;
   }
+
+  const questionIDs = list?.map(question => question?.id);
+  const questions = getQuestionById(questionIDs?.[0]).then((questionsRes) => {
+    if (questionsRes) {
+      return QuestionClass.questionExtraction(questionsRes);
+    }
+    return {};
+  }, err => console.log(err));
+
+  const answers = getAnswerById(questionIDs?.[0]).then((answersRes) => {
+    if (answersRes) {
+      return answersRes?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer));
+    }
+    return [];
+  }, err => console.log(err));
+
+  return defer({
+    list,
+    count,
+    questions,
+    answers,
+  });
 }
 
-
 export default function SearchPage() {
-  const { list, count } = useLoaderData() as LoaderData;
+  const { list, count, questions, answers } = useLoaderData() as LoaderData;
   const [showVerifiedAnswer, setshowVerifiedAnswer] = useState(true);
 
   return (
@@ -98,7 +125,12 @@ export default function SearchPage() {
           </p>
           <div className="pt-4 space-y-4">
             {list.map((el) => {
-              return <SearchQuestion key={el.id} text={el.text} />;
+              return <SearchQuestion
+                key={el.id}
+                text={el.text}
+                answer={answers}
+                question={questions}
+              />;
             })}
           </div>
         </div>
