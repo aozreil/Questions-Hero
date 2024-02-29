@@ -23,16 +23,21 @@ export default function AnswerCard({ answer, userName }: Props) {
                     <p className='text-sm font-bold'>{userName ?? 'Answered By Askgram User'}</p>
                     {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
                     {answer?.text && (
-                      <p className='font-medium' dangerouslySetInnerHTML={{ __html: answer?.text }} />
+                      <p>
+                          <span className='font-medium'>Final Answer : </span>
+                          <span dangerouslySetInnerHTML={{ __html: answer?.text }} />
+                      </p>
                     )}
                     {!!answer?.answer_steps?.length && (
                       answer.answer_steps.map((step, index) => (
                         step?.text ? (
                           <p
-                              className='font-medium mt-2'
+                              className='mt-2'
                               key={index}
-                              dangerouslySetInnerHTML={{ __html: step?.text }}
-                          />
+                          >
+                              <span className='font-medium'>Explanation : </span>
+                              <span dangerouslySetInnerHTML={{ __html: step?.text }} />
+                          </p>
                         ) :null
                       ))
                     )}
