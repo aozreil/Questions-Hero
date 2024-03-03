@@ -1,27 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { Link } from "@remix-run/react";
 import clsx from "clsx";
-
-const SOCIAL_LINKS = [
-  {
-    text: 'GOOGLE',
-    logoSrc: '/assets/images/google-icon.svg',
-    alt: 'google',
-    className: 'text-[#344f60] border-2 border-[#99a7af]'
-  },
-  // {
-  //   text: 'APPLE',
-  //   logoSrc: '/assets/images/apple.svg',
-  //   alt: 'apple',
-  //   className: 'text-white bg-black'
-  // },
-  // {
-  //   text: 'FACEBOOK',
-  //   logoSrc: '/assets/images/facebook-icon.svg',
-  //   alt: 'facebook',
-  //   className: 'text-white bg-[#1a77f2]'
-  // },
-]
+import SignInWithGoogle from "~/components/UI/SignInWithGoogle";
 
 interface Props {
   closeModal: () => void;
@@ -33,7 +13,6 @@ interface Props {
 export default function LoginModal({ closeModal, openLoginModal, openSignupModal, type }: Props) {
   const pageTitle = type === 'LOGIN' ? 'Get answers within seconds' : 'Explore more';
   const pageDesc = type === 'LOGIN' ? 'Welcome Back' : 'Get your free answers now!';
-  const socialButtonText = type === 'LOGIN' ? 'LOGIN WITH' : 'SIGN UP WITH';
   const bottomText = type === 'LOGIN' ? "Don't have an account?" : 'Already have an account?';
   return (
     <Dialog.Panel className="w-screen h-screen sm:min-h-screen overflow-y-auto fixed sm:absolute bg-transparent sm:h-screen z-50 sm:top-0 bottom-0">
@@ -44,7 +23,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
       />
       <div className='max-sm:absolute bottom-0 w-full h-fit sm:min-h-[100vh] max-sm:rounded-t-3xl bg-[#f7f8fa] flex flex-col items-center'>
         <section className='w-full hidden sm:flex justify-between items-center border-t-[3px] border-t-[#070707] px-4 md:px-14 pt-7 pb-6'>
-          <Link to='/' className='block w-fit'>
+          <Link to='/' className='block w-fit' onClick={closeModal}>
             <img src='/assets/images/logo.svg' alt='logo' className='h-7' />
           </Link>
           <img
@@ -71,30 +50,16 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
           <p className='text-2xl sm:text-5xl font-bold'>{pageDesc}</p>
         </section>
         <section className='w-full mt-12 gap-4 flex flex-col items-center font-semibold text-xl'>
-          {
-            SOCIAL_LINKS.map(social => (
-              <button
-                key={social.text}
-                className={clsx('w-[90%] max-sm:text-sm sm:w-[40rem] h-[40px] sm:h-[60px] gap-4 rounded-full flex items-center justify-center cursor-pointer',
-                  social?.className
-                )}
-              >
-                <img
-                  src={social.logoSrc}
-                  alt={social.alt}
-                  className='w-5 sm:w-6 h-5 sm:h-6'
-                  width={22}
-                  height={22}
-                />
-                <p>{`${socialButtonText} ${social.text}`}</p>
-              </button>
-            ))
-          }
+          <SignInWithGoogle isSignUp={type === 'SIGNUP'} />
         </section>
-        <p className='max-sm:w-[90%] text-center sm:text-lg text-[#4d6473] mt-6 sm:mt-12'>
-          By creating an account, you accept the Askgram
-          <Link to='/terms/terms-of-use' target='_blank' className='text-black font-medium ml-1'>Terms of Service &amp; Privacy Policy</Link>
-        </p>
+        {type === 'SIGNUP' && (
+          <p className='max-sm:w-[90%] text-center sm:text-lg text-[#4d6473] mt-6 sm:mt-12'>
+            By creating an account, you accept the Askgram
+            <Link to='/terms/terms-of-use' target='_blank' className='text-black font-medium ml-1'>Terms of Service</Link>
+            <span className='mx-1'>&amp;</span>
+            <Link to='/terms/privacy-policy' target='_blank' className='text-black font-medium ml-1'>Privacy Policy</Link>
+          </p>
+        )}
         <section className='w-full pt-10 mt-auto bottom-0 flex flex-col items-center gap-4 sm:gap-6 pb-5'>
           <p className='text-lg text-[#4d6473] '>{bottomText}</p>
           <div className='max-sm:hidden border border-t-[#ebf2f6] broder-t-4 w-full' />

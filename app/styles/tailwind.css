@@ -32,8 +32,16 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     color: #0000EE;
 }
 
-.terms-list {
-    list-style-type: disc;
+.dashedList {
+    margin-left: 15px;
+}
+
+.terms-line {
+    box-shadow: 7px -1px 0 1px #f7f8fa, -7px -1px 0 1px #f7f8fa;
+}
+
+.terms-line-circle {
+    box-shadow: 9px 0 0 1px #f7f8fa, -9px 0 0 1px #f7f8fa;
 }
 
 
