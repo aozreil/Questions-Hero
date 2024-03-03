@@ -44,7 +44,7 @@ export default function Terms({ terms, type }: Props) {
   const location = useLocation();
   return (
     <div className='mt-10 sm:mt-14 flex flex-col items-center text-[#070707]'>
-      <div className='container flex flex-col items-center max-w-[70rem] w-[70%] sm:w-[70%] pb-10'>
+      <div className='container flex flex-col items-center max-w-[70rem] w-[85%] sm:w-[70%] pb-10'>
         <div className='bg-[#afafb0] w-fit rounded-[18px] flex justify-center items-center gap-y-1 gap-x-9 py-1.5 px-5 mb-12 flex-wrap'>
           {TERMS_NAVIGATION_LINKS?.map(term =>
             <Link
