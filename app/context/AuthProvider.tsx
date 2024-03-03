@@ -14,6 +14,7 @@ export interface AuthContextType {
   user?: IUser;
   logout: () => void;
   updateState: (user?: IUser) => void;
+  isLoadingUserData: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,7 +72,8 @@ export default function AuthProvider({ children }: Props) {
         openSignUpModal,
         user,
         logout,
-        updateState
+        updateState,
+        isLoadingUserData,
       }}
     >
       {children}
