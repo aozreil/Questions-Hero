@@ -111,7 +111,7 @@ export default function SearchPage() {
                 onClick={() => setShowVerifiedAnswer(false)}
                 className="ml-auto">
                 <span className="sr-only">Dismiss</span>
-                <CloseModal fillColor='#667a87' className='w-4 h-4 cursor-pointer' />
+                <CloseModal colorFill='#667a87' className='w-4 h-4 cursor-pointer' />
               </button>
             </section>
           </SuccessAlert>

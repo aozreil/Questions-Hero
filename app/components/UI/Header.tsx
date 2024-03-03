@@ -12,7 +12,7 @@ export default function Header() {
      ${location?.pathname?.includes("question") ? "bg-white border-b-[3px] border-[#ebf2f6]" : ""}`}>
         <div className={`container flex items-center justify-between`}>
           <div className='flex items-center'>
-            <Link to='/' className='block w-fit'>
+            <Link to='/' className='block w-fit mr-6'>
                 <img src='/assets/images/logo.svg' alt='logo' className='h-5 sm:h-7' />
             </Link>
             <HeaderSearch />
