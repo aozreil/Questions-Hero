@@ -1,17 +1,23 @@
-import { defer, LoaderFunctionArgs, useLoaderData } from "react-router";
+import { defer, LoaderFunctionArgs, useLoaderData, useNavigation } from "react-router";
 import { json } from "@remix-run/node";
 import { SearchQuestionResponse, searchQuestionsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SearchQuestion from "~/components/question/SearchQuestion";
-import { getAnswerById, getQuestionById } from "~/apis/questionsAPI.server";
-import { IAnswer, QuestionClass } from "~/models/questionModel";
+import { getQuestionsById } from "~/apis/questionsAPI.server";
+import Loader from "~/components/UI/Loader";
+import CloseModal from "~/components/icons/CloseModal";
+
+interface QuestionsMapper {
+  [questionId: string]: {
+    slug: string
+  }
+}
 
 interface LoaderData {
   list: SearchQuestionResponse[],
   count: number,
-  questions: any;
-  answers: any;
+  questions: Promise<QuestionsMapper>;
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -28,64 +34,55 @@ export async function loader({ request }: LoaderFunctionArgs) {
     list = searchRes?.data?.data;
     count = searchRes?.data?.count;
   } catch (e) {
-    console.log(e);
-    list = [{
-      "id": "01HPYFXGA83R128HARX4VW42C4",
-      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-      "user_id": 5,
-    }, {
-      "id": "01HPYFXGA857M2QJ9V5RCJ4XPN",
-      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-      "user_id": 5,
-    }, {
-      "id": "01HPYFXGA81R18VGRY072ES1FJ",
-      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-      "user_id": 5,
-    }, {
-      "id": "01HPYFXGA8MVKQRAM1H1NT6ZC0",
-      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-      "user_id": 5,
-    }, {
-      "id": "01HPYFXGA85NMWN6J27K1FY9BM",
-      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-      "user_id": 5,
-    }, {
-      "id": "01HPYFXGA8QFVYWFQXMMETDRFW",
-      "text": "Suppose a six-year-old girl wants to buy a $30 Hello Kitty doll. The money she received for her birthday to buy the doll Hello be used for which of the following purposes?",
-      "user_id": 5,
-    }];
-    count = 6;
+    console.error(e);
   }
 
   const questionIDs = list?.map(question => question?.id);
-  const questions = getQuestionById(questionIDs?.[0]).then((questionsRes) => {
-    if (questionsRes) {
-      return QuestionClass.questionExtraction(questionsRes);
+  const questions = getQuestionsById(questionIDs?.join()).then((questionsRes) => {
+    if (questionsRes?.length) {
+      let questionsObj: { [questionId: string]: { slug?: string } } = {};
+      for (const question of questionsRes) {
+        if (question.id) {
+          questionsObj[question.id] = { slug: question.slug }
+        }
+      }
+      return questionsObj;
     }
     return {};
-  }, err => console.log(err));
-
-  const answers = getAnswerById(questionIDs?.[0]).then((answersRes) => {
-    if (answersRes) {
-      return answersRes?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer));
-    }
-    return [];
-  }, err => console.log(err));
+  }, err => console.error(err));
 
   return defer({
     list,
     count,
     questions,
-    answers,
   });
 }
 
 export default function SearchPage() {
-  const { list, count, questions, answers } = useLoaderData() as LoaderData;
-  const [showVerifiedAnswer, setshowVerifiedAnswer] = useState(true);
+  const { list, count, questions } = useLoaderData() as LoaderData;
+  const [questionsMapper, setQuestionsMapper] = useState<QuestionsMapper | undefined>(undefined);
+  const [showVerifiedAnswer, setShowVerifiedAnswer] = useState(true);
+  const navigation = useNavigation();
+
+  const getQuestionSlug = useCallback((questionId?: string) => {
+    if (questionId && questionsMapper?.hasOwnProperty(questionId)) return questionsMapper[questionId]?.slug;
+    return undefined;
+  }, [questionsMapper]);
+
+  useEffect(() => {
+    questions?.then(data => !!data && setQuestionsMapper(data))
+  }, [questions]);
+
+  if (navigation.state === 'loading') {
+    return (
+      <section className="w-full h-64 flex items-center justify-center">
+        <Loader className="fill-[#5fc9a2] w-12 h-12" />
+      </section>
+    );
+  }
 
   return (
-    <section className={"pt-2"}>
+    <section className="pt-2 pb-40">
       {list.length === 0 && <>
         <div
           className="container shadow bg-white p-16 text-center max-w-prose h-full flex items-center flex-col rounded-md">
@@ -105,21 +102,21 @@ export default function SearchPage() {
       </>}
 
       {list.length > 0 && <>
-        {showVerifiedAnswer && <SuccessAlert>
-          <img src="/assets/images/verified.svg" alt="verifed" className="mr-3" />
-          <p>Verified Answers: Curated by experts, our search results highlight accurate and detailed information.</p>
-          <button
-            onClick={() => setshowVerifiedAnswer(false)}
-            className="bg-transparent ml-auto border-0 inline-flex rounded-md bg-green-50 p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50">
-            <span className="sr-only">Dismiss</span>
-            <img
-              src="/assets/images/close-button.svg"
-              alt="close"
-              className="cursor-pointer"
-            />
-          </button>
-        </SuccessAlert>}
-        <div className="container mt-4">
+        {showVerifiedAnswer &&
+          <SuccessAlert>
+            <section className='container max-md:px-4 lg:pl-52 flex items-center'>
+              <img src="/assets/images/verified.svg" alt="verifed" className="mr-3" />
+              <p>Verified Answers: Curated by experts, our search results highlight accurate and detailed information.</p>
+              <button
+                onClick={() => setShowVerifiedAnswer(false)}
+                className="ml-auto">
+                <span className="sr-only">Dismiss</span>
+                <CloseModal fillColor='#667a87' className='w-4 h-4 cursor-pointer' />
+              </button>
+            </section>
+          </SuccessAlert>
+        }
+        <div className="container w-full mt-4 max-md:px-4 lg:pl-52">
           <p>
             {count} <span className="font-bold">Result{count > 1 ? "s" : ""} found</span>
           </p>
@@ -128,16 +125,13 @@ export default function SearchPage() {
               return <SearchQuestion
                 key={el.id}
                 text={el.text}
-                answer={answers}
-                question={questions}
-              />;
+                questionId={el?.id}
+                slug={getQuestionSlug(el?.id)}
+              />
             })}
           </div>
         </div>
-
-
       </>}
-
     </section>
   );
 }

@@ -45,3 +45,30 @@ input[type="search"]:focus::-webkit-search-cancel-button {
 .dashedList {
     margin-left: 15px;
 }
+
+.content-loader-component {
+    display: block;
+    overflow: hidden;
+}
+
+.animated-background {
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #fff;
+    background: linear-gradient(to right, #ebf0fa 8%, #dfe8fa 25%, #eff2fa 33%);
+    background-size: 2400px 104px;
+    height: 100%;
+    position: relative;
+}
+
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: -1200px 0
+    }
+    100%{
+        background-position: 1200px 0
+    }
+}

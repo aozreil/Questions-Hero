@@ -15,6 +15,11 @@ export async function getQuestionById(id: string): Promise<IQuestion> {
    return response?.data;
 }
 
+export async function getQuestionsById(id: string): Promise<IQuestion[]> {
+    const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions?ids=${id}`);
+    return response?.data;
+}
+
 export async function getQuestionConcepts(id: string): Promise<IConcept[]> {
     const response = await AxiosServerInstance.get<IConcept[]>(`${CONTENT_CLUSTER}/questions/${id}/concepts`);
     return response?.data;
