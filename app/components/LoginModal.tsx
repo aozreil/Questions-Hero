@@ -23,7 +23,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
       />
       <div className='max-sm:absolute bottom-0 w-full h-fit sm:min-h-[100vh] max-sm:rounded-t-3xl bg-[#f7f8fa] flex flex-col items-center'>
         <section className='w-full hidden sm:flex justify-between items-center border-t-[3px] border-t-[#070707] px-4 md:px-14 pt-7 pb-6'>
-          <Link to='/' className='block w-fit'>
+          <Link to='/' className='block w-fit' onClick={closeModal}>
             <img src='/assets/images/logo.svg' alt='logo' className='h-7' />
           </Link>
           <img
@@ -50,12 +50,16 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
           <p className='text-2xl sm:text-5xl font-bold'>{pageDesc}</p>
         </section>
         <section className='w-full mt-12 gap-4 flex flex-col items-center font-semibold text-xl'>
-          <SignInWithGoogle isSignUp={type === 'SIGNUP'} onSuccess={closeModal} />
+          <SignInWithGoogle isSignUp={type === 'SIGNUP'} />
         </section>
-        <p className='max-sm:w-[90%] text-center sm:text-lg text-[#4d6473] mt-6 sm:mt-12'>
-          By creating an account, you accept the Askgram
-          <Link to='/terms/terms-of-use' target='_blank' className='text-black font-medium ml-1'>Terms of Service &amp; Privacy Policy</Link>
-        </p>
+        {type === 'SIGNUP' && (
+          <p className='max-sm:w-[90%] text-center sm:text-lg text-[#4d6473] mt-6 sm:mt-12'>
+            By creating an account, you accept the Askgram
+            <Link to='/terms/terms-of-use' target='_blank' className='text-black font-medium ml-1'>Terms of Service</Link>
+            <span className='mx-1'>&amp;</span>
+            <Link to='/terms/privacy-policy' target='_blank' className='text-black font-medium ml-1'>Privacy Policy</Link>
+          </p>
+        )}
         <section className='w-full pt-10 mt-auto bottom-0 flex flex-col items-center gap-4 sm:gap-6 pb-5'>
           <p className='text-lg text-[#4d6473] '>{bottomText}</p>
           <div className='max-sm:hidden border border-t-[#ebf2f6] broder-t-4 w-full' />

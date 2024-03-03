@@ -9,18 +9,21 @@ interface Props {
 }
 
 export default function SignInWithGoogle({ isSignUp, onSuccess }: Props) {
-  const googleSignInRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const { updateState } = useAuth();
+  const googleSignInRef = useRef(null);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     if (googleSignInRef.current && window.google?.accounts) {
       const isMobileScreen = window.screen.width <= 450;
 
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_SIGN_IN_CLIENT_ID,
-        callback: handleGoogleLogin,
-      });
+      if (isFirstRender.current) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_SIGN_IN_CLIENT_ID,
+          callback: handleGoogleLogin,
+        });
+      }
 
       window.google.accounts.id.renderButton(googleSignInRef.current, {
         theme: "outline",
@@ -30,9 +33,10 @@ export default function SignInWithGoogle({ isSignUp, onSuccess }: Props) {
         text: isSignUp ? "signup_with" : "signin_with",
         width: isMobileScreen ? "340" : "400",
         locale: "en-US",
+        logo_alignment: "center"
       });
     }
-  }, [googleSignInRef.current]);
+  }, [googleSignInRef.current, isSignUp]);
 
   const handleGoogleLogin = useCallback(async (response: any) => {
     try {

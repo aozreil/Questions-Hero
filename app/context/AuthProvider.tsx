@@ -58,11 +58,8 @@ export default function AuthProvider({ children }: Props) {
   },[]);
 
   const updateState = useCallback((user?: IUser) => {
-    if (user) {
-      setUser(user);
-    } else {
-      getUserData();
-    }
+    !!user ? setUser(user) : getUserData();
+    closeModal();
   }, []);
 
   useGoogleOneTab({ isLoggedIn: isLoadingUserData || !!user, updateState });
