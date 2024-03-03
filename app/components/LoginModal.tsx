@@ -64,10 +64,10 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
           <p className='text-lg text-[#4d6473] '>{bottomText}</p>
           <div className='max-sm:hidden border border-t-[#ebf2f6] broder-t-4 w-full' />
           <div className='bg-[#afafb0] flex rounded-full px-5 py-1.5 text-sm text-[#d7d8da] gap-6'>
-            <p className={clsx('cursor-pointer', { 'text-[#f9fafc]': type === 'LOGIN' })} onClick={openLoginModal}>
+            <p className={clsx('cursor-pointer hover:text-[#f9fafc]', { 'text-[#f9fafc]': type === 'LOGIN' })} onClick={openLoginModal}>
               Log in
             </p>
-            <p className={clsx('cursor-pointer', { 'text-[#f9fafc]': type === 'SIGNUP' })} onClick={openSignupModal}>
+            <p className={clsx('cursor-pointer hover:text-[#f9fafc]', { 'text-[#f9fafc]': type === 'SIGNUP' })} onClick={openSignupModal}>
               Sign up
             </p>
           </div>
