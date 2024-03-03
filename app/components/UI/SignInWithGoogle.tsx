@@ -33,7 +33,7 @@ export default function SignInWithGoogle({ isSignUp, onSuccess }: Props) {
         text: isSignUp ? "signup_with" : "signin_with",
         width: isMobileScreen ? "340" : "400",
         locale: "en-US",
-        logo_alignment: "center"
+        logo_alignment: "center",
       });
     }
   }, [googleSignInRef.current, isSignUp]);
