@@ -1,4 +1,4 @@
-import { Form, useSearchParams } from "@remix-run/react";
+import { Form, useLocation, useSearchParams } from "@remix-run/react";
 import clsx from "clsx";
 import Loader from "~/components/UI/Loader";
 import { useNavigation } from "react-router";
@@ -10,7 +10,8 @@ interface Props {
 export default function HeaderSearch({ className }: Props) {
   const [searchParams] = useSearchParams();
   const navigation = useNavigation();
-  const searchTerm = navigation?.location?.pathname === '/search' ? searchParams?.get('term') : '';
+  const location = useLocation();
+  const searchTerm = location?.pathname === '/search' ? searchParams?.get('term') : '';
   const isSearching = navigation.state === 'loading' && navigation.formAction === '/search';
   return (
     <Form action="/search" className={clsx(`relative rounded-md w-[22rem] lg:w-[34rem]`, className)}>
