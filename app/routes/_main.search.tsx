@@ -7,6 +7,7 @@ import SearchQuestion from "~/components/question/SearchQuestion";
 import { getQuestionsById } from "~/apis/questionsAPI.server";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
+import HeaderSearch from "~/components/UI/HeaderSearch";
 
 interface QuestionsMapper {
   [questionId: string]: {
@@ -83,10 +84,12 @@ export default function SearchPage() {
 
   return (
     <section className="pt-2 pb-40">
+      <div className='container w-full px-4 mb-4 md:hidden'>
+        <HeaderSearch className='bg-white w-full' />
+      </div>
       {list.length === 0 && <>
         <div
-          className="container shadow bg-white p-16 text-center max-w-prose h-full flex items-center flex-col rounded-md">
-          <div className="w-48 h-48 bg-red-300 m-8"></div>
+          className="container shadow bg-white p-16 text-center w-[95%] sm:w-[34rem] h-full flex items-center flex-col rounded-md">
           <h2 className="text-3xl font-bold mb-3">
             No matching results
           </h2>

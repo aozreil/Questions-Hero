@@ -28,7 +28,9 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
   }, [])
 
   return <>
-    <Popover className="relative flex space-x-2">
+    <Popover className="relative flex max-xl:flex-col max-xl:space-y-4 max-xl:items-baseline xl:space-x-2">
+      {({ open }) => (
+      <>
       <div className="border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit">
         <div className="flex justify-between pb-4">
           <div className="flex items-center space-x-2 text-[#25b680] font-bold">
@@ -36,19 +38,20 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
             <p>Has Verified Answer</p>
           </div>
           <Popover.Button
-            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
+            className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
             onClick={getAnswer}
           >
-            Show Answer
+            {open ? 'Hide' : 'Show Answer'}
+            <img src='/assets/images/related-arrow.svg' alt='arrow' className={`w-4 h-4 ml-1 mt-0.5 ${open ? 'rotate-180' : ''}`} />
           </Popover.Button>
         </div>
         <hr className="mb-4" />
         {text}
       </div>
-      <Popover.Panel className="absolute left-[33.5rem] top-0 z-10 overflow-y-auto">
+      <Popover.Panel className="xl:absolute xl:left-[33.5rem] xl:top-0 z- max-sm:w-full overflow-y-auto">
         {({ close }) => (
-          <div className="flex h-full items-end justify-center p-4 pt-0 text-center">
-            <div className="border-2 border-[#5fc9a2] p-4 rounded-xl bg-white sm:w-[34rem]">
+          <div className="flex h-full max-sm:w-full items-end justify-center xl:p-4 xl:pt-0 text-center">
+            <div className="border-2 border-[#5fc9a2] p-4 rounded-xl bg-white w-full sm:w-[34rem] xl:max-w-[34rem]">
               {
                 !!answer?.length
                 ? (
@@ -124,6 +127,8 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
           </div>
         )}
       </Popover.Panel>
+      </>
+      )}
     </Popover>
   </>
 }

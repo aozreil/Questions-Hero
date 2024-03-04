@@ -8,14 +8,14 @@ export default function Header() {
     const location = useLocation();
     const { openLoginModal, openSignUpModal, logout, user } = useAuth();
     return (
-      <header className={`sticky top-0 z-40 w-full bg-[#f7f8fa] border-t-[3px] border-t-[#070707] max-sm:px-4 pt-7 pb-6
+      <header className={`sticky top-0 z-40 px-4 md:px-10 w-full bg-[#f7f8fa] border-t-[3px] border-t-[#070707] max-sm:px-4 pt-7 pb-6
      ${location?.pathname?.includes("question") ? "bg-white border-b-[3px] border-[#ebf2f6]" : ""}`}>
         <div className={`container flex items-center justify-between`}>
           <div className='flex items-center'>
             <Link to='/' className='block w-fit mr-6'>
                 <img src='/assets/images/logo.svg' alt='logo' className='h-5 sm:h-7' />
             </Link>
-            <HeaderSearch />
+            <HeaderSearch className='max-md:hidden' />
           </div>
             {!user
               ? (
