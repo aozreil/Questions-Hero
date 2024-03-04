@@ -1,5 +1,5 @@
 import { defer, LoaderFunctionArgs, useLoaderData, useNavigation } from "react-router";
-import { json } from "@remix-run/node";
+import { json, MetaFunction } from "@remix-run/node";
 import { SearchQuestionResponse, searchQuestionsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
 import { useCallback, useEffect, useState } from "react";
@@ -8,6 +8,12 @@ import { getQuestionsById } from "~/apis/questionsAPI.server";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
 import HeaderSearch from "~/components/UI/HeaderSearch";
+import { getKatexLink } from "~/utils/external-links";
+import { ASKGRAM_BASE } from "~/config/enviromenet";
+
+export const meta: MetaFunction = () => ([
+  ...getKatexLink(ASKGRAM_BASE),
+]);
 
 interface QuestionsMapper {
   [questionId: string]: {
