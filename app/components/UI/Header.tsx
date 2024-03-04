@@ -15,7 +15,7 @@ export default function Header() {
             {isLoadingUserData ? null : !user
               ? (
                 <section className='text-[#1a384b] max-sm:text-sm font-medium flex items-center gap-3 sm:gap-5'>
-                  <button onClick={openLoginModal}>Log in</button>
+                  <button onClick={openLoginModal} className={'hidden sm:block'}>Log in</button>
                   <button onClick={openSignUpModal} className='text-white px-5 py-2 rounded-2xl bg-[#070707]'>
                     Join for free
                   </button>
@@ -39,12 +39,12 @@ export default function Header() {
                   >
                     <Menu.Items className='absolute -right-2 top-10 w-44 p-3 text-[#4d6473] bg-white border border-[#e8e8e8] rounded-md'>
                       <p className='truncate'>{user?.view_name}</p>
-                      <p
-                        className='cursor-pointer font-semibold'
+                      <button
+                        className='font-semibold'
                         onClick={logout}
                       >
                         Logout
-                      </p>
+                      </button>
                     </Menu.Items>
                   </Transition>
                 </Menu>

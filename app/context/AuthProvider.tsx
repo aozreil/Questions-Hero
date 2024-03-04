@@ -1,8 +1,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import LoginModal from "~/components/LoginModal";
-import { Dialog } from '@headlessui/react'
-import useGoogleOneTab from "~/hooks/useGoogleOneTab";
-import { getMe, logoutAPI } from "~/apis/userAPI";
+import { getMe, loginWithGoogle, logoutAPI } from "~/apis/userAPI";
+import { AxiosError } from "axios";
 
 interface Props {
   children: ReactNode;
@@ -13,57 +12,65 @@ export interface AuthContextType {
   openSignUpModal: () => void;
   user?: IUser;
   logout: () => void;
-  updateState: (user?: IUser) => void;
   isLoadingUserData: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export default function AuthProvider({ children }: Props) {
-  const [authModal, setAuthModal] = useState<undefined | 'LOGIN' | 'SIGNUP'>(undefined);
+  const [authModal, setAuthModal] = useState<undefined | "LOGIN" | "SIGNUP">(undefined);
   const [user, setUser] = useState<undefined | IUser>(undefined);
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
 
   useEffect(() => {
-    getUserData();
+    getUserData()
+      .finally(() => {
+        setIsLoadingUserData(false);
+      });
   }, []);
 
-  const getUserData = useCallback(async () => {
+  const getUserData = async () => {
     try {
       const data = await getMe();
       if (data?.view_name) {
         setUser(data);
       }
     } catch (e) {
-      console.log(e);
+      if (e instanceof AxiosError && e.status !== 401) {
+        console.error(e);
+      }
     }
+  };
 
-    setIsLoadingUserData(false);
-  }, []);
-
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     setUser(undefined);
-    logoutAPI();
+    await logoutAPI();
   }, []);
 
-  const openLoginModal = useCallback(() => {
-    setAuthModal('LOGIN')
-  },[]);
+  const openLoginModal = () => {
+    if (user) {
+      return;
+    }
+    setAuthModal("LOGIN");
+  };
 
-  const openSignUpModal = useCallback(() => {
+  const openSignUpModal = () => {
+    if (user) {
+      return;
+    }
     setAuthModal("SIGNUP");
-  },[]);
+  };
+
+  const googleLogin = async (credential: string) => {
+    const user = await loginWithGoogle(credential);
+    if (user?.id) {
+      setUser(user);
+    }
+  };
 
   const closeModal = useCallback(() => {
     setAuthModal(undefined);
-  },[]);
-
-  const updateState = useCallback((user?: IUser) => {
-    !!user ? setUser(user) : getUserData();
-    closeModal();
   }, []);
-
-  useGoogleOneTab({ isLoggedIn: isLoadingUserData || !!user, updateState });
 
   return (
     <AuthContext.Provider
@@ -72,21 +79,20 @@ export default function AuthProvider({ children }: Props) {
         openSignUpModal,
         user,
         logout,
-        updateState,
-        isLoadingUserData,
+        isLoadingUserData
       }}
     >
       {children}
-      <Dialog open={!!authModal} onClose={closeModal}>
-        <LoginModal
-          type={!!authModal ? authModal : 'LOGIN'}
-          closeModal={closeModal}
-          openLoginModal={openLoginModal}
-          openSignupModal={openSignUpModal}
-        />
-      </Dialog>
+      {!user && !isLoadingUserData && <LoginModal
+        type={authModal}
+        closeModal={closeModal}
+        openLoginModal={openLoginModal}
+        openSignupModal={openSignUpModal}
+        googleLogin={googleLogin}
+      />}
+
     </AuthContext.Provider>
-  )
+  );
 }
 
 export function useAuth() {

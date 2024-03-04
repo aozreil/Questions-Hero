@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.511.0",
+    "@headlessui/react": "^1.7.18",
     "@remix-run/css-bundle": "^2.5.1",
     "@remix-run/express": "^2.7.2",
     "@remix-run/node": "^2.5.1",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@remix-run/dev": "^2.5.1",
     "@types/express": "^4.17.21",
+    "@types/google.accounts": "^0.0.14",
     "@types/katex": "^0.16.7",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
