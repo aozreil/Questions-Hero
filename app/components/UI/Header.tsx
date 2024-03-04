@@ -6,9 +6,9 @@ import { Menu, Transition } from "@headlessui/react";
 
 export default function Header() {
     const location = useLocation();
-    const { openLoginModal, openSignUpModal, logout, user } = useAuth();
+    const { openLoginModal, openSignUpModal, logout, user, isLoadingUserData } = useAuth();
     return (
-      <header className={`sticky top-0 z-40 px-4 md:px-10 w-full bg-[#f7f8fa] border-t-[3px] border-t-[#070707] max-sm:px-4 pt-7 pb-6
+      <header className={`sticky top-0 z-40 h-24  px-4 md:px-10 w-full bg-[#f7f8fa] border-t-[3px] border-t-[#070707] max-sm:px-4 pt-7 pb-6
      ${location?.pathname?.includes("question") ? "bg-white border-b-[3px] border-[#ebf2f6]" : ""}`}>
         <div className={`container flex items-center justify-between`}>
           <div className='flex items-center'>
@@ -17,7 +17,7 @@ export default function Header() {
             </Link>
             <HeaderSearch className='max-md:hidden' />
           </div>
-            {!user
+            {isLoadingUserData ? null : !user
               ? (
                 <section className='text-[#1a384b] max-sm:text-sm font-medium flex items-center gap-3 sm:gap-5'>
                   <button onClick={openLoginModal}>Log in</button>
