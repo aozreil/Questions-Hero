@@ -20,7 +20,7 @@ export default function Header() {
             {isLoadingUserData ? null : !user
               ? (
                 <section className='text-[#1a384b] max-sm:text-sm font-medium flex items-center gap-3 sm:gap-5'>
-                  <button onClick={openLoginModal}>Log in</button>
+                  <button onClick={openLoginModal} className={'hidden sm:block'}>Log in</button>
                   <button onClick={openSignUpModal} className='text-white px-5 py-2 rounded-2xl bg-[#070707]'>
                     Join for free
                   </button>
