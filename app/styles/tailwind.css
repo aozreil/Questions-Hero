@@ -3,7 +3,28 @@
 @tailwind utilities;
 
 html {
-    font-size: 16px;
+    font-size: 12px;
+    @media screen(sm) {
+        font-size: 14px;
+    }
+    @media screen(md) {
+        font-size: 16px;
+    }
+}
+
+
+input[type=search]::-webkit-search-cancel-button{
+    position:relative;
+    -webkit-appearance: none;
+    height: 1em;
+    width: 1em;
+    border-radius: 0.5em;
+    background: url('/assets/images/search-cancel.svg') no-repeat 50% 50%;
+    background-size: contain;
+}
+input[type="search"]:focus::-webkit-search-cancel-button {
+    opacity: .3;
+    pointer-events: all;
 }
 
 .terms-link {
@@ -21,4 +42,41 @@ html {
 
 .terms-line-circle {
     box-shadow: 9px 0 0 1px #f7f8fa, -9px 0 0 1px #f7f8fa;
+}
+
+
+.terms-link {
+    border-bottom: solid 2px #0000EE;
+    color: #0000EE;
+}
+
+.dashedList {
+    margin-left: 15px;
+}
+
+.content-loader-component {
+    display: block;
+    overflow: hidden;
+}
+
+.animated-background {
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #fff;
+    background: linear-gradient(to right, #ebf0fa 8%, #dfe8fa 25%, #eff2fa 33%);
+    background-size: 2400px 104px;
+    height: 100%;
+    position: relative;
+}
+
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: -1200px 0
+    }
+    100%{
+        background-position: 1200px 0
+    }
 }

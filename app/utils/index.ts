@@ -23,3 +23,16 @@ export function getTimesAgo (date: string) {
         return format(date, 'MMM dd, y')
     }
 }
+
+export function getCreatedAt (createdAt?: string) {
+   return createdAt ? getTimesAgo(createdAt) : undefined
+}
+
+export function getUserInitials (userName?: string) {
+    if (!userName) return 'A';
+    const nameFields = userName?.split(' ');
+    const firstInitial = nameFields?.[0]?.charAt(0)?.toUpperCase() ?? '';
+    const secondInitial = nameFields?.[1]?.charAt(0)?.toUpperCase() ?? '';
+
+    return `${firstInitial}${secondInitial}`
+}
