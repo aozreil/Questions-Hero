@@ -61,10 +61,12 @@ export default function Index() {
                     className="absolute h-36 group-hover:h-40 flex-shrink-0 bottom-0 transition"
                   />
                 </div>
-                <h3 className="w-76 text-4xl md:text-6xl font-semibold peer-hover:font-bold mb-2 transition">
-                  {section.title}
-                </h3>
-                <p className="max-lg:text-center w-76 text-sm">{section.desc}</p>
+                <div className='peer-hover:[&>h3]:font-bold w-[76%] xs:w-72'>
+                  <h3 className="text-4xl md:text-6xl font-semibold mb-2 transition">
+                    {section.title}
+                  </h3>
+                  <p className="text-[13px]">{section.desc}</p>
+                </div>
               </div>
             ))}
           </div>
