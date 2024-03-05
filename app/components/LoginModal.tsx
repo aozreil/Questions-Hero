@@ -122,7 +122,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
              <SignInWithGoogle isReady={status === 'ready'} type={type}/>
           </section>
           {type === "SIGNUP" && (
-            <p className="max-sm:w-[90%] text-center sm:text-lg text-[#4d6473] mt-6 sm:mt-12">
+            <p className="max-sm:w-[90%] text-center sm:text-sm text-[#4d6473] mt-6 sm:mt-12">
               By creating an account, you accept the Askgram
               <Link to={"/terms/terms-of-use"} target="_blank" className="text-black font-medium ml-1">Terms of Service</Link>
               <span className="mx-1">&amp;</span>
