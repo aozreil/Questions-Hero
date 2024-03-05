@@ -1,6 +1,9 @@
 import ExpandableSearch from "~/components/UI/ExpandableSearch";
 import BackgroundEffect from "~/components/UI/BackgroundEffect";
 
+const SLIDER_DATA = ['Business', 'Medicine', 'Biology', 'Computing'];
+const SLIDER_CONTENT = [...SLIDER_DATA, ...SLIDER_DATA, ...SLIDER_DATA, ...SLIDER_DATA];
+
 export default function Landing() {
   return (
     <section className='w-full flex flex-col items-center max-sm:space-y-4 mt-16 sm:mt-36 text-[#070707] text-center'>
@@ -11,6 +14,13 @@ export default function Landing() {
       <BackgroundEffect>
         <ExpandableSearch />
       </BackgroundEffect>
+      <div className='slider w-[90%] sm:w-[36rem] h-[26px] relative overflow-hidden'>
+        <div className='slide-track'>
+          {SLIDER_CONTENT?.map(value => (
+            <div className='slide text-sm px-1 text-[#6e777f] bg-white border border-[#f1f1f1] rounded-md mx-2 flex items-center justify-center'>{value}</div>
+          ))}
+        </div>
+      </div>
     </section>
   )
 }
