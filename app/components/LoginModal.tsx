@@ -131,7 +131,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
             </p>
           )}
           <section className="w-full pt-10 mt-auto bottom-0 flex flex-col items-center gap-4 sm:gap-6 pb-5">
-            <p className="text-lg text-[#4d6473] ">{bottomText}</p>
+            <p className="text-sm text-[#4d6473]">{bottomText}</p>
             <div className="max-sm:hidden border border-t-[#ebf2f6] broder-t-4 w-full" />
             <div className="bg-[#afafb0] flex rounded-full px-5 py-1.5 text-sm text-[#d7d8da] gap-6">
               <button className={clsx("cursor-pointer hover:text-[#f9fafc]", { "text-[#f9fafc]": type === "LOGIN" })}
