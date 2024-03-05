@@ -1,14 +1,20 @@
 import {useCallback, useRef, useState} from "react";
 import { Form } from "@remix-run/react";
 
-export default function ExpandableSearch() {
+interface Props {
+    setIsSearchFocused: (isFocused: boolean) => void;
+}
+
+export default function ExpandableSearch({ setIsSearchFocused }: Props) {
     const [hasValue, setHasValue] = useState(false);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const [focused, setFocused] = useState(false)
 
-    const onFocus = useCallback(() => setFocused(true), []);
-    const onBlur = useCallback(() => setFocused(false), []);
+    const onFocus = useCallback(() => {
+        setFocused(true); setIsSearchFocused(true) }, []);
+    const onBlur = useCallback(() => {
+        setFocused(false); setIsSearchFocused(false) }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         if (hasValue && !e?.target?.value) setHasValue(false);

@@ -1,10 +1,14 @@
-import ExpandableSearch from "~/components/UI/ExpandableSearch";
 import BackgroundEffect from "~/components/UI/BackgroundEffect";
+import ExpandableSearch from "~/components/UI/ExpandableSearch";
 
 const SLIDER_DATA = ['Business', 'Medicine', 'Biology', 'Computing'];
 const SLIDER_CONTENT = [...SLIDER_DATA, ...SLIDER_DATA, ...SLIDER_DATA, ...SLIDER_DATA];
 
-export default function Landing() {
+interface Props {
+  setIsSearchFocused: (isFocused: boolean) => void;
+}
+
+export default function LandingSearchSlide({ setIsSearchFocused }: Props) {
   return (
     <section className='w-full flex flex-col items-center max-sm:space-y-4 mt-16 sm:mt-36 text-[#070707] text-center'>
       <h4 className='max-sm:font-bold text-2xl sm:text-3xl lg:text-4xl font-medium'>Unlocking Knowledge, Guiding Futures:</h4>
@@ -12,7 +16,7 @@ export default function Landing() {
         Your Ultimate University<br className='md:hidden' /> Resource Hub!
       </h3>
       <BackgroundEffect>
-        <ExpandableSearch />
+        <ExpandableSearch setIsSearchFocused={setIsSearchFocused} />
       </BackgroundEffect>
       <div className='slider w-[90%] sm:w-[36rem] h-[26px] relative overflow-hidden'>
         <div className='slide-track'>
