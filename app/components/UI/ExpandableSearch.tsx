@@ -31,12 +31,12 @@ export default function ExpandableSearch() {
         <Form
           action='/search'
           ref={formRef}
-          className='z-10 pt-4 pl-4 pr-3 bg-white border border-[#2b2b2b] min-h-[60px] h-fit w-[95%] sm:w-[30rem]
+          className='z-10 pt-2 sm:pt-4 pl-4 pr-3 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%] sm:w-[30rem]
            md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between'
         >
             <img src='/assets/images/search-icon.svg' alt='search' className='cursor-pointer' width={27} height={27} />
             <textarea
-              className='textarea-scrollable cursor-text resize-none w-full text-left pt-0.5 flex-1 mx-3 max-h-[158px] bg-white outline-none text-xl'
+              className='textarea-scrollable rounded-lg cursor-text resize-none w-full text-left pt-0.5 flex-1 mx-3 max-h-[158px] bg-white outline-none text-xl'
               rows={focused ? 3 : 1}
               name='term'
               placeholder='Search for acadmic answers…'

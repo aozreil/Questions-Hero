@@ -47,7 +47,7 @@ export default function SearchAnswer({ answers, askedBy, slug, close }: Props) {
                 </div>
                 <hr className="my-3" />
                 <div>
-                  <div className="bg-[#d3f0e5] text-left p-4 rounded-xl">
+                  <div className="bg-[#d3f0e5] text-left p-4 rounded-xl mb-3">
                     <div className="flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0">
                       <img src="/assets/images/verified.svg" alt="verifed" />
                       <p>Verified Answer</p>
@@ -73,7 +73,7 @@ export default function SearchAnswer({ answers, askedBy, slug, close }: Props) {
                     )}
                   </div>
                   {!!slug && (
-                    <Link to={`/question/${slug}`} target='_blank' className="text-sm mt-4 text-gray-500 text-center">
+                    <Link to={`/question/${slug}`} target='_blank' className="text-sm mt-4 hover:text-[#070707] text-gray-500 text-center">
                       Go to question page for more information
                     </Link>
                   )}

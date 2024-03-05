@@ -10,10 +10,24 @@ import CloseModal from "~/components/icons/CloseModal";
 import HeaderSearch from "~/components/UI/HeaderSearch";
 import { getKatexLink } from "~/utils/external-links";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
+import { getSeoMeta } from "~/utils/seo";
 
-export const meta: MetaFunction = () => ([
-  ...getKatexLink(ASKGRAM_BASE),
-]);
+export const meta: MetaFunction = ({ data }) => {
+  const { query, list } = data as LoaderData;
+  const canonical = `${ASKGRAM_BASE}/search`
+  if (!query || !list?.length) {
+    return [
+      ...getSeoMeta({ title: 'Search Results', canonical })
+    ]
+  }
+
+  return [
+    ...getSeoMeta({
+      title: `Search results of ${query}`,
+      canonical,
+    }),
+    ...getKatexLink(ASKGRAM_BASE),
+]};
 
 interface QuestionsMapper {
   [questionId: string]: {
@@ -25,6 +39,7 @@ interface LoaderData {
   list: SearchQuestionResponse[],
   count: number,
   questions: Promise<QuestionsMapper>;
+  query?: string;
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -62,6 +77,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     list,
     count,
     questions,
+    query,
   });
 }
 
