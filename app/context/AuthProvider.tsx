@@ -2,6 +2,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useState 
 import LoginModal from "~/components/LoginModal";
 import { getMe, loginWithGoogle, logoutAPI } from "~/apis/userAPI";
 import { AxiosError } from "axios";
+import { IUser } from "~/models/questionModel";
 
 interface Props {
   children: ReactNode;

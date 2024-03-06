@@ -1,5 +1,7 @@
 import {useCallback, useRef, useState} from "react";
 import { Form } from "@remix-run/react";
+import { useOverlay } from "~/routes/_main";
+import clsx from "clsx";
 
 interface Props {
     setIsSearchFocused: (isFocused: boolean) => void;
@@ -9,12 +11,21 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
     const [hasValue, setHasValue] = useState(false);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
-    const [focused, setFocused] = useState(false)
+    const [focused, setFocused] = useState(false);
+    const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
 
     const onFocus = useCallback(() => {
-        setFocused(true); setIsSearchFocused(true) }, []);
+        setFocused(true);
+        setIsSearchFocused(true);
+        setOverlayVisible(true)
+
+    }, []);
+
     const onBlur = useCallback(() => {
-        setFocused(false); setIsSearchFocused(false) }, []);
+        setFocused(false);
+        setIsSearchFocused(false);
+        setOverlayVisible(false)
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         if (hasValue && !e?.target?.value) setHasValue(false);
@@ -37,8 +48,8 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
         <Form
           action='/search'
           ref={formRef}
-          className='z-10 pt-2 sm:pt-4 pl-4 pr-3 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%] sm:w-[30rem]
-           md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between'
+          className={clsx(`z-10 pt-2 sm:pt-4 pl-4 pr-3 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%] sm:w-[30rem]
+           md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between`, focusedOverlayStyles)}
         >
             <img src='/assets/images/search-icon.svg' alt='search' className='cursor-pointer' width={27} height={27} />
             <textarea
