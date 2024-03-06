@@ -11,8 +11,8 @@ export default function Footer({setCurrentSlide, currentSlide, numberOfSlides}: 
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto gap-2 sm:gap-0 text-xs sm:text-base border-t-0.2 border-[#ebf2f6] px-4 md:px-14 py-7 text-[#6e777f] flex justify-center sm:justify-between items-center gap-y-4 max-lg:flex-col">
-      <p className='max-sm:hidden'>
+    <footer className="mt-auto gap-2 sm:gap-0 text-base border-t-0.2 border-[#ebf2f6] px-4 md:px-14 py-7 text-[#6e777f] flex justify-center sm:justify-between items-center gap-y-4 max-lg:flex-col">
+      <p className='max-lg:hidden'>
         All copyrights are reserved to{" "}
         <span className="font-bold">{`Askgram ® ${currentYear}`}</span>
       </p>
@@ -25,7 +25,7 @@ export default function Footer({setCurrentSlide, currentSlide, numberOfSlides}: 
           />
         ))}
       </div>
-      <p className='sm:hidden'>
+      <p className='lg:hidden'>
         All copyrights are reserved to{" "}
         <span className="font-bold">{`Askgram ® ${currentYear}`}</span>
       </p>
