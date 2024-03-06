@@ -1,9 +1,9 @@
 import { Dialog } from "@headlessui/react";
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
 import clsx from "clsx";
 import SignInWithGoogle from "~/components/UI/SignInWithGoogle";
 import { useScript } from "usehooks-ts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GOOGLE_SIGN_IN_CLIENT_ID } from "~/config/enviromenet";
 
 interface Props {
@@ -18,10 +18,26 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
   const pageTitle = type === "LOGIN" ? "Get answers within seconds" : "Explore more";
   const pageDesc = type === "LOGIN" ? "Welcome Back" : "Get your free answers now!";
   const bottomText = type === "LOGIN" ? "Don't have an account?" : "Already have an account?";
+  const [currentLocation, setCurrentSolution] = useState<string | undefined>(undefined);
+  const location = useLocation();
 
   const status = useScript("https://accounts.google.com/gsi/client", {
     removeOnUnmount: true
   });
+
+  useEffect(() => {
+    // handle location change so that modal should be closed
+    if (type && !currentLocation) {
+      setCurrentSolution(location?.pathname);
+    } else if (type && location?.pathname !== currentLocation){
+      setCurrentSolution(undefined);
+      closeModal();
+    }
+
+    if (!type && currentLocation) {
+      setCurrentSolution(undefined);
+    }
+  }, [location, type, currentLocation]);
 
   useEffect(() => {
     if(status !== 'ready'){
@@ -106,16 +122,16 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
              <SignInWithGoogle isReady={status === 'ready'} type={type}/>
           </section>
           {type === "SIGNUP" && (
-            <p className="max-sm:w-[90%] text-center sm:text-lg text-[#4d6473] mt-6 sm:mt-12">
+            <p className="max-sm:w-[90%] text-center sm:text-sm text-[#4d6473] mt-6 sm:mt-12">
               By creating an account, you accept the Askgram
-              <Link to={"/terms/terms-of-use"} className="text-black font-medium ml-1">Terms of Service</Link>
+              <Link to={"/terms/terms-of-use"} target="_blank" className="text-black font-medium ml-1">Terms of Service</Link>
               <span className="mx-1">&amp;</span>
               <Link to="/terms/privacy-policy" target="_blank" className="text-black font-medium ml-1">Privacy
                 Policy</Link>
             </p>
           )}
           <section className="w-full pt-10 mt-auto bottom-0 flex flex-col items-center gap-4 sm:gap-6 pb-5">
-            <p className="text-lg text-[#4d6473] ">{bottomText}</p>
+            <p className="text-sm text-[#4d6473]">{bottomText}</p>
             <div className="max-sm:hidden border border-t-[#ebf2f6] broder-t-4 w-full" />
             <div className="bg-[#afafb0] flex rounded-full px-5 py-1.5 text-sm text-[#d7d8da] gap-6">
               <button className={clsx("cursor-pointer hover:text-[#f9fafc]", { "text-[#f9fafc]": type === "LOGIN" })}
