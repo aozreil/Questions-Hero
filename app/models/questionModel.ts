@@ -2,7 +2,7 @@ import {
     getTextFormatted,
     isTextIncludingLatex,
     title
-} from "~/utils/text-formatting-utils.server";
+} from "~/utils/text-formatting-utils";
 
 export class QuestionClass {
     static questionExtraction (question?: IQuestion): IQuestion {

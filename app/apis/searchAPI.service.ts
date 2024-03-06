@@ -26,5 +26,5 @@ interface SearchResponseInterface {
 }
 
 export function searchQuestionsAPI(term: string) {
-  return axios.post<SearchResponseInterface>(SEARCH_CLUSTER, { term });
+  return axios.post<SearchResponseInterface>(`${SEARCH_CLUSTER}/askgram/search/questions`, { term });
 }

@@ -32,7 +32,7 @@ import { BASE_URL } from "~/config/enviroment.server";
 import { isbot } from "isbot";
 import invariant from "tiny-invariant";
 import { getKatexLink } from "~/utils/external-links";
-import { getCleanText } from "~/utils/text-formatting-utils.server";
+import { getCleanText } from "~/utils/text-formatting-utils";
 
 export const meta: MetaFunction = ({ data }) => {
     const { canonical, question, baseUrl, structuredData } = data as LoaderData;

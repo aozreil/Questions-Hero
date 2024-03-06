@@ -1,5 +1,5 @@
 import { defer, LoaderFunctionArgs, useLoaderData, useNavigation } from "react-router";
-import { json } from "@remix-run/node";
+import { json, MetaFunction } from "@remix-run/node";
 import { SearchQuestionResponse, searchQuestionsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
 import { useCallback, useEffect, useState } from "react";
@@ -8,6 +8,26 @@ import { getQuestionsById } from "~/apis/questionsAPI.server";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
 import HeaderSearch from "~/components/UI/HeaderSearch";
+import { getKatexLink } from "~/utils/external-links";
+import { ASKGRAM_BASE } from "~/config/enviromenet";
+import { getSeoMeta } from "~/utils/seo";
+
+export const meta: MetaFunction = ({ data }) => {
+  const { query, list } = data as LoaderData;
+  const canonical = `${ASKGRAM_BASE}/search`
+  if (!query || !list?.length) {
+    return [
+      ...getSeoMeta({ title: 'Search Results', canonical })
+    ]
+  }
+
+  return [
+    ...getSeoMeta({
+      title: `Search results of ${query}`,
+      canonical,
+    }),
+    ...getKatexLink(ASKGRAM_BASE),
+]};
 
 interface QuestionsMapper {
   [questionId: string]: {
@@ -19,6 +39,7 @@ interface LoaderData {
   list: SearchQuestionResponse[],
   count: number,
   questions: Promise<QuestionsMapper>;
+  query?: string;
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -56,6 +77,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     list,
     count,
     questions,
+    query,
   });
 }
 
