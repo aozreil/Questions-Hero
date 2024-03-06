@@ -5,6 +5,7 @@ import { clientGetAnswer, clientGetUsers } from "~/apis/questionsAPI";
 import SearchAnswer from "~/components/question/SearchAnswer";
 import { useOverlay } from "~/routes/_main";
 import clsx from "clsx";
+import { useNavigate } from "@remix-run/react";
 
 interface IProps {
   text: string;
@@ -15,7 +16,8 @@ interface IProps {
 export default function SearchQuestion({ text, questionId, slug }: IProps) {
   const [answers, setAnswers] = useState<IAnswer[] | undefined>(undefined);
   const [askedBy, setAskedBy] = useState<IUser | undefined>(undefined);
-  const { focusedOverlayStyles } = useOverlay();
+  const { focusedOverlayStyles, overlayVisible } = useOverlay();
+  const navigate = useNavigate();
 
   const getAnswer = useCallback(() => {
     if (answers?.length)  return;
@@ -37,8 +39,8 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
         <div className={clsx("relative flex max-xl:flex-col max-xl:space-y-4 max-xl:items-baseline xl:space-x-2", open ? focusedOverlayStyles : '')}>
           <PopoverOverlayController open={open} />
           <div
-            className="border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit"
-            onClick={() => {  }}
+            className={clsx("border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit", slug && 'cursor-pointer')}
+            onClick={() => { slug && !overlayVisible && navigate(`/question/${slug}`) }}
           >
             <div className="flex justify-between pb-4">
               <div className="flex items-center space-x-2 text-[#25b680] font-bold">
