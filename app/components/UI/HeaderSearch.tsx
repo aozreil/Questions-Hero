@@ -17,10 +17,11 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
   const mobileInputRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
   const { setOverlayVisible, overlayVisible } = useOverlay();
   const searchTerm = searchParams?.get('term') ?? undefined;
   const isSearching = navigation.state === 'loading' && navigation.formAction === '/search';
+  const searchOutsideSearchPage = !location?.pathname?.includes('search')
 
   useEffect(() => {
     // clear search value on location change
@@ -59,7 +60,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   }, [overlayVisible]);
 
   const searchClickHandler = () => {
-    formRef?.current?.submit();
+    submitButtonRef?.current?.click();
     if (setIsSearchExpanded && isSearchExpanded && overlayVisible) {
       setIsSearchExpanded(false);
       setOverlayVisible(false);
@@ -67,10 +68,10 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   }
 
   return (
-    <Form ref={formRef} action="/search" className={clsx(`relative rounded-md max-sm:flex-1 sm:w-[22rem] lg:w-[34rem]`, className)}>
+    <Form action="/search" className={clsx(`relative rounded-md max-sm:flex-1 sm:w-[22rem] lg:w-[34rem]`, className)}>
       <div className={clsx("absolute inset-y-0 sm:left-3 flex items-center", isSearchExpanded ? 'right-14' : 'max-sm:right-3')}>
-        {isSearching
-          ? <Loader className='w-2 sm:w-4 h-2 sm:h-4' />
+        {isSearching && searchOutsideSearchPage
+          ? <Loader className='w-5 h-5' />
           : <img
             src="/assets/images/search-icon.svg"
             alt="search"
@@ -97,6 +98,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
           onClick={clearExpandedSearch}
         />}
       </div>
+      <button ref={submitButtonRef} type='submit' className='hidden' />
     </Form>
   );
 }
