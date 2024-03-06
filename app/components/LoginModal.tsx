@@ -28,8 +28,8 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
   useEffect(() => {
     // handle location change so that modal should be closed
     if (type && !currentLocation) {
-      setCurrentSolution(location?.pathname);
-    } else if (type && location?.pathname !== currentLocation){
+      setCurrentSolution(location?.key);
+    } else if (type && location?.key !== currentLocation){
       setCurrentSolution(undefined);
       closeModal();
     }

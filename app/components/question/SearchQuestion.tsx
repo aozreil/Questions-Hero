@@ -46,7 +46,7 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
           </Popover.Button>
         </div>
         <hr className="mb-4" />
-        {text}
+        <p dangerouslySetInnerHTML={{ __html: text }} />
       </div>
       <Popover.Panel className="xl:absolute xl:left-[33.5rem] xl:top-0 z- max-sm:w-full overflow-y-auto">
         {({ close }) => <SearchAnswer answers={answers} askedBy={askedBy} slug={slug} close={close} />}

@@ -11,6 +11,7 @@ import HeaderSearch from "~/components/UI/HeaderSearch";
 import { getKatexLink } from "~/utils/external-links";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
+import { getTextFormatted } from "~/utils/text-formatting-utils";
 
 export const meta: MetaFunction = ({ data }) => {
   const { query, list } = data as LoaderData;
@@ -53,7 +54,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let count = 0;
   try {
     const searchRes = await searchQuestionsAPI(query);
-    list = searchRes?.data?.data;
+    list = searchRes?.data?.data?.map(question => ({
+      ...question,
+      text: getTextFormatted(question?.text, '') ?? '',
+    }));
     count = searchRes?.data?.count;
   } catch (e) {
     console.error(e);
