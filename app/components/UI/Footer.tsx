@@ -19,7 +19,8 @@ export default function Footer({setCurrentSlide, currentSlide, numberOfSlides}: 
       <div className='flex items-center space-x-1.5 bg-[#afafb0] p-2.5 rounded-full'>
         {Array(numberOfSlides).fill('').map((slide, index) => (
           <div
-            className={`bg-[${index === currentSlide ? '#f9fafc' : '#d7d9da'}] w-2.5 h-2.5 rounded-full cursor-pointer`}
+            key={index}
+            className={`${index === currentSlide ? 'bg-[#f9fafc]' : 'bg-[#d7d9da]'} w-2.5 h-2.5 rounded-full cursor-pointer`}
             onClick={() => setCurrentSlide(index)}
           />
         ))}

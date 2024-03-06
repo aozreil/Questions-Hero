@@ -44,7 +44,7 @@ export async function loader () {
 const NUMBER_OF_SLIDES = 2;
 
 export default function Index() {
-  const [currentSlide, setCurrentSlide] = useState(1);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [slideSelectedByUser, setSlideSelectedByUser] = useState(false);
 
