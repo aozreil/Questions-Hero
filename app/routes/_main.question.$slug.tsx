@@ -12,9 +12,8 @@ import {
     getQuestionConcepts,
     getQuestionObjectives,
     getUsersInfo,
-    handleError,
 } from "~/apis/questionsAPI.server";
-import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
+import { redirect, useLoaderData} from "@remix-run/react";
 import {
     IAnswer,
     IConcept,
@@ -28,14 +27,18 @@ import {
 import QuestionContent from "~/components/question/QuestionContent";
 import {getSeoMeta} from "~/utils/seo";
 import {getUser} from "~/utils";
-import { BASE_URL } from "~/config/enviroment.server";
+import { BASE_URL } from "~/config/enviromenet";
 import { isbot } from "isbot";
 import invariant from "tiny-invariant";
 import { getKatexLink } from "~/utils/external-links";
 import { getCleanText } from "~/utils/text-formatting-utils";
+import {  LoaderFunctionArgs } from "@remix-run/router";
 
-export const meta: MetaFunction = ({ data }) => {
-    const { canonical, question, baseUrl, structuredData } = data as LoaderData;
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+    if(!data){
+        return [];
+    }
+    const { canonical, question, structuredData } = data;
     return [
         ...getSeoMeta({
             title: question?.title ?? question?.text,
@@ -43,7 +46,7 @@ export const meta: MetaFunction = ({ data }) => {
             canonical,
         }),
         ...getStructuredData(data as LoaderData),
-        ...[ question?.includesLatex ? getKatexLink(baseUrl) : {} ],
+        ...[ question?.includesLatex ? getKatexLink() : {} ],
     ];
 };
 
@@ -81,11 +84,11 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             internalAnswers,
         ] = await Promise.all([
             getQuestionById(id),
-            getAnswerById(id).catch((e) => handleError(e, [])),
-            getQuestionConcepts(id).catch((e) => handleError(e, [])),
-            getQuestionObjectives(id).catch((e) => handleError(e, [])),
+            getAnswerById(id).catch(() => []),
+            getQuestionConcepts(id).catch(() => []),
+            getQuestionObjectives(id).catch(() => []),
             getInternalQuestion(id, isBot, { req: request }),
-            getInternalAnswers(id, isBot, { req: request }),
+            getInternalAnswers(id, isBot, { req: request })
         ]);
 
         if (question?.error) return redirect('/');
@@ -94,9 +97,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
         const userIds = [];
         if (question?.user_id) userIds.push(question.user_id);
         if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
-        const users = userIds?.length
-          ? await getUsersInfo(userIds).catch((e) => handleError(e, []))
-          : [];
+        const users = userIds?.length ? await getUsersInfo(userIds).catch(() => []) : [];
 
         const canonical = `${BASE_URL}/question/${question?.slug}`;
 
@@ -113,7 +114,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             verifiedAnswer: getCleanText(answerText)
         }
 
-        return json<LoaderData>({
+        return json({
             question: QuestionClass.questionExtraction(question),
             answers: answers?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer)),
             concepts,
@@ -122,7 +123,6 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             canonical,
             internalQuestion,
             internalAnswers,
-            baseUrl: BASE_URL,
             structuredData,
         }, {
             headers: {
@@ -144,7 +144,7 @@ export const headers: HeadersFunction = () => ({
 
 export default function QuestionPage() {
     const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined);
-    const {question, answers, users, concepts, objectives} = useLoaderData() as LoaderData;
+    const {question, answers, users, concepts, objectives} = useLoaderData<typeof loader>() ;
 
     return (
         <>
@@ -163,7 +163,7 @@ export default function QuestionPage() {
                                         title='Definitions'
                                         content={(
                                             <>
-                                                {concepts.map((concept) => (
+                                                {concepts?.map((concept) => (
                                                     !concept?.definition ? null : (
                                                         <div key={concept?.concept} className='text-sm mt-4'>
                                                             <p className='mb-1 font-bold'>{concept?.concept}</p>

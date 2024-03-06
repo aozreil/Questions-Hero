@@ -5,10 +5,10 @@ import {
 } from "~/utils/text-formatting-utils";
 
 export class QuestionClass {
-    static questionExtraction (question?: IQuestion): IQuestion {
+    static questionExtraction (question: IQuestion): IQuestion {
         return {
             ...question,
-            text: getTextFormatted(question?.text, question?.type),
+            text: getTextFormatted(question.text, question?.type),
             title: title(question?.text),
             includesLatex: isTextIncludingLatex(question?.text),
         }
@@ -26,7 +26,7 @@ export class QuestionClass {
     }
 
     static usersExtraction (users: IUser[]): IUsers {
-        let usersObject: IUsers = {};
+        const usersObject: IUsers = {};
         for (const user of users) {
             if (user?.user_id && user?.view_name) {
                 usersObject[user.user_id] = user.view_name
@@ -48,11 +48,11 @@ export interface IAnswer {
 }
 
 export interface IQuestion {
-    id?: string,
+    id: string,
     user_id?: number,
-    text?: string,
+    text: string,
     type?: string,
-    slug?: string,
+    slug: string,
     created_at?: string,
     error?: string;
 

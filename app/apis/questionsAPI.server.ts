@@ -89,8 +89,3 @@ export async function getInternalAnswers (
         return [];
     }
 }
-
-export function handleError (e: any, defaultValue: any) {
-    console.error(e);
-    return defaultValue;
-}
