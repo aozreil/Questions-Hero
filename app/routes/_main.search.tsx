@@ -7,7 +7,6 @@ import SearchQuestion from "~/components/question/SearchQuestion";
 import { getQuestionsById } from "~/apis/questionsAPI.server";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
-import HeaderSearch from "~/components/UI/HeaderSearch";
 import { getKatexLink } from "~/utils/external-links";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
@@ -109,13 +108,10 @@ export default function SearchPage() {
   }
 
   return (
-    <section className="pt-2 pb-40">
-      <div className='container w-full px-4 mb-4 md:hidden'>
-        <HeaderSearch className='bg-white w-full' />
-      </div>
+    <section className="pb-40">
       {list.length === 0 && <>
         <div
-          className="container shadow bg-white p-16 text-center w-[95%] sm:w-[34rem] h-full flex items-center flex-col rounded-md">
+          className="container mt-4 shadow bg-white p-16 text-center w-[95%] sm:w-[34rem] h-full flex items-center flex-col rounded-md">
           <h2 className="text-3xl font-bold mb-3">
             No matching results
           </h2>
