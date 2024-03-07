@@ -1,7 +1,7 @@
 import { json, MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
 import Footer from "~/components/UI/Footer";
-import { BASE_URL } from "~/config/enviroment.server";
+import { BASE_URL } from "~/config/enviromenet";
 
 const HOW_SECTIONS = [
   {
