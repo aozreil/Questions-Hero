@@ -6,12 +6,12 @@ import SearchQuestion from "~/components/question/SearchQuestion";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
-import { ASKGRAM_BASE } from "~/config/enviromenet";
+import { BASE_URL } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
 import { Await, defer, useLoaderData } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
-import { getTextFormatted } from "~/utils/text-formatting-utils";
+import HeaderSearch from "~/components/UI/HeaderSearch";
 
 export const meta: MetaFunction = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -24,7 +24,7 @@ export const meta: MetaFunction = ({ location }) => {
   return [
     ...getSeoMeta({
       title: title,
-      canonical: `${ASKGRAM_BASE}/search`
+      canonical: `${BASE_URL}/search`
     }),
     ...getKatexLink()
   ];
