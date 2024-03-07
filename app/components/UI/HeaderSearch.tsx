@@ -1,7 +1,6 @@
-import { Form, useLocation, useSearchParams } from "@remix-run/react";
+import { Form, useLocation, useSearchParams, useNavigation } from "@remix-run/react";
 import clsx from "clsx";
 import Loader from "~/components/UI/Loader";
-import { useNavigation } from "react-router";
 import { useEffect, useRef } from "react";
 import { useOverlay } from "~/routes/_main";
 
