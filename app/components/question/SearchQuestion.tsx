@@ -5,19 +5,19 @@ import { clientGetAnswer, clientGetUsers } from "~/apis/questionsAPI";
 import SearchAnswer from "~/components/question/SearchAnswer";
 import { useOverlay } from "~/routes/_main";
 import clsx from "clsx";
-import { Link, useNavigate } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 
 interface IProps {
   text: string;
   questionId: string;
   slug?: string;
+  handleAnswerOpen?: (questionId: string) => void;
 }
 
-export default function SearchQuestion({ text, questionId, slug }: IProps) {
+export default function SearchQuestion({ text, questionId, slug, handleAnswerOpen }: IProps) {
   const [answers, setAnswers] = useState<IAnswer[] | undefined>(undefined);
   const [askedBy, setAskedBy] = useState<IUser | undefined>(undefined);
   const { focusedOverlayStyles, overlayVisible } = useOverlay();
-  const navigate = useNavigate();
 
   const getAnswer = useCallback(() => {
     if (answers?.length)  return;
@@ -36,7 +36,7 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
   return <>
     <Popover>
       {({ open }) => (
-        <div className={clsx("relative flex max-xl:flex-col max-xl:space-y-4 max-xl:items-baseline xl:space-x-2", open ? focusedOverlayStyles : '')}>
+        <div id={`q-${questionId}`} className={clsx("relative flex max-xl:flex-col max-xl:space-y-4 max-xl:items-baseline xl:space-x-2", open ? focusedOverlayStyles : '')}>
           <PopoverOverlayController open={open} />
           <Link
             className={clsx("border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit", slug && 'cursor-pointer')}
@@ -65,6 +65,7 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
               askedBy={askedBy}
               slug={slug}
               close={close}
+              handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(questionId)}
             />}
           </Popover.Panel>
         </div>

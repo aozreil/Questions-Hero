@@ -2,9 +2,9 @@ import { Link } from "@remix-run/react";
 import { TERMS_NAVIGATION_LINKS } from "~/components/UI/Terms";
 
 interface Props {
-  setCurrentSlide: (slideNumber: number) => void;
-  currentSlide: number;
-  numberOfSlides: number;
+  setCurrentSlide?: (slideNumber: number) => void;
+  currentSlide?: number;
+  numberOfSlides?: number;
 }
 
 export default function Footer({setCurrentSlide, currentSlide, numberOfSlides}: Props) {
@@ -16,15 +16,17 @@ export default function Footer({setCurrentSlide, currentSlide, numberOfSlides}: 
         All copyrights are reserved to{" "}
         <span className="font-bold">{`Askgram ® ${currentYear}`}</span>
       </p>
-      <div className='flex items-center space-x-1.5 bg-[#afafb0] p-2.5 rounded-full'>
-        {Array(numberOfSlides).fill('').map((slide, index) => (
-          <div
-            key={index}
-            className={`${index === currentSlide ? 'bg-[#f9fafc]' : 'bg-[#d7d9da]'} w-2.5 h-2.5 rounded-full cursor-pointer`}
-            onClick={() => setCurrentSlide(index)}
-          />
-        ))}
-      </div>
+      {!!setCurrentSlide && (
+        <div className='flex items-center space-x-1.5 bg-[#afafb0] p-2.5 rounded-full'>
+          {Array(numberOfSlides).fill('').map((slide, index) => (
+            <div
+              key={index}
+              className={`${index === currentSlide ? 'bg-[#f9fafc]' : 'bg-[#d7d9da]'} w-2.5 h-2.5 rounded-full cursor-pointer`}
+              onClick={() => setCurrentSlide && setCurrentSlide(index)}
+            />
+          ))}
+        </div>
+      )}
       <p className='lg:hidden'>
         All copyrights are reserved to{" "}
         <span className="font-bold">{`Askgram ® ${currentYear}`}</span>

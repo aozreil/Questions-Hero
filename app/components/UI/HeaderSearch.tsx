@@ -90,6 +90,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
           placeholder="Search for acadmic answers"
           defaultValue={searchTerm}
           onFocus={onFocus}
+          autoComplete='off'
         />
         {isSearchExpanded && <img
           src='/assets/images/close-button.svg'

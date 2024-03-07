@@ -2,7 +2,7 @@ import { getCreatedAt, getUserInitials } from "~/utils";
 import ContentLoader from "~/components/UI/ContentLoader";
 import { Link } from "@remix-run/react";
 import Loader from "~/components/UI/Loader";
-import React from "react";
+import React, { useEffect } from "react";
 import { IAnswer, IUser } from "~/models/questionModel";
 
 interface Props {
@@ -10,10 +10,14 @@ interface Props {
   askedBy?: IUser;
   slug?: string;
   close: () => void;
+  handleAnswerOpen?: () => void;
 }
 
-export default function SearchAnswer({ answers, askedBy, slug, close }: Props) {
+export default function SearchAnswer({ answers, askedBy, slug, close, handleAnswerOpen }: Props) {
   const verifiedAnswer = answers?.[0];
+  useEffect(() => {
+    handleAnswerOpen && handleAnswerOpen();
+  }, []);
   return (
     <div className="flex h-full max-sm:w-full items-end justify-center xl:p-4 xl:pt-0 text-center">
       <div className="border-2 border-[#5fc9a2] p-4 rounded-xl bg-white w-full sm:w-[34rem] xl:max-w-[34rem] z-20">

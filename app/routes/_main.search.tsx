@@ -11,7 +11,6 @@ import { getSeoMeta } from "~/utils/seo";
 import { Await, defer, useLoaderData } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
-import HeaderSearch from "~/components/UI/HeaderSearch";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -46,12 +45,18 @@ export default function SearchPage() {
   const { data } = useLoaderData<typeof loader>();
   const [showVerifiedAnswer, setShowVerifiedAnswer] = useState(true);
 
-  return (
-    <section className="pt-2 pb-40">
-      <div className="container w-full px-4 mb-4 md:hidden">
-        <HeaderSearch className="bg-white w-full" />
-      </div>
+  const handleAnswerOpen = (questionId: string) => {
+    const element = document.getElementById(`q-${questionId}`);
+    if (element) {
+      window.scroll({
+        top: element?.offsetTop - 150,
+        behavior: 'smooth'
+      })
+    }
+  }
 
+  return (
+    <section className="pb-40">
       <Suspense fallback={
         <section className="w-full h-64 flex items-center justify-center">
           <Loader className="fill-[#5fc9a2] w-12 h-12" />
@@ -97,6 +102,7 @@ export default function SearchPage() {
                         text={el.text}
                         questionId={el.id}
                         slug={el.slug}
+                        handleAnswerOpen={handleAnswerOpen}
                       />;
                     })}
                   </div>
