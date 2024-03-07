@@ -11,25 +11,39 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
     const [hasValue, setHasValue] = useState(false);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
-    const [focused, setFocused] = useState(false);
     const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
 
     const onFocus = useCallback(() => {
-        setFocused(true);
         setIsSearchFocused(true);
-        setOverlayVisible(true)
+        setOverlayVisible(true);
+        if (textAreaRef.current) calculateTextareaRows(textAreaRef.current.value)
 
     }, []);
 
     const onBlur = useCallback(() => {
-        setFocused(false);
         setIsSearchFocused(false);
-        setOverlayVisible(false)
+        setOverlayVisible(false);
+        if (textAreaRef.current) textAreaRef.current.rows = 1
     }, []);
+
+    const calculateTextareaRows = useCallback((text?: string) => {
+        if (textAreaRef.current && text !== undefined) {
+            const rows = Math.min(Math.floor(text.length / 50), 3) + 1;
+            const hasNewLines = text.includes('\n');
+
+            if (hasNewLines) {
+                textAreaRef.current.rows = 3;
+            } else if (rows !== textAreaRef.current.rows) {
+                textAreaRef.current.rows = rows <= 3 ? rows : 3;
+            }
+        }
+    }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         if (hasValue && !e?.target?.value) setHasValue(false);
         if (!hasValue && e?.target?.value) setHasValue(true);
+
+        calculateTextareaRows(e?.target?.value);
     }
 
     const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -54,7 +68,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
             <img src='/assets/images/search-icon.svg' alt='search' className='cursor-pointer' width={27} height={27} />
             <textarea
               className='textarea-scrollable rounded-lg cursor-text resize-none w-full text-left pt-0.5 flex-1 mx-3 max-h-[158px] bg-white outline-none text-xl'
-              rows={focused ? 3 : 1}
+              rows={1}
               name='term'
               placeholder='Search for acadmic answers…'
               ref={textAreaRef}
