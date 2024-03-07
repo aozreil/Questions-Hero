@@ -5,7 +5,7 @@ import { clientGetAnswer, clientGetUsers } from "~/apis/questionsAPI";
 import SearchAnswer from "~/components/question/SearchAnswer";
 import { useOverlay } from "~/routes/_main";
 import clsx from "clsx";
-import { useNavigate } from "@remix-run/react";
+import { Link, useNavigate } from "@remix-run/react";
 
 interface IProps {
   text: string;
@@ -38,9 +38,10 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
       {({ open }) => (
         <div className={clsx("relative flex max-xl:flex-col max-xl:space-y-4 max-xl:items-baseline xl:space-x-2", open ? focusedOverlayStyles : '')}>
           <PopoverOverlayController open={open} />
-          <div
+          <Link
             className={clsx("border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit", slug && 'cursor-pointer')}
-            onClick={() => { slug && !overlayVisible && navigate(`/question/${slug}`) }}
+            to={slug? `/question/${slug}` : `/question/${questionId}`}
+            prefetch={'intent'}
           >
             <div className="flex justify-between pb-4">
               <div className="flex items-center space-x-2 text-[#25b680] font-bold">
@@ -57,7 +58,7 @@ export default function SearchQuestion({ text, questionId, slug }: IProps) {
             </div>
             <hr className="mb-4" />
             <p dangerouslySetInnerHTML={{ __html: text }} />
-          </div>
+          </Link>
           <Popover.Panel className="xl:absolute xl:left-[33.5rem] xl:top-0 z- max-sm:w-full overflow-y-auto">
             {({ close }) => <SearchAnswer
               answers={answers}

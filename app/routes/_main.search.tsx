@@ -13,7 +13,7 @@ import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import HeaderSearch from "~/components/UI/HeaderSearch";
 
-export const meta: MetaFunction = ({ location }) => {
+export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
   const query = params.get("term");
   let title = "Search | AskGram";
