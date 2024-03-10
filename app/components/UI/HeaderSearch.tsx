@@ -91,6 +91,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
           defaultValue={searchTerm}
           onFocus={onFocus}
           autoComplete='off'
+          required={true}
         />
         {isSearchExpanded && <img
           src='/assets/images/close-button.svg'

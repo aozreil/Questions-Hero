@@ -8,7 +8,7 @@ import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
 import { BASE_URL } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
-import { Await, defer, useLoaderData } from "@remix-run/react";
+import { Await, defer, useLoaderData, useNavigation } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
 
@@ -44,6 +44,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function SearchPage() {
   const { data } = useLoaderData<typeof loader>();
   const [showVerifiedAnswer, setShowVerifiedAnswer] = useState(true);
+  const navigation = useNavigation();
+  const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
 
   const handleAnswerOpen = (questionId: string) => {
     const element = document.getElementById(`q-${questionId}`);
@@ -58,15 +60,13 @@ export default function SearchPage() {
   return (
     <section className="pb-40">
       <Suspense fallback={
-        <section className="w-full h-64 flex items-center justify-center">
-          <Loader className="fill-[#5fc9a2] w-12 h-12" />
-        </section>
+        <SearchLoading />
       }>
         <Await resolve={data} errorElement={
           <EmptyResultsSearch />
         }>
-
-          {({ data, count }) => {
+          {isLoadingData ? <SearchLoading /> : (
+          ({ data, count }) => {
             return <>
               {data.length === 0 && <>
                 <EmptyResultsSearch />
@@ -83,7 +83,7 @@ export default function SearchPage() {
                         onClick={() => setShowVerifiedAnswer(false)}
                         className="ml-auto">
                         <span className="sr-only">Dismiss</span>
-                        <CloseModal colorFill="#667a87" className="w-4 h-4 cursor-pointer" />
+                        <CloseModal colorfill="#667a87" className="w-4 h-4 cursor-pointer" />
                       </button>
                     </section>
                   </SuccessAlert>
@@ -109,10 +109,16 @@ export default function SearchPage() {
                 </div>
               </>}
             </>;
-          }}
+          })}
         </Await>
       </Suspense>
 
     </section>
   );
 }
+
+const SearchLoading = () => (
+  <section className="w-full h-screen pt-16 flex items-start justify-center">
+    <Loader className="fill-[#5fc9a2] w-12 h-12" />
+  </section>
+)
