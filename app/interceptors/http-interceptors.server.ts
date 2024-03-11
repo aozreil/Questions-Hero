@@ -2,7 +2,8 @@ import axios from "axios";
 import type { AxiosRequestConfig } from "axios";
 import { isbot } from "isbot";
 import {getCookie} from "~/services/cookie.service";
-import { BASE_URL, VERSION_DATE } from "~/config/enviromenet";
+import { BASE_URL } from "~/config/enviromenet";
+import { VERSION_DATE } from "~/config/enviroment.server";
 
 const Axios = axios.create({
   baseURL: BASE_URL,
