@@ -18,16 +18,17 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   const mobileInputRef = useRef<HTMLInputElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const { setOverlayVisible, overlayVisible } = useOverlay();
-  const searchTerm = searchParams?.get('term') ?? undefined;
   const isSearching = navigation.state === 'loading' && navigation.formAction === '/search';
   const searchOutsideSearchPage = !location?.pathname?.includes('search')
 
   useEffect(() => {
-    // clear search value on location change
+    const searchTerm = searchParams?.get('term') ?? undefined;
     if (inputRef.current && location?.pathname !== '/search') {
       inputRef.current.value = '';
+    } else if (searchTerm && inputRef.current && location?.pathname === '/search') {
+      inputRef.current.value = searchTerm;
     }
-  }, [location?.pathname]);
+  }, [location]);
 
   useEffect(() => {
     // if mobile remove styles applied by input[type=search]::-webkit-search-cancel-button
@@ -88,7 +89,6 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
             rounded-full max-sm:pr-10 max-sm:pl-3 focus:ring-1 focus:ring-inset max-sm:focus:ring-gray-300
             sm:rounded-md sm:pl-10 sm:pr-2 sm:bg-[#f2f4f5] sm:ring-1 sm:ring-inset sm:ring-[#99a7af] sm:focus:ring-[#070707] sm:text-sm sm:leading-6`}
           placeholder="Search for acadmic answers"
-          defaultValue={searchTerm}
           onFocus={onFocus}
           autoComplete='off'
           required={true}

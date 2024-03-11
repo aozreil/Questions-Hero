@@ -45,13 +45,15 @@ export default function Index() {
   }
 
   return (
-    <>
-      {getHomeContent()}
+    <section className='flex-1 flex flex-col justify-between'>
+      <div className='flex-1 flex sm:items-center'>
+        {getHomeContent()}
+      </div>
       <Footer
         currentSlide={currentSlide}
         setCurrentSlide={setSlideByUser}
         numberOfSlides={NUMBER_OF_SLIDES}
       />
-    </>
+    </section>
   );
 }

@@ -19,13 +19,13 @@ const HOW_SECTIONS = [
 
 export default function LandingAboutSlide() {
   return (
-    <div className="container py-16 md:py-20">
+    <div className="container max-sm:py-16">
       <section className="px-4 flex flex-col items-center text-[#070707]">
-        <h1 className="text-xl sm:text-2xl md:text-4xl font-medium py-5 text-center">
+        <h1 className="text-xl sm:text-2xl md:text-4xl font-medium py-3 text-center">
           A simple path to feeling better today.
         </h1>
         <h2 className="text-4xl md:text-6xl font-bold">How it Works</h2>
-        <div className="grid grid-cols-1 xl:grid-cols-3 mt-20 gap-12 justify-center">
+        <div className="grid grid-cols-1 xl:grid-cols-3 mt-10 gap-12 justify-center">
           {HOW_SECTIONS.map((section) => (
             <div
               key={section.title}
