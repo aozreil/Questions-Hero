@@ -1,7 +1,8 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import LoginModal from "~/components/LoginModal";
 import { getMe, loginWithGoogle, logoutAPI } from "~/apis/userAPI";
 import { AxiosError } from "axios";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 interface Props {
   children: ReactNode;
@@ -21,6 +22,7 @@ export default function AuthProvider({ children }: Props) {
   const [authModal, setAuthModal] = useState<undefined | "LOGIN" | "SIGNUP">(undefined);
   const [user, setUser] = useState<undefined | IUser>(undefined);
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
+  const {trackSignUpEvent, trackLoginEvent, trackEvent, identifyUserById} = useAnalytics()
 
   useEffect(() => {
     getUserData()
@@ -42,15 +44,23 @@ export default function AuthProvider({ children }: Props) {
     }
   };
 
-  const logout = useCallback(async () => {
+  useEffect(() => {
+    if(user?.id){
+      identifyUserById(`${user.id}`)
+    }
+  }, [user]);
+
+  const logout = async () => {
     setUser(undefined);
+    trackEvent('logout')
     await logoutAPI();
-  }, []);
+  };
 
   const openLoginModal = () => {
     if (user) {
       return;
     }
+    trackEvent('login_open_login')
     setAuthModal("LOGIN");
   };
 
@@ -58,6 +68,7 @@ export default function AuthProvider({ children }: Props) {
     if (user) {
       return;
     }
+    trackEvent('login_open_sign_up')
     setAuthModal("SIGNUP");
   };
 
@@ -65,12 +76,20 @@ export default function AuthProvider({ children }: Props) {
     const user = await loginWithGoogle(credential);
     if (user?.id) {
       setUser(user);
+      if(authModal === 'LOGIN'){
+        trackLoginEvent('Google')
+      }else if(authModal === 'SIGNUP'){
+        trackSignUpEvent('Google')
+      }else {
+        trackSignUpEvent('Google')
+      }
     }
   };
 
-  const closeModal = useCallback(() => {
+  const closeModal =() => {
+    trackEvent('login_close_login')
     setAuthModal(undefined);
-  }, []);
+  };
 
   return (
     <AuthContext.Provider

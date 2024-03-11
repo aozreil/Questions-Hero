@@ -1,4 +1,7 @@
 User-agent: *
 Disallow: /build/
 Disallow: /api/
-Disallow: /assets/
+
+Sitemap: https://askgram.com/sitemap/questions/sitemap_2024-03-11_00-57-02.xml
+Sitemap: https://askgram.com/sitemap/questions/sitemap_2024-02-29_09-29-54.xml
+Sitemap: https://askgram.com/sitemap/questions/sitemap_2024-02-18_18-22-24.xml
