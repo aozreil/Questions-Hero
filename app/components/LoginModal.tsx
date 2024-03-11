@@ -46,7 +46,6 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
     google.accounts.id.initialize({
       client_id: GOOGLE_SIGN_IN_CLIENT_ID,
       callback: async (response) => {
-        console.log('GoogleLogin', response)
         try {
           if (response.credential) {
             await googleLogin(response.credential);
@@ -59,7 +58,9 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
     });
     google.accounts.id.prompt()
     return () =>{
-      google.accounts.id.cancel()
+      if(status === 'ready'){
+        google.accounts.id.cancel()
+      }
     }
   }, [status]);
 

@@ -12,7 +12,7 @@ axiosApiInstance.interceptors.response.use((response) => {
     try {
       await refreshToken();
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
     originalRequest._retry = true;
     return axiosApiInstance(originalRequest);
