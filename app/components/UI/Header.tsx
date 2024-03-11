@@ -38,9 +38,9 @@ export default function Header() {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className='absolute -right-2 top-10 w-44 p-3 text-[#4d6473] bg-white border border-[#e8e8e8] rounded-md'>
-                      <p className='truncate'>{user?.view_name}</p>
+                      <p className='truncate capitalize px-4'>{user?.view_name}</p>
                       <button
-                        className='font-semibold'
+                        className='font-semibold rounded-md mt-2 bg-white py-2 text-sm hover:bg-gray-50 w-full text-left px-4'
                         onClick={logout}
                       >
                         Logout
