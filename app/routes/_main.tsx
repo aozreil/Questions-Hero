@@ -1,6 +1,6 @@
 import Header from "~/components/UI/Header";
 import { Outlet } from "@remix-run/react";
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 interface IOverlayContext {
   overlayVisible: boolean;
@@ -14,6 +14,13 @@ const OverlayContext = createContext<IOverlayContext | undefined>(undefined);
 export default function Main() {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const hideOverlay = useCallback(() => setOverlayVisible(false), []);
+  useEffect(() => {
+    if (overlayVisible) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [overlayVisible]);
   return (
     <div className="relative min-h-screen bg-[#f7f8fa] flex flex-col">
       {overlayVisible && (
