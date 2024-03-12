@@ -5,6 +5,7 @@ import LandingAboutSlide from "~/components/widgets/LandingAboutSlide";
 import LandingSearchSlide from "~/components/widgets/LandingSearchSlide";
 import { useCallback, useEffect, useState } from "react";
 import { BASE_URL } from "~/config/enviromenet";
+import SlidesNavigator from "~/components/UI/SlidesNavigator";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({
@@ -50,9 +51,13 @@ export default function Index() {
         {getHomeContent()}
       </div>
       <Footer
-        currentSlide={currentSlide}
-        setCurrentSlide={setSlideByUser}
-        numberOfSlides={NUMBER_OF_SLIDES}
+        slidesNavigator={
+          <SlidesNavigator
+            currentSlide={currentSlide}
+            setCurrentSlide={setSlideByUser}
+            numberOfSlides={NUMBER_OF_SLIDES}
+          />
+        }
       />
     </section>
   );

@@ -45,6 +45,12 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
     }
   }
 
+  const onSubmit = () => {
+    setOverlayVisible(false);
+    isSearchExpanded && setIsSearchExpanded && setIsSearchExpanded(false);
+    inputRef.current?.blur();
+  }
+
   const clearExpandedSearch = () => {
     if (setIsSearchExpanded) {
       setOverlayVisible(false);
@@ -68,7 +74,11 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   }
 
   return (
-    <Form action="/search" className={clsx(`relative rounded-md max-sm:flex-1 sm:w-[22rem] lg:w-[34rem]`, className)}>
+    <Form
+      action="/search"
+      className={clsx(`relative rounded-md max-sm:flex-1 sm:w-[22rem] lg:w-[34rem]`, className)}
+      onSubmit={onSubmit}
+    >
       <div className={clsx("absolute inset-y-0 sm:left-3 flex items-center", isSearchExpanded ? 'right-14' : 'max-sm:right-3')}>
         {isSearching && searchOutsideSearchPage
           ? <Loader className='w-5 h-5' />

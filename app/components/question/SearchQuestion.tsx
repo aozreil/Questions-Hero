@@ -6,6 +6,7 @@ import SearchAnswer from "~/components/question/SearchAnswer";
 import { useOverlay } from "~/routes/_main";
 import clsx from "clsx";
 import { Link } from "@remix-run/react";
+import { getTextFormatted } from "~/utils/text-formatting-utils";
 
 interface IProps {
   text: string;
@@ -17,6 +18,7 @@ interface IProps {
 export default function SearchQuestion({ text, questionId, slug, handleAnswerOpen }: IProps) {
   const [answers, setAnswers] = useState<IAnswer[] | undefined>(undefined);
   const [askedBy, setAskedBy] = useState<IUser | undefined>(undefined);
+  const [formattedText] = useState(() => getTextFormatted(text))
   const { focusedOverlayStyles, overlayVisible } = useOverlay();
 
   const getAnswer = useCallback(() => {
@@ -57,7 +59,7 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
               </Popover.Button>
             </div>
             <hr className="mb-4" />
-            <p dangerouslySetInnerHTML={{ __html: text }} />
+            <p dangerouslySetInnerHTML={{ __html: formattedText }} />
           </Link>
           <Popover.Panel className="xl:absolute xl:left-[33.5rem] xl:top-0 z- max-sm:w-full overflow-y-auto">
             {({ close }) => <SearchAnswer
