@@ -29,7 +29,7 @@ export class QuestionClass {
         const usersObject: IUsers = {};
         for (const user of users) {
             if (user?.user_id && user?.view_name) {
-                usersObject[user.user_id] = user
+                usersObject[user.user_id] = user.view_name
             }
         }
 
@@ -72,8 +72,9 @@ export interface IObjective {
 
 export interface IUser {
     id: number,
-    view_name: string,
-    user_id: number
+    view_name: string;
+    user_id: number;
+    picture: string;
 }
 
 export interface IUsers {
@@ -102,4 +103,13 @@ export interface IInternalAnswer {
         step_number: number
     }[],
     created_at: string
+}
+
+export interface IPostQuestion {
+    id: string;
+    user_id: number;
+    text: string;
+    type: string;
+    slug: string;
+    created_at: number;
 }
