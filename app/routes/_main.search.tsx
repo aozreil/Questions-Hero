@@ -89,7 +89,7 @@ export default function SearchPage() {
                     </section>
                   </SuccessAlert>
                 }
-                <div className="container max-sm:px-2 pl-2 w-full mt-4">
+                <div className="container px-2 xl:pl-14 w-full mt-4">
                   <p>
                     {count} <span className="font-bold">Result{count > 1 ? "s" : ""} found</span>
                   </p>
