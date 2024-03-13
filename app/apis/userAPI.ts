@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { axiosApiInstance } from "~/interceptors/client-interceptors";
 
@@ -19,10 +19,11 @@ export async function loginWithGoogle(jwt_token: string) {
   return res.data;
 }
 
-export async function getMe() {
+export async function getMe(config?: AxiosRequestConfig) {
   const res = await axiosApiInstance.get<IUser>(
     `${ASKGRAM_BASE}/api/users/users/me`,
     {
+      ...config,
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",

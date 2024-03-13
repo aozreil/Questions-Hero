@@ -25,24 +25,25 @@ export default function AuthProvider({ children }: Props) {
   const {trackSignUpEvent, trackLoginEvent, trackEvent, identifyUserById} = useAnalytics()
 
   useEffect(() => {
-    getUserData()
-      .finally(() => {
-        setIsLoadingUserData(false);
-      });
-  }, []);
-
-  const getUserData = async () => {
-    try {
-      const data = await getMe();
+    const controller = new AbortController();
+    getMe({
+      signal: controller.signal
+    }).then((data) => {
       if (data?.view_name) {
         setUser(data);
       }
-    } catch (e) {
+    }).catch((e) => {
       if (e instanceof AxiosError && e.status !== 401) {
         console.error(e);
       }
-    }
-  };
+    }).finally(() => {
+      setIsLoadingUserData(false);
+    });
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
 
   useEffect(() => {
     if(user?.id){
