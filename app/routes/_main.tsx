@@ -15,10 +15,9 @@ export default function Main() {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const hideOverlay = useCallback(() => setOverlayVisible(false), []);
   useEffect(() => {
-    if (overlayVisible) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
+    // disable page scroll if overlay is visible for large screens
+    if (window.innerWidth > 1280) {
+      document.body.style.overflow = overlayVisible ? 'hidden' : 'auto';
     }
   }, [overlayVisible]);
   return (

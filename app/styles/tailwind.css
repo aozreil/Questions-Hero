@@ -151,3 +151,17 @@ input[type="search"]:focus::-webkit-search-cancel-button {
         transform: translateX(calc(-110px * 6));
     }
 }
+
+.thin-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 4px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+    background: #efefef;
+    border-radius: 5px;
+}

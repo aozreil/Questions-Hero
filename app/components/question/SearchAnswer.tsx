@@ -20,7 +20,7 @@ export default function SearchAnswer({ answers, askedBy, slug, close, handleAnsw
   }, []);
   return (
     <div className="flex h-full max-sm:w-full items-end justify-center xl:p-4 xl:pt-0 text-center">
-      <div className="border-2 border-[#5fc9a2] p-4 rounded-xl bg-white w-full sm:w-[34rem] xl:max-w-[34rem] z-20">
+      <div className="thin-scrollbar xl:max-h-[75vh] xl:overflow-y-auto border-2 border-[#5fc9a2] p-4 rounded-xl bg-white w-full sm:w-[34rem] xl:max-w-[34rem] z-20">
         {
           !!answers?.length
             ? (

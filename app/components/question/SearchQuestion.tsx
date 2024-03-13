@@ -41,7 +41,11 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
         <div id={`q-${questionId}`} className={clsx("relative flex max-xl:flex-col max-xl:space-y-4 max-xl:items-baseline xl:space-x-2", open ? focusedOverlayStyles : '')}>
           <PopoverOverlayController open={open} />
           <Link
-            className={clsx("border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit", slug && 'cursor-pointer')}
+            className={clsx(
+              "thin-scrollbar border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit",
+              slug && 'cursor-pointer',
+              open && 'xl:max-h-[75vh] xl:overflow-y-auto',
+            )}
             to={slug? `/question/${slug}` : `/question/${questionId}`}
             prefetch={'intent'}
           >

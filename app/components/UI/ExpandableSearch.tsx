@@ -81,7 +81,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
         <Form
           action='/search'
           ref={formRef}
-          className={clsx(`z-10 py-2 sm:py-3.5 px-5 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%] sm:w-[30rem]
+          className={clsx(`z-10 py-2 sm:py-3.5 px-5 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%]
            md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
           onBlur={handleBlur}
           onSubmit={onBlur}
