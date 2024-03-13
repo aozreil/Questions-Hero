@@ -48,6 +48,7 @@ export default function SearchPage() {
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
 
   const handleAnswerOpen = (questionId: string) => {
+    if (window.innerWidth < 1024) return;
     const element = document.getElementById(`q-${questionId}`);
     if (element) {
       window.scroll({
@@ -75,7 +76,7 @@ export default function SearchPage() {
               {data.length > 0 && <>
                 {showVerifiedAnswer &&
                   <SuccessAlert>
-                    <section className="container max-md:px-4 lg:pl-52 flex items-center">
+                    <section className="container w-full flex items-center">
                       <img src="/assets/images/verified.svg" alt="verifed" className="mr-3" />
                       <p>Verified Answers: Curated by experts, our search results highlight accurate and detailed
                         information.</p>
@@ -88,7 +89,7 @@ export default function SearchPage() {
                     </section>
                   </SuccessAlert>
                 }
-                <div className="container w-full mt-4 max-md:px-4 lg:pl-52">
+                <div className="container max-sm:px-2 pl-2 w-full mt-4">
                   <p>
                     {count} <span className="font-bold">Result{count > 1 ? "s" : ""} found</span>
                   </p>
