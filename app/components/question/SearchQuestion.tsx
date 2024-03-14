@@ -22,6 +22,10 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
   const { focusedOverlayStyles, overlayVisible, setOverlayVisible } = useOverlay();
 
   useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+  }, [isOpen]);
+
+  useEffect(() => {
     if (window.innerWidth > 1024 && !overlayVisible && isOpen) {
       setIsOpen(false);
     }
@@ -100,7 +104,7 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
               aria-hidden="true"
               onClick={close}
             />
-            <div className='absolute sm:top-0 sm:m-auto sm:w-[70%] sm:min-h-[50vh] right-0 left-0 bottom-0 w-full h-fit rounded-t-[26px] sm:rounded-b-[26px] bg-white max-h-[90vh] overflow-y-auto'>
+            <div className='absolute sm:top-0 sm:m-auto sm:w-[70%] sm:min-h-[50vh] right-0 left-0 bottom-0 w-full h-fit rounded-t-[26px] sm:rounded-b-[26px] bg-white max-h-[80vh] overflow-y-auto'>
               <div onClick={close} className='flex justify-end p-5 pb-0'>
                 <img src='/assets/images/close-button.svg' alt='close' className='w-9 h-9' />
               </div>
