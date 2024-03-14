@@ -57,7 +57,7 @@ export default function SearchAnswer({ answers, askedBy, slug, close, handleAnsw
                   )}
                 </div>
                 <hr className="my-3" />
-                <div className='w-full'>
+                <div className='w-full max-sm:pb-5'>
                   <div className="bg-[#d3f0e5] text-left p-4 rounded-xl mb-3">
                     <div className="flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0">
                       <img src="/assets/images/verified.svg" alt="verifed" />
