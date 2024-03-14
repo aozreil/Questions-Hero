@@ -24,7 +24,7 @@ export default function LandingAboutSlide() {
         <h1 className="text-xl sm:text-2xl md:text-4xl font-medium py-3 text-center">
           A simple path to feeling better today.
         </h1>
-        <h2 className="text-4xl md:text-6xl font-bold">How it Works</h2>
+        <h2 className="text-4xl md:text-6xl lg:text-4xl 2xl:text-6xl font-bold">How it Works</h2>
         <div className="grid grid-cols-1 xl:grid-cols-3 mt-4 2xl:mt-10 gap-12 justify-center">
           {HOW_SECTIONS.map((section) => (
             <div
@@ -40,7 +40,7 @@ export default function LandingAboutSlide() {
                 />
               </div>
               <div className='peer-hover:[&>h3]:font-bold w-[76%] xs:w-72'>
-                <h3 className="text-4xl md:text-6xl font-semibold mb-2 transition">
+                <h3 className="text-4xl md:text-6xl lg:text-4xl 2xl:text-6xl font-semibold mb-2 transition">
                   {section.title}
                 </h3>
                 <p className="text-[13px]">{section.desc}</p>

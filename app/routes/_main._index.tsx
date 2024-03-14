@@ -47,10 +47,10 @@ export default function Index() {
 
   return (
     <div className='flex-1 flex flex-col relative'>
-      <div className='flex-1 flex sm:items-center overflow-y-auto max-xl:pb-40'>
+      <div className={`flex-1 flex ${currentSlide === 1 ? 'lg:items-start 2xl:items-center' : 'sm:items-center'} overflow-y-auto max-xl:pb-10`}>
         {getHomeContent()}
       </div>
-      <div className='fixed w-full bottom-0 z-40 bg-[#f7f8fa] h-fit flex flex-col items-center'>
+      <div className='sticky w-full bottom-0 z-40 bg-[#f7f8fa] h-fit flex flex-col items-center'>
         <SlidesNavigator
           currentSlide={currentSlide}
           setCurrentSlide={setSlideByUser}
