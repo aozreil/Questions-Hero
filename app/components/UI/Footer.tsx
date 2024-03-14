@@ -9,7 +9,7 @@ export default function Footer({slidesNavigator}: Props) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full gap-2 sm:gap-0 bg-[#f7f8fa] text-base border-t-2 border-[#ebf2f6] px-4 md:px-14 py-4 text-[#6e777f] flex justify-center sm:justify-between items-center gap-y-4 max-lg:flex-col">
+    <footer className="w-full gap-2 sm:gap-0 bg-[#f7f8fa] text-base border-t-2 border-[#ebf2f6] px-4 md:px-14 py-4 max-sm:pb-8 text-[#6e777f] flex justify-center sm:justify-between items-center gap-y-4 max-lg:flex-col">
       <p>
         All copyrights are reserved to{" "}
         <span className="font-bold">{`Askgram ® ${currentYear}`}</span>
