@@ -16,7 +16,7 @@ export const meta: MetaFunction = () => ([
 const NUMBER_OF_SLIDES = 2;
 
 export default function Index() {
-  const [currentSlide, setCurrentSlide] = useState(1);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [slideSelectedByUser, setSlideSelectedByUser] = useState(false);
 
@@ -25,7 +25,7 @@ export default function Index() {
       if (isSearchFocused || slideSelectedByUser) return;
       const nextIndex = (currentSlide + 1) % NUMBER_OF_SLIDES;
       setCurrentSlide(nextIndex);
-    }, 10000);
+    }, 30000);
 
     return () => {
       clearInterval(interval);
@@ -46,7 +46,7 @@ export default function Index() {
   }
 
   return (
-    <div className='flex-1 relative'>
+    <div className='flex-1 flex flex-col relative'>
       <div className='flex-1 flex sm:items-center overflow-y-auto max-xl:pb-40'>
         {getHomeContent()}
       </div>
