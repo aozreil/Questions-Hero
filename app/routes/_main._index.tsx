@@ -39,26 +39,35 @@ export default function Index() {
 
   const getHomeContent = () => {
     switch (currentSlide) {
-      case 0: return <LandingAboutSlide />;
-      case 1: return  <LandingSearchSlide setIsSearchFocused={setIsSearchFocused} />;
+      case 0: return <LandingSearchSlide setIsSearchFocused={setIsSearchFocused} />;
+      case 1: return  <LandingAboutSlide />;
       default: return <LandingAboutSlide />;
     }
   }
 
   return (
-    <section className='flex-1 flex flex-col justify-between'>
-      <div className='flex-1 flex sm:items-center'>
+    <div className='flex-1 relative'>
+      <div className='flex-1 flex sm:items-center overflow-y-auto max-xl:pb-40'>
         {getHomeContent()}
       </div>
-      <Footer
-        slidesNavigator={
-          <SlidesNavigator
-            currentSlide={currentSlide}
-            setCurrentSlide={setSlideByUser}
-            numberOfSlides={NUMBER_OF_SLIDES}
-          />
-        }
-      />
-    </section>
+      <div className='fixed w-full bottom-0 z-40 bg-[#f7f8fa] h-fit flex flex-col items-center'>
+        <SlidesNavigator
+          currentSlide={currentSlide}
+          setCurrentSlide={setSlideByUser}
+          numberOfSlides={NUMBER_OF_SLIDES}
+          className='lg:hidden w-fit mb-4'
+        />
+        <Footer
+          slidesNavigator={
+            <SlidesNavigator
+              currentSlide={currentSlide}
+              setCurrentSlide={setSlideByUser}
+              numberOfSlides={NUMBER_OF_SLIDES}
+              className='max-lg:hidden'
+            />
+          }
+        />
+      </div>
+    </div>
   );
 }

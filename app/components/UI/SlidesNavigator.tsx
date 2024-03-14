@@ -1,12 +1,15 @@
+import clsx from "clsx";
+
 interface Props {
   setCurrentSlide: (slideNumber: number) => void;
   currentSlide: number;
   numberOfSlides: number;
+  className?: string;
 }
 
-export default function SlidesNavigator({ currentSlide, numberOfSlides, setCurrentSlide }: Props) {
+export default function SlidesNavigator({ currentSlide, numberOfSlides, setCurrentSlide, className }: Props) {
   return (
-    <div className='flex items-center space-x-3 sm:space-x-1.5 bg-[#afafb0] px-3 py-2.5 sm:p-2.5 rounded-full'>
+    <div className={clsx('flex items-center space-x-3 sm:space-x-1.5 bg-[#afafb0] px-3 py-2.5 sm:p-2.5 rounded-full', className)}>
       {Array(numberOfSlides).fill('').map((slide, index) => (
         <div
           key={index}
