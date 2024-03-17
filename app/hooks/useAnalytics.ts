@@ -45,11 +45,22 @@ export function useAnalytics() {
     });
   }
 
+  function trackSearchEvent(searchTerm: string) {
+    analytics.forEach(el => {
+      try {
+        el.trackSearchEvent(searchTerm);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }
+
 
   return {
     identifyUserById,
     trackEvent,
     trackLoginEvent,
-    trackSignUpEvent
+    trackSignUpEvent,
+    trackSearchEvent
   };
 }

@@ -3,6 +3,7 @@ import clsx from "clsx";
 import Loader from "~/components/UI/Loader";
 import { useEffect, useRef } from "react";
 import { useOverlay } from "~/routes/_main";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 interface Props {
   className?: string;
@@ -15,11 +16,11 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   const navigation = useNavigation();
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
-  const mobileInputRef = useRef<HTMLInputElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const { setOverlayVisible, overlayVisible } = useOverlay();
   const isSearching = navigation.state === 'loading' && navigation.formAction === '/search';
   const searchOutsideSearchPage = !location?.pathname?.includes('search')
+  const { trackSearchEvent } = useAnalytics();
 
   useEffect(() => {
     const searchTerm = searchParams?.get('term') ?? undefined;
@@ -49,13 +50,13 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
     setOverlayVisible(false);
     isSearchExpanded && setIsSearchExpanded && setIsSearchExpanded(false);
     inputRef.current?.blur();
+    trackSearchEvent(inputRef.current ? inputRef.current.value : '');
   }
 
   const clearExpandedSearch = () => {
     if (setIsSearchExpanded) {
       setOverlayVisible(false);
       setIsSearchExpanded(false);
-      if(mobileInputRef.current) mobileInputRef.current.value = ''
     }
   }
 
