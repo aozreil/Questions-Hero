@@ -3,6 +3,7 @@ import type { AxiosRequestConfig } from "axios";
 import { isbot } from "isbot";
 import {getCookie} from "~/services/cookie.service";
 import { BASE_URL } from "~/config/enviromenet";
+import { VERSION_DATE } from "~/config/enviroment.server";
 
 const Axios = axios.create({
   baseURL: BASE_URL,
@@ -12,16 +13,16 @@ export interface RequestConfigCustomize extends AxiosRequestConfig {
   req?: Request;
 }
 
-export default class AxiosInstance {
+export default class AxiosServerInstance {
   static get<T>(url: string, config?: RequestConfigCustomize) {
     return Axios.get<T>(url, prepareConfig(config));
   }
 
-  static post<T>(url: string, payload: any, config?: RequestConfigCustomize) {
+  static post<T>(url: string, payload?: unknown, config?: RequestConfigCustomize) {
     return Axios.post<T>(url, payload, prepareConfig(config));
   }
 
-  static put<T>(url: string, payload: any, config?: RequestConfigCustomize) {
+  static put<T>(url: string, payload?: unknown, config?: RequestConfigCustomize) {
     return Axios.put<T>(url, payload, prepareConfig(config));
   }
 
@@ -52,8 +53,8 @@ function prepareConfig(config?: RequestConfigCustomize) {
     ...config,
     headers: {
       ...config?.headers,
-      'web-version': '2-11-2024 AskGram',
-      "User-Agent": config?.req?.headers.get("User-Agent") ?? '',
+      'web-version':VERSION_DATE,
+      "User-Agent": `AskgramServer - ${config?.req?.headers.get("User-Agent")?? ''}` ,
     },
     params: {
       ...config?.params,

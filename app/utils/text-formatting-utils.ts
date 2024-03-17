@@ -912,7 +912,7 @@ export const getTextFormatted = (text?: string, type?: string) => {
         newText = newText.replace("<br>A)", "<br><br>A)");
     }
 
-    return newText;
+    return newText ?? '';
 }
 
 export function removeKatexFromString(text: string): string {

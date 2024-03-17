@@ -3,7 +3,28 @@
 @tailwind utilities;
 
 html {
-    font-size: 16px;
+    font-size: 12px;
+    @media screen(sm) {
+        font-size: 14px;
+    }
+    @media screen(md) {
+        font-size: 16px;
+    }
+}
+
+
+input[type=search]::-webkit-search-cancel-button{
+    position:relative;
+    -webkit-appearance: none;
+    height: 1em;
+    width: 1em;
+    border-radius: 0.5em;
+    background: url('/assets/images/search-cancel.svg') no-repeat 50% 50%;
+    background-size: contain;
+}
+input[type="search"]:focus::-webkit-search-cancel-button {
+    opacity: .3;
+    pointer-events: all;
 }
 
 .terms-link {
@@ -21,4 +42,126 @@ html {
 
 .terms-line-circle {
     box-shadow: 9px 0 0 1px #f7f8fa, -9px 0 0 1px #f7f8fa;
+}
+
+
+.terms-link {
+    border-bottom: solid 2px #0000EE;
+    color: #0000EE;
+}
+
+.dashedList {
+    margin-left: 15px;
+}
+
+.content-loader-component {
+    display: block;
+    overflow: hidden;
+}
+
+.animated-background {
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #fff;
+    background: linear-gradient(to right, #ebf0fa 8%, #dfe8fa 25%, #eff2fa 33%);
+    background-size: 2400px 104px;
+    height: 100%;
+    position: relative;
+}
+
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: -1200px 0
+    }
+    100%{
+        background-position: 1200px 0
+    }
+}
+
+@keyframes name-of-animation {
+    0%    { filter: hue-rotate(60deg) }
+    20%   { filter: hue-rotate(120deg) }
+    40%   { filter: hue-rotate(180deg) }
+    60%   { filter: hue-rotate(240deg) }
+    80%   { filter: hue-rotate(300deg) }
+    100%  { filter: hue-rotate(360deg) }
+}
+
+.bg-effect {
+    animation: name-of-animation 15s infinite;
+}
+
+.textarea-scrollable::-webkit-scrollbar-thumb {
+    background: #9d9d9d;
+    border-radius: 3px;
+    max-width: 2px;
+}
+
+.textarea-scrollable::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px #e5e5e5;
+    border-radius: 10px;
+    background: #fefefe;
+}
+
+.slider::before, .slider::after {
+    background: linear-gradient(to right, #f7f8fa 0%, rgba(255, 255, 255, 0) 100%);
+    content: "";
+    height: 100%;
+    position: absolute;
+    width: 100px;
+    z-index: 2;
+}
+
+.slider::after {
+    right: 0;
+    top: 0;
+    -webkit-transform: rotateZ(180deg);
+    transform: rotateZ(180deg);
+}
+
+.slider::before {
+    left: 0;
+    top: 0;
+}
+
+.slider .slide-track {
+    animation: scroll 80s linear infinite;
+    display: flex;
+    width: calc(110px * 8);
+
+}
+
+.slider .slide-track:hover {
+    animation-play-state: paused;
+}
+
+.slider .slide {
+    height: 23px;
+    width: 110px;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-110px * 6));
+    }
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 4px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+    background: #efefef;
+    border-radius: 5px;
 }

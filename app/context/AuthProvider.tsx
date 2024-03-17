@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import LoginModal from "~/components/LoginModal";
 import { getMe, loginWithGoogle, logoutAPI } from "~/apis/userAPI";
 import { AxiosError } from "axios";
+import { IUser } from "~/models/questionModel";
 import { useAnalytics } from "~/hooks/useAnalytics";
 
 interface Props {

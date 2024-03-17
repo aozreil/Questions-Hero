@@ -12,9 +12,8 @@ import {
     getQuestionConcepts,
     getQuestionObjectives,
     getUsersInfo,
-    handleError,
 } from "~/apis/questionsAPI.server";
-import {LoaderFunctionArgs, redirect, useLoaderData} from "react-router";
+import { redirect, useLoaderData} from "@remix-run/react";
 import {
     IAnswer,
     IConcept,
@@ -32,10 +31,14 @@ import { BASE_URL } from "~/config/enviromenet";
 import { isbot } from "isbot";
 import invariant from "tiny-invariant";
 import { getKatexLink } from "~/utils/external-links";
-import { getCleanText } from "~/utils/text-formatting-utils.server";
+import { getCleanText } from "~/utils/text-formatting-utils";
+import {  LoaderFunctionArgs } from "@remix-run/router";
 
-export const meta: MetaFunction = ({ data }) => {
-    const { canonical, question, answers, baseUrl, structuredData } = data as LoaderData;
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+    if(!data){
+        return [];
+    }
+    const { canonical, question, structuredData } = data;
     return [
         ...getSeoMeta({
             title: question?.title ?? question?.text,
@@ -43,7 +46,7 @@ export const meta: MetaFunction = ({ data }) => {
             canonical,
         }),
         ...getStructuredData(data as LoaderData),
-        ...[ question?.includesLatex ? getKatexLink(baseUrl) : {} ],
+        ...[ question?.includesLatex ? getKatexLink() : {} ],
     ];
 };
 
@@ -81,11 +84,11 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             internalAnswers,
         ] = await Promise.all([
             getQuestionById(id),
-            getAnswerById(id).catch((e) => handleError(e, [])),
-            getQuestionConcepts(id).catch((e) => handleError(e, [])),
-            getQuestionObjectives(id).catch((e) => handleError(e, [])),
+            getAnswerById(id).catch(() => []),
+            getQuestionConcepts(id).catch(() => []),
+            getQuestionObjectives(id).catch(() => []),
             getInternalQuestion(id, isBot, { req: request }),
-            getInternalAnswers(id, isBot, { req: request }),
+            getInternalAnswers(id, isBot, { req: request })
         ]);
 
         if (question?.error) return redirect('/');
@@ -94,9 +97,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
         const userIds = [];
         if (question?.user_id) userIds.push(question.user_id);
         if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
-        const users = userIds?.length
-          ? await getUsersInfo(userIds).catch((e) => handleError(e, []))
-          : [];
+        const users = userIds?.length ? await getUsersInfo(userIds).catch(() => []) : [];
 
         const canonical = `${BASE_URL}/question/${question?.slug}`;
 
@@ -113,16 +114,15 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             verifiedAnswer: getCleanText(answerText)
         }
 
-        return json<LoaderData>({
+        return json({
             question: QuestionClass.questionExtraction(question),
-            answers: answers?.map(answer => QuestionClass.answerExtraction(answer)),
+            answers: answers?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer)),
             concepts,
             objectives,
             users,
             canonical,
             internalQuestion,
             internalAnswers,
-            baseUrl: BASE_URL,
             structuredData,
         }, {
             headers: {
@@ -144,15 +144,15 @@ export const headers: HeadersFunction = () => ({
 
 export default function QuestionPage() {
     const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined);
-    const {question, answers, users, concepts, objectives} = useLoaderData() as LoaderData;
+    const {question, answers, users, concepts, objectives} = useLoaderData<typeof loader>() ;
 
     return (
         <>
             <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
-            <main className='container max-xs:mx-0 w-full h-fit flex flex-col items-center pt-4 sm:py-4 sm:px-4'>
+            <main className='sm:container max-xs:mx-0 w-full h-fit flex flex-col items-center sm:pt-4 sm:py-4 sm:px-4'>
                 <div className='w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit'>
                     <div className='flex flex-col lg:flex-row justify-center gap-4'>
-                        <div className='w-full h-fit sm:max-w-[34rem] lg:w-[34rem] flex flex-col bg-[#f1f5fb] border border-[#00000038] sm:rounded-xl overflow-hidden'>
+                        <div className='w-full h-fit sm:max-w-[34rem] lg:w-[34rem] flex flex-col bg-[#f1f5fb] sm:border sm:border-[#00000038] sm:rounded-xl overflow-hidden'>
                             <div className='flex flex-col items-center w-full rounded-b-xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
                                 <QuestionContent
                                     question={question}
@@ -163,7 +163,7 @@ export default function QuestionPage() {
                                         title='Definitions'
                                         content={(
                                             <>
-                                                {concepts.map((concept) => (
+                                                {concepts?.map((concept) => (
                                                     !concept?.definition ? null : (
                                                         <div key={concept?.concept} className='text-sm mt-4'>
                                                             <p className='mb-1 font-bold'>{concept?.concept}</p>
@@ -224,17 +224,6 @@ const getStructuredData = (data: LoaderData) => {
 
     const getAnswer = (index: number) => {
         return internalAnswers?.[index] ?? answers?.[index];
-    }
-
-    const getAnswerText = (index: number) => {
-        const answer = getAnswer(index);
-        let answerText = answer?.text ?? `The Answer of ${questionTitle}`;
-        if (answer?.answer_steps) {
-            for (const step of answer.answer_steps) {
-                answerText = answerText + ' ' + step?.text;
-            }
-        }
-        return answerText;
     }
 
     const Educational = {

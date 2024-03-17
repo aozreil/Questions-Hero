@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { axiosApiInstance } from "~/interceptors/client-interceptors";
+import { IUser } from "~/models/questionModel";
 
 export async function loginWithGoogle(jwt_token: string) {
   const res = await axios.post<IUser>(
