@@ -21,7 +21,7 @@ export default function Header() {
         <div className={`container flex items-center justify-between`}>
           <div className='flex items-center pr-2 flex-1'>
             <Link to='/' className={clsx('block w-fit mr-5 sm:mr-6', isSearchExpanded && 'hidden')}>
-                <img src='/assets/images/logo.svg' alt='logo' className='h-6 sm:h-7' />
+                <img src='/assets/images/logo.svg' alt='logo' className='h-6 sm:h-7 w-auto object-contain' height={24} width={112} />
             </Link>
             {!shouldHideSearch && <HeaderSearch setIsSearchExpanded={setIsSearchExpanded} isSearchExpanded={isSearchExpanded} />}
           </div>
