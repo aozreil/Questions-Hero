@@ -1,16 +1,17 @@
 import { json, MetaFunction } from "@remix-run/node";
 import { searchQuestionsDetailsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import SearchQuestion from "~/components/question/SearchQuestion";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
 import { BASE_URL } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
-import { Await, defer, useLoaderData, useNavigation } from "@remix-run/react";
+import { Await, defer, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -46,6 +47,17 @@ export default function SearchPage() {
   const [showVerifiedAnswer, setShowVerifiedAnswer] = useState(true);
   const navigation = useNavigation();
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
+  const [searchParams] = useSearchParams();
+  const { trackEvent } = useAnalytics();
+
+  useEffect(() => {
+    const search_term = searchParams.get('term');
+    if (search_term) {
+      trackEvent("search", {
+        search_term,
+      })
+    }
+  }, [searchParams]);
 
   const handleAnswerOpen = (questionId: string) => {
     if (window.innerWidth < 1024) return;

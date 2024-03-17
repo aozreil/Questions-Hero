@@ -15,7 +15,6 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   const navigation = useNavigation();
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
-  const mobileInputRef = useRef<HTMLInputElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const { setOverlayVisible, overlayVisible } = useOverlay();
   const isSearching = navigation.state === 'loading' && navigation.formAction === '/search';
@@ -55,7 +54,6 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
     if (setIsSearchExpanded) {
       setOverlayVisible(false);
       setIsSearchExpanded(false);
-      if(mobileInputRef.current) mobileInputRef.current.value = ''
     }
   }
 
