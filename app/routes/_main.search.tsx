@@ -51,9 +51,12 @@ export default function SearchPage() {
   const { trackEvent } = useAnalytics();
 
   useEffect(() => {
-    trackEvent("search", {
-      search_term: searchParams.get('term'),
-    })
+    const search_term = searchParams.get('term');
+    if (search_term) {
+      trackEvent("search", {
+        search_term,
+      })
+    }
   }, [searchParams]);
 
   const handleAnswerOpen = (questionId: string) => {
