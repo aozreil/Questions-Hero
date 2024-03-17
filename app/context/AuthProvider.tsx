@@ -33,10 +33,8 @@ export default function AuthProvider({ children }: Props) {
       if (data?.view_name) {
         setUser(data);
       }
-    }).catch((e) => {
-      if (e instanceof AxiosError && e.status !== 401) {
-        console.error(e);
-      }
+    }).catch(() => {
+
     }).finally(() => {
       setIsLoadingUserData(false);
     });
