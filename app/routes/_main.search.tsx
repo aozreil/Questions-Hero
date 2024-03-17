@@ -38,7 +38,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   return defer({
-    data: searchQuestionsDetailsAPI(query),
+    data: searchQuestionsDetailsAPI(query)
   });
 }
 
