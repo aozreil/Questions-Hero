@@ -8,7 +8,7 @@ import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
 import { BASE_URL } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
-import { Await, defer, useLoaderData, useNavigation } from "@remix-run/react";
+import { Await, defer, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { useAnalytics } from "~/hooks/useAnalytics";
@@ -39,20 +39,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   return defer({
     data: searchQuestionsDetailsAPI(query),
-    query,
   });
 }
 
 export default function SearchPage() {
-  const { data, query } = useLoaderData<typeof loader>();
+  const { data } = useLoaderData<typeof loader>();
   const [showVerifiedAnswer, setShowVerifiedAnswer] = useState(true);
   const navigation = useNavigation();
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
-  const { trackSearchEvent } = useAnalytics();
+  const [searchParams] = useSearchParams();
+  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
-    trackSearchEvent(query);
-  }, [query]);
+    trackEvent("search", {
+      search_term: searchParams.get('term'),
+    })
+  }, [searchParams]);
 
   const handleAnswerOpen = (questionId: string) => {
     if (window.innerWidth < 1024) return;

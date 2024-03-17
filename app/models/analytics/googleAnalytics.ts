@@ -20,12 +20,6 @@ class GoogleAnalytics implements AnalyticsBase {
   identifyUserById(userId: string): void {
     gtag('set', 'user_id', userId)
   }
-
-  trackSearchEvent(searchTerm: string): void {
-    this.trackEvent("search", {
-      search_term: searchTerm
-    });
-  }
 }
 
 

@@ -7,7 +7,5 @@ export default abstract class AnalyticsBase {
 
   abstract trackSignUpEvent(method: AnalyticsLoginMethod): void;
 
-  abstract identifyUserById(userId: string): void;
-
-  abstract trackSearchEvent(searchTerm: string): void;
+  abstract identifyUserById(userId: string): void
 }
