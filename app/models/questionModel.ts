@@ -71,6 +71,7 @@ export interface IObjective {
 }
 
 export interface IUser {
+    id: number,
     view_name: string,
     user_id: number
 }
