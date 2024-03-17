@@ -1,7 +1,7 @@
 import { json, MetaFunction } from "@remix-run/node";
 import { searchQuestionsDetailsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import SearchQuestion from "~/components/question/SearchQuestion";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
@@ -11,6 +11,7 @@ import { getSeoMeta } from "~/utils/seo";
 import { Await, defer, useLoaderData, useNavigation } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -37,15 +38,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   return defer({
-    data: searchQuestionsDetailsAPI(query)
+    data: searchQuestionsDetailsAPI(query),
+    query,
   });
 }
 
 export default function SearchPage() {
-  const { data } = useLoaderData<typeof loader>();
+  const { data, query } = useLoaderData<typeof loader>();
   const [showVerifiedAnswer, setShowVerifiedAnswer] = useState(true);
   const navigation = useNavigation();
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
+  const { trackSearchEvent } = useAnalytics();
+
+  useEffect(() => {
+    trackSearchEvent(query);
+  }, [query]);
 
   const handleAnswerOpen = (questionId: string) => {
     if (window.innerWidth < 1024) return;

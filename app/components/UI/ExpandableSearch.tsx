@@ -3,7 +3,6 @@ import { Form } from "@remix-run/react";
 import { useOverlay } from "~/routes/_main";
 import clsx from "clsx";
 import CloseIcon from "~/components/icons/CloseIcon";
-import { useAnalytics } from "~/hooks/useAnalytics";
 
 interface Props {
     setIsSearchFocused: (isFocused: boolean) => void;
@@ -15,7 +14,6 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
     const formRef = useRef<HTMLFormElement>(null);
     const submitButton = useRef<HTMLButtonElement>(null);
     const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
-    const { trackSearchEvent } = useAnalytics();
 
     const onFocus = useCallback(() => {
         setIsSearchFocused(true);
@@ -79,11 +77,6 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
         onBlur();
     }, []);
 
-    const handleSubmit = useCallback(() => {
-        trackSearchEvent(textAreaRef.current ? textAreaRef.current.value : '');
-        onBlur();
-    }, [])
-
     return (
         <Form
           action='/search'
@@ -91,7 +84,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
           className={clsx(`z-10 py-2 sm:py-3.5 px-5 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%]
            md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
           onBlur={handleBlur}
-          onSubmit={handleSubmit}
+          onSubmit={onBlur}
         >
             <button ref={submitButton} className='flex-shrink-0' type='submit'>
                 <img
