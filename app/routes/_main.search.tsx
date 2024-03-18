@@ -1,7 +1,7 @@
 import { json, MetaFunction } from "@remix-run/node";
 import { searchQuestionsDetailsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import SearchQuestion from "~/components/question/SearchQuestion";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
@@ -49,6 +49,7 @@ export default function SearchPage() {
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
   const [searchParams] = useSearchParams();
   const { trackEvent } = useAnalytics();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const search_term = searchParams.get('term');
@@ -62,8 +63,8 @@ export default function SearchPage() {
   const handleAnswerOpen = (questionId: string) => {
     if (window.innerWidth < 1024) return;
     const element = document.getElementById(`q-${questionId}`);
-    if (element) {
-      window.scroll({
+    if (element && containerRef.current) {
+      containerRef.current.scroll({
         top: element?.offsetTop - 150,
         behavior: 'smooth'
       })
@@ -71,7 +72,7 @@ export default function SearchPage() {
   }
 
   return (
-    <section className="pb-40">
+    <section className="pb-40 max-h-[calc(100vh-96px)] overflow-y-auto" ref={containerRef}>
       <Suspense fallback={
         <SearchLoading />
       }>

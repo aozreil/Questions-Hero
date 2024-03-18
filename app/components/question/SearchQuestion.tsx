@@ -22,10 +22,6 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
   const { focusedOverlayStyles, overlayVisible, setOverlayVisible } = useOverlay();
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
-  }, [isOpen]);
-
-  useEffect(() => {
     if (window.innerWidth > 1024 && !overlayVisible && isOpen) {
       setIsOpen(false);
     }
