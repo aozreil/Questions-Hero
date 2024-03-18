@@ -12,6 +12,7 @@ import { Await, defer, useLoaderData, useNavigation, useSearchParams } from "@re
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { useAnalytics } from "~/hooks/useAnalytics";
+import { useOverlay } from "~/routes/_main";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -49,6 +50,7 @@ export default function SearchPage() {
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
   const [searchParams] = useSearchParams();
   const { trackEvent } = useAnalytics();
+  const { overlayVisible } = useOverlay();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -72,7 +74,10 @@ export default function SearchPage() {
   }
 
   return (
-    <section className="pb-40 max-h-[calc(100vh-96px)] overflow-y-auto" ref={containerRef}>
+    <section
+      ref={containerRef}
+      className={`pb-40 search-page-scroll max-h-[calc(100vh-96px)] ${overlayVisible ? 'overflow-hidden pr-[12px]' : 'overflow-y-auto'}`}
+    >
       <Suspense fallback={
         <SearchLoading />
       }>
