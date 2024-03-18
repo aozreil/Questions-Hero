@@ -5,6 +5,7 @@ import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { useOverlay } from "~/routes/_main";
+import UserProfile from "~/components/UI/UserProfile";
 
 export default function Header() {
     const location = useLocation();
@@ -35,11 +36,8 @@ export default function Header() {
               </section>
             ) : (
               <Menu as='div' className='relative'>
-                <Menu.Button
-                  className='cursor-pointer h-9 w-9 bg-[#002237] text-white text-sm flex items-center justify-center
-                      rounded-full border-2 border-[#5dc9a1] flex-shrink-0 font-semibold'
-                >
-                  {getUserInitials(user?.view_name)}
+                <Menu.Button>
+                  <UserProfile user={user} className='cursor-pointer overflow-hidden h-9 w-9' />
                 </Menu.Button>
                 <Transition
                   as={Fragment}
@@ -66,13 +64,4 @@ export default function Header() {
         </div>
         </header>
     )
-}
-
-const getUserInitials = (userName?: string) => {
-  if (!userName) return 'A';
-  const nameFields = userName?.split(' ');
-  const firstInitial = nameFields?.[0]?.charAt(0)?.toUpperCase() ?? '';
-  const secondInitial = nameFields?.[1]?.charAt(0)?.toUpperCase() ?? '';
-
-  return `${firstInitial}${secondInitial}`
 }

@@ -2,7 +2,7 @@ import { IUsers } from "~/models/questionModel";
 import {differenceInDays, formatDistance, format} from "date-fns";
 
 export function getUser (userId?: number, users?: IUsers) {
-    if (userId && users?.hasOwnProperty(userId)) return users[userId];
+    if (userId && users?.hasOwnProperty(userId)) return users[userId]?.view_name;
     return 'Askgram User';
 }
 

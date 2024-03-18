@@ -156,7 +156,7 @@ export default function QuestionPage() {
                             <div className='flex flex-col items-center w-full rounded-b-xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
                                 <QuestionContent
                                     question={question}
-                                    userName={question?.user_id ? users[question.user_id] : undefined}
+                                    user={question?.user_id ? users[question.user_id] : undefined}
                                 />
                                 {!!concepts?.length && (
                                     <QuestionSection
@@ -193,7 +193,7 @@ export default function QuestionPage() {
                                 <div className='mb-2 px-3 flex flex-col items-center'>
                                     <AnswerCard
                                         answer={answers[0]}
-                                        userName={answers[0]?.user_id ? users[answers[0]?.user_id] : undefined}
+                                        user={answers[0]?.user_id ? users[answers[0]?.user_id] : undefined}
                                     />
                                 </div>
                             )}

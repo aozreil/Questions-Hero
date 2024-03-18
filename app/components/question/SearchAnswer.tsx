@@ -1,10 +1,11 @@
-import { getCreatedAt, getUserInitials } from "~/utils";
+import { getCreatedAt } from "~/utils";
 import ContentLoader from "~/components/UI/ContentLoader";
 import { Link } from "@remix-run/react";
 import Loader from "~/components/UI/Loader";
 import React, { useEffect } from "react";
 import { IAnswer, IUser } from "~/models/questionModel";
 import clsx from "clsx";
+import UserProfile from "~/components/UI/UserProfile";
 
 interface Props {
   answers?: IAnswer[];
@@ -33,9 +34,7 @@ export default function SearchAnswer({ answers, askedBy, slug, close, handleAnsw
                 <div className='relative'>
                   {!!askedBy ? (
                     <div className='flex space-x-3'>
-                      <div className='h-12 w-12 bg-[#002237] text-white flex items-center justify-center rounded-full border-2 border-[#5dc9a1] flex-shrink-0 font-semibold'>
-                        {getUserInitials(askedBy?.view_name)}
-                      </div>
+                      <UserProfile user={askedBy} className='h-12 w-12' />
                       <div className='flex flex-col items-start text-black'>
                         <p className='font-bold'>{askedBy?.view_name ?? 'Answered By Askgram User'}</p>
                         {!!verifiedAnswer?.created_at && <p className='mt-1 text-sm'>{getCreatedAt(verifiedAnswer?.created_at)}</p>}
