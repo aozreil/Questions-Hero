@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { Form } from "@remix-run/react";
-import { useOverlay } from "~/routes/_main";
+import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import CloseIcon from "~/components/icons/CloseIcon";
 

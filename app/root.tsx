@@ -19,6 +19,7 @@ import FavIcon from "~/components/UI/FavIcon";
 import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
 import AuthProvider from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
+import OverlayProvider from "~/context/OverlayProvider";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({}),
@@ -52,7 +53,9 @@ function Document({children}: {children: ReactNode}) {
   </head>
   <body>
     <AuthProvider>
-      {children}
+      <OverlayProvider>
+        {children}
+      </OverlayProvider>
     </AuthProvider>
   </body>
   </html>;
@@ -74,30 +77,34 @@ export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    if(error.status === 404){
-      return  <Document>
-        <Header/>
-        <NotFoundPage/>
+    if (error.status === 404) {
+      return <Document>
+        <Header />
+        <NotFoundPage />
       </Document>;
     }
     return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
+      <Document>
+        <div>
+          <h1>
+            {error.status} {error.statusText}
+          </h1>
+          <p>{error.data}</p>
+        </div>
+      </Document>
     );
   } else if (error instanceof Error) {
     return (
-      <div>
-        <h1>Error</h1>
-        <p>{error.message}</p>
-        <p>The stack trace is:</p>
-        <pre>{error.stack}</pre>
-      </div>
+      <Document>
+        <div>
+          <h1>Error</h1>
+          <p>{error.message}</p>
+          <p>The stack trace is:</p>
+          <pre>{error.stack}</pre>
+        </div>
+      </Document>
     );
   } else {
-    return <h1>Unknown Error</h1>;
+    return <Document><h1>Unknown Error</h1></Document>;
   }
 }
