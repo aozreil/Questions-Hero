@@ -29,7 +29,7 @@ export class QuestionClass {
         const usersObject: IUsers = {};
         for (const user of users) {
             if (user?.user_id && user?.view_name) {
-                usersObject[user.user_id] = user.view_name
+                usersObject[user.user_id] = user
             }
         }
 
@@ -77,7 +77,7 @@ export interface IUser {
 }
 
 export interface IUsers {
-    [user_id: number]: string,
+    [user_id: number]: IUser,
 }
 
 export interface IInternalQuestion {
