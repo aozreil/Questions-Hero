@@ -168,3 +168,17 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     background: #efefef;
     border-radius: 5px;
 }
+
+.search-page-scroll::-webkit-scrollbar {
+    width: 12px;
+    height: 10px;
+}
+
+.search-page-scroll::-webkit-scrollbar-thumb {
+    background: #cdd1d6;
+}
+
+.search-page-scroll::-webkit-scrollbar-track {
+    background: #f5f6f7;
+    border-radius: 5px;
+}
