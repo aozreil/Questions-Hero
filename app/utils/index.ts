@@ -36,3 +36,31 @@ export function getUserInitials (userName?: string) {
 
     return `${firstInitial}${secondInitial}`
 }
+
+export function debounce<Params extends any[]>(
+  func: (...args: Params) => void,
+  delay: number
+) {
+    let timer: NodeJS.Timeout | undefined = undefined;
+    return function (this: any, ...args: Params) {
+        if (timer === undefined) {
+            func.apply(this, args);
+        }
+
+        clearTimeout(timer);
+        timer = setTimeout(() => timer = undefined, delay);
+        return timer;
+    }
+}
+
+export function debounceLeading<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number
+): (...args: Parameters<T>) => void {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    return (...args: Parameters<T>) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func(...args), delay);
+    };
+}

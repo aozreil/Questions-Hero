@@ -1,30 +1,7 @@
 import axios from "axios";
 import { SEARCH_CLUSTER } from "~/config/enviroment.server";
 import { getQuestionsById } from "~/apis/questionsAPI.server";
-
-export interface SearchQuestionResponse {
-  "id": string,
-  "text": string,
-  "user_id": number
-}
-
-interface SearchResponseInterface {
-  "banners": {
-    "source": string,
-    "source_url": string,
-  }[],
-  "count": number,
-  "data": SearchQuestionResponse[],
-  "page": number
-  "size": number
-  "subjectsCounts": {
-    "additionalProp1": number
-    "additionalProp2": number
-    "additionalProp3": number
-  },
-  "term": string,
-  "uuid": string,
-}
+import { SearchResponseInterface } from "~/models/searchModel";
 
 export async function searchQuestionsDetailsAPI(term: string) {
   const searchResponse = await searchQuestionsAPI(term)
