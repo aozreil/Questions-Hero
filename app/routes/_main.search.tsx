@@ -76,7 +76,7 @@ export default function SearchPage() {
   return (
     <section
       ref={containerRef}
-      className={`pb-40 search-page-scroll max-h-[calc(100vh-96px)] ${overlayVisible ? 'overflow-hidden pr-[12px]' : 'overflow-y-auto'}`}
+      className={`pb-40 search-page-scroll max-h-[calc(100vh-6rem)] ${overlayVisible ? 'overflow-hidden pr-[12px]' : 'overflow-y-auto'}`}
     >
       <Suspense fallback={
         <SearchLoading />
