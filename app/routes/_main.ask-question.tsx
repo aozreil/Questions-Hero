@@ -64,14 +64,17 @@ export default function AskQuestion() {
 
   const handleChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textLength = e?.target?.value?.length ?? 0;
-    if (hasValue && textLength < 10) setHasValue(false);
+    if (hasValue && textLength < 10) {
+      setHasValue(false);
+      setSearchData([]);
+      searchRequestedWithLength.current = 0;
+    }
     if (!hasValue && textLength >= 10) setHasValue(true);
 
     shouldRequestSearch(textLength);
   }
 
   const shouldRequestSearch = debounceLeading(async (textLength: number, forceUpdate?: boolean) => {
-    console.log('here')
     const prevLength = searchRequestedWithLength.current;
     if (forceUpdate || (
       textLength && Math.abs(textLength - prevLength) > CHAR_CHANGE_UPDATE
@@ -115,7 +118,7 @@ export default function AskQuestion() {
   }, [])
 
   return (
-    <div className='flex-1 bg-[#070707] px-4 md:px-10 pt-14'>
+    <div className='flex-1 max-h-[calc(100vh-6rem)] overflow-y-auto bg-[#070707] px-4 md:px-10 pt-14'>
       <div className='container w-full flex flex-col text-white'>
         <h1 className='text-4xl lg:text-5xl font-bold mb-4'>Ask your question</h1>
         <p className='text-2xl lg:text-3xl w-[70%]' >Need assistance with your homework? Feel free to ask your question here and get the help you need to complete your assignment!</p>
@@ -138,24 +141,24 @@ export default function AskQuestion() {
             </section>
             <section className='w-full flex-1 py-2 flex items-start justify-between text-sm'>
               <div className='flex space-x-2 w-[60%]'>
-                <input className='hidden' accept="image/png, image/gif, image/jpeg" multiple id="upload-files" type="file" onChange={handleFileChange} />
-                <label className='cursor-pointer py-2 px-2.5 h-fit border border-black rounded-lg' htmlFor='upload-files'>
-                  <img src='/assets/images/attachments.svg' alt='close' className='w-4 h-4' />
-                </label>
-                {!!files?.length && (
-                  <div className='flex-1 space-y-2 overflow-hidden '>
-                    {files?.map(file => (
-                      <div key={file.lastModified} className='overflow-hidden bg-[#dfe4ea] flex-1 rounded-lg space-x-2.5 text-[#002237] py-1.5 px-2 flex items-center justify-between'>
-                        <p className='truncate w-full'>{file?.name}</p>
-                        <CloseIcon
-                          colorfill='#002237'
-                          className='w-2.5 h-2.5 mt-1 cursor-pointer'
-                          onClick={() => removeFile(file)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {/*<input className='hidden' accept="image/png, image/gif, image/jpeg" multiple id="upload-files" type="file" onChange={handleFileChange} />*/}
+                {/*<label className='cursor-pointer py-2 px-2.5 h-fit border border-black rounded-lg' htmlFor='upload-files'>*/}
+                {/*  <img src='/assets/images/attachments.svg' alt='close' className='w-4 h-4' />*/}
+                {/*</label>*/}
+                {/*{!!files?.length && (*/}
+                {/*  <div className='flex-1 space-y-2 overflow-hidden '>*/}
+                {/*    {files?.map(file => (*/}
+                {/*      <div key={file.lastModified} className='overflow-hidden bg-[#dfe4ea] flex-1 rounded-lg space-x-2.5 text-[#002237] py-1.5 px-2 flex items-center justify-between'>*/}
+                {/*        <p className='truncate w-full'>{file?.name}</p>*/}
+                {/*        <CloseIcon*/}
+                {/*          colorfill='#002237'*/}
+                {/*          className='w-2.5 h-2.5 mt-1 cursor-pointer'*/}
+                {/*          onClick={() => removeFile(file)}*/}
+                {/*        />*/}
+                {/*      </div>*/}
+                {/*    ))}*/}
+                {/*  </div>*/}
+                {/*)}*/}
               </div>
               <button
                 disabled={!hasValue || isPosting}
