@@ -2,7 +2,7 @@ import { IAnswer, IUser, QuestionClass } from "~/models/questionModel";
 import React, { useCallback, useEffect, useState } from "react";
 import { clientGetAnswer, clientGetUsers } from "~/apis/questionsAPI";
 import SearchAnswer from "~/components/question/SearchAnswer";
-import { useOverlay } from "~/routes/_main";
+import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import { Link } from "@remix-run/react";
 import { getTextFormatted } from "~/utils/text-formatting-utils";

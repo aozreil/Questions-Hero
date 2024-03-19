@@ -12,7 +12,7 @@ import { Await, defer, useLoaderData, useNavigation, useSearchParams } from "@re
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { useAnalytics } from "~/hooks/useAnalytics";
-import { useOverlay } from "~/routes/_main";
+import { useOverlay } from "~/context/OverlayProvider";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
