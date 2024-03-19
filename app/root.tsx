@@ -52,11 +52,11 @@ function Document({children}: {children: ReactNode}) {
     </script>
   </head>
   <body>
-  <OverlayProvider>
     <AuthProvider>
-      {children}
+      <OverlayProvider>
+        {children}
+      </OverlayProvider>
     </AuthProvider>
-  </OverlayProvider>
   </body>
   </html>;
 }
