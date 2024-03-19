@@ -2,7 +2,7 @@ import { Form, useLocation, useSearchParams, useNavigation } from "@remix-run/re
 import clsx from "clsx";
 import Loader from "~/components/UI/Loader";
 import { useEffect, useRef } from "react";
-import { useOverlay } from "~/routes/_main";
+import { useOverlay } from "~/context/OverlayProvider";
 
 interface Props {
   className?: string;

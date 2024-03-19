@@ -4,7 +4,7 @@ import { useAuth } from "~/context/AuthProvider";
 import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import clsx from "clsx";
-import { useOverlay } from "~/routes/_main";
+import { useOverlay } from "~/context/OverlayProvider";
 import UserProfile from "~/components/UI/UserProfile";
 
 export default function Header() {

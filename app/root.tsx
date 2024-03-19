@@ -19,6 +19,7 @@ import FavIcon from "~/components/UI/FavIcon";
 import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
 import AuthProvider from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
+import OverlayProvider from "~/context/OverlayProvider";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({}),
@@ -52,7 +53,9 @@ function Document({children}: {children: ReactNode}) {
   </head>
   <body>
     <AuthProvider>
-      {children}
+      <OverlayProvider>
+        {children}
+      </OverlayProvider>
     </AuthProvider>
   </body>
   </html>;
