@@ -1,7 +1,7 @@
 import { getWebSiteSchema } from "~/utils/seo-schema";
 
-const DEFAULT_META_TITLE = 'Askgram - Your Homework Help Community';
-const DEFAULT_META_DESCRIPTION = 'Askgram provides a platform for students, educators, and enthusiasts to collaborate, ask questions, and find answers in a supportive environment.';
+export const DEFAULT_META_TITLE = 'Askgram - Your Homework Help Community';
+export const DEFAULT_META_DESCRIPTION = 'Askgram provides a platform for students, educators, and enthusiasts to collaborate, ask questions, and find answers in a supportive environment.';
 
 export function getSeoMeta({ title, description, canonical } : { title?: string, description?: string, canonical?: string }) {
   const metaTitle = `${title || DEFAULT_META_TITLE}`;

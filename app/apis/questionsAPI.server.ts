@@ -9,6 +9,7 @@ import {
 } from "~/models/questionModel";
 import AxiosServerInstance, {RequestConfigCustomize} from "~/interceptors/http-interceptors.server";
 import {CONTENT_CLUSTER, USERS_CLUSTER} from "~/config/enviroment.server";
+import { AxiosRequestConfig } from "axios";
 
 export async function getQuestionById(id: string): Promise<IQuestion> {
    const response = await AxiosServerInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
@@ -88,4 +89,10 @@ export async function getInternalAnswers (
         console.error(e);
         return [];
     }
+}
+
+
+export async function getLatestAddedQuestions(config?: AxiosRequestConfig){
+    const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions/latest`, config);
+    return response?.data;
 }
