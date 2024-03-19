@@ -52,6 +52,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
         id: url,
         link: url,
         date: new Date(question.created_at),
+        published: new Date(question.created_at),
         description: question.text,
         content: question.text
       });
