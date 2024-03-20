@@ -2,6 +2,7 @@ import CustomModal from "~/components/UI/CustomModal";
 import { useCallback, useRef, useState } from "react";
 import { postAnswer } from "~/apis/questionsAPI";
 import Loader from "~/components/UI/Loader";
+import toast from "react-hot-toast";
 
 interface Props {
   open: boolean;
@@ -22,10 +23,12 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
       if (answer && questionId) {
         setIsPosting(true);
         await postAnswer(answer, questionId);
+        toast.success('Your question added successfully!');
         onSuccess();
       }
     } catch (e) {
       console.log(e);
+      toast.error('Something went wrong, please try again');
     }
 
     setIsPosting(false);

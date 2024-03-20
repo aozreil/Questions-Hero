@@ -2,7 +2,7 @@ import { getCreatedAt } from "~/utils";
 import ContentLoader from "~/components/UI/ContentLoader";
 import { Link } from "@remix-run/react";
 import Loader from "~/components/UI/Loader";
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import { AnswerStatus, IAnswer, IUser, IUsers } from "~/models/questionModel";
 import clsx from "clsx";
 import UserProfile from "~/components/UI/UserProfile";
@@ -45,14 +45,13 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
                   </button>
                 )}
                 {answers?.map((answer, index) => (
-                  <>
+                  <Fragment key={answer?.created_at}>
                     {!!index && <div className='w-full border-t border-t-0.5 border-t-[#c4c5c5] mb-2' />}
                     <Answer
-                      key={answer.created_at}
                       answer={answer}
                       askedBy={userProfiles?.[answer?.user_id ?? 0]}
                     />
-                  </>
+                  </Fragment>
                 ))}
                 {!!slug && (
                   <>

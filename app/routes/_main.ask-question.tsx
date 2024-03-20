@@ -8,6 +8,7 @@ import { searchQuestionsAPI } from "~/apis/searchAPI";
 import { debounceLeading } from "~/utils";
 import AskQuestionSearchCard from "~/components/question/AskQuestionSearchCard";
 import { SearchQuestionResponse } from "~/models/searchModel";
+import toast from "react-hot-toast";
 
 const CHAR_CHANGE_UPDATE = 10;
 
@@ -53,10 +54,12 @@ export default function AskQuestion() {
       try {
         const res = await postQuestion(textAreaRef.current.value);
         if (res?.slug || res?.id) {
+          toast.success('Your question added successfully!');
           navigate(`/question/${res?.slug ?? res?.id}`);
         }
       } catch (e) {
         console.error(e);
+        toast.error('Something went wrong, please try again');
         setIsPosting(false);
       }
     }
