@@ -39,3 +39,26 @@ export async function postAnswer (answerBody: string, questionId: string) {
   });
   return response?.data;
 }
+
+export async function getPreSignedUrls (
+  attachments: {
+    filename: string,
+    key: string,
+  }[],
+) {
+  const response = await axiosApiInstance.post(`${ASKGRAM_BASE}/api/content/storage/attachments/pre-signed-url`, {
+    attachments,
+  }, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+  return response.data;
+}
+
+export async function uploadFile (preSignedUrl: string, file: File) {
+  const response = await axios.put(preSignedUrl, file);
+  return response.data;
+}

@@ -1,4 +1,4 @@
-import { IAnswer, IUser, QuestionClass } from "~/models/questionModel";
+import { answersSorterFun, IAnswer, IUsers, QuestionClass } from "~/models/questionModel";
 import React, { useCallback, useEffect, useState } from "react";
 import { clientGetAnswer, clientGetUsers } from "~/apis/questionsAPI";
 import SearchAnswer from "~/components/question/SearchAnswer";
@@ -17,7 +17,7 @@ interface IProps {
 export default function SearchQuestion({ text, questionId, slug, handleAnswerOpen }: IProps) {
   const [answers, setAnswers] = useState<IAnswer[] | undefined>(undefined);
   const [isOpen, setIsOpen] = useState(false);
-  const [askedBy, setAskedBy] = useState<IUser | undefined>(undefined);
+  const [userProfiles, setUserProfiles] = useState<IUsers | undefined>(undefined);
   const [formattedText] = useState(() => getTextFormatted(text))
   const { focusedOverlayStyles, overlayVisible, setOverlayVisible } = useOverlay();
 
@@ -38,12 +38,14 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
     if (answers?.length)  return;
     clientGetAnswer(questionId).then((answers) => {
       if (answers?.length) {
-        const verifiedAnswer = answers?.[0];
-        if (verifiedAnswer?.user_id) {
-          clientGetUsers([verifiedAnswer.user_id]).then((users) =>
-            users?.[0]?.view_name && setAskedBy(users[0]));
+        const userIds = [];
+        for (const answer of answers) {
+          if (answer?.user_id) userIds.push(answer.user_id);
         }
-        setAnswers(answers?.map(answer => QuestionClass.answerExtraction(answer)));
+        !!userIds?.length && clientGetUsers(userIds).then((users) => {
+          !!users.length && setUserProfiles(QuestionClass.usersExtraction(users));
+        });
+        setAnswers(answers?.map(answer => QuestionClass.answerExtraction(answer))?.sort(answersSorterFun));
       }
     });
   }, [answers]);
@@ -86,7 +88,7 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
           <div className="max-lg:hidden lg:absolute lg:left-[33.5rem] lg:top-0 max-sm:w-full overflow-y-auto">
             <SearchAnswer
               answers={answers}
-              askedBy={askedBy}
+              userProfiles={userProfiles}
               slug={slug}
               close={close}
               handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(questionId)}
@@ -100,13 +102,13 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
               aria-hidden="true"
               onClick={close}
             />
-            <div className='absolute sm:top-0 sm:m-auto sm:w-[70%] sm:min-h-[50vh] right-0 left-0 bottom-0 w-full h-fit rounded-t-[26px] sm:rounded-b-[26px] bg-white max-h-[80vh] overflow-y-auto'>
+            <div className='absolute sm:top-0 sm:m-auto sm:max-w-[70%] sm:w-fit sm:min-h-[50vh] right-0 left-0 bottom-0 w-full h-fit rounded-t-[26px] sm:rounded-b-[26px] bg-white max-h-[80vh] overflow-y-auto'>
               <div onClick={close} className='flex justify-end p-5 pb-0'>
                 <img src='/assets/images/close-button.svg' alt='close' className='w-9 h-9' />
               </div>
               <SearchAnswer
                 answers={answers}
-                askedBy={askedBy}
+                userProfiles={userProfiles}
                 slug={slug}
                 close={close}
                 handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(questionId)}

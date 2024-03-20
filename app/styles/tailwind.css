@@ -182,3 +182,18 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     background: #f5f6f7;
     border-radius: 5px;
 }
+
+.answer-scrollable::-webkit-scrollbar {
+    width: 10px;
+    height: 4px;
+}
+
+.answer-scrollable::-webkit-scrollbar-thumb {
+    background: #cdd1d6;
+    border-radius: 5px;
+}
+
+.answer-scrollable::-webkit-scrollbar-track {
+    background: #f5f6f7;
+    border-radius: 5px;
+}

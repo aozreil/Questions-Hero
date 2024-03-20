@@ -2,19 +2,20 @@ import { HeadersFunction, json, MetaFunction } from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
-import {useState} from "react";
+import { useCallback, useState } from "react";
 import ExpandImage from "~/components/question/ExpandImage";
 import {
-    getAnswerById,
-    getInternalAnswers,
-    getInternalQuestion,
-    getQuestionById,
-    getQuestionConcepts,
-    getQuestionObjectives,
-    getUsersInfo,
+  getAnswerById,
+  getInternalAnswers,
+  getInternalQuestion,
+  getQuestionById,
+  getQuestionConcepts,
+  getQuestionObjectives,
+  getUsersInfo,
 } from "~/apis/questionsAPI.server";
-import { redirect, useLoaderData} from "@remix-run/react";
+import { redirect, useLoaderData, useRevalidator } from "@remix-run/react";
 import {
+    answersSorterFun,
     IAnswer,
     IConcept,
     IInternalAnswer,
@@ -22,17 +23,20 @@ import {
     IObjective,
     IQuestion,
     IUsers,
-    QuestionClass,
+    QuestionClass
 } from "~/models/questionModel";
 import QuestionContent from "~/components/question/QuestionContent";
-import {getSeoMeta} from "~/utils/seo";
-import {getUser} from "~/utils";
+import { getSeoMeta } from "~/utils/seo";
+import { getUser } from "~/utils";
 import { BASE_URL } from "~/config/enviromenet";
 import { isbot } from "isbot";
 import invariant from "tiny-invariant";
 import { getKatexLink } from "~/utils/external-links";
 import { getCleanText } from "~/utils/text-formatting-utils";
-import {  LoaderFunctionArgs } from "@remix-run/router";
+import { LoaderFunctionArgs } from "@remix-run/router";
+import UserProfile from "~/components/UI/UserProfile";
+import { useAuth } from "~/context/AuthProvider";
+import PostAnswerModal from "~/components/UI/PostAnswerModal";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
     if(!data){
@@ -96,7 +100,9 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
 
         const userIds = [];
         if (question?.user_id) userIds.push(question.user_id);
-        if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
+        for (const answer of answers) {
+            if (answer?.user_id) userIds.push(answer.user_id)
+        }
         const users = userIds?.length ? await getUsersInfo(userIds).catch(() => []) : [];
 
         const canonical = `${BASE_URL}/question/${question?.slug}`;
@@ -114,9 +120,11 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             verifiedAnswer: getCleanText(answerText)
         }
 
+        const sortedAnswer = answers?.sort(answersSorterFun)
+        
         return json({
             question: QuestionClass.questionExtraction(question),
-            answers: answers?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer)),
+            answers: sortedAnswer?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer)),
             concepts,
             objectives,
             users,
@@ -144,10 +152,25 @@ export const headers: HeadersFunction = () => ({
 
 export default function QuestionPage() {
     const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined);
+    const [postAnswerOpened, setPostAnswerOpened] = useState(false);
     const {question, answers, users, concepts, objectives} = useLoaderData<typeof loader>() ;
+    const { user } = useAuth();
+    const revalidator = useRevalidator();
+
+    const handlePostAnswerSuccess = useCallback(() => {
+        revalidator.revalidate();
+        setPostAnswerOpened(false);
+    }, [])
 
     return (
         <>
+            <PostAnswerModal
+              open={postAnswerOpened}
+              onClose={() => setPostAnswerOpened(false)}
+              questionText={question?.text}
+              questionId={question?.id}
+              onSuccess={handlePostAnswerSuccess}
+            />
             <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
             <main className='sm:container max-xs:mx-0 w-full h-fit flex flex-col items-center sm:pt-4 sm:py-4 sm:px-4'>
                 <div className='w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit'>
@@ -188,13 +211,30 @@ export default function QuestionPage() {
                                         )}
                                     />
                                 )}
+                                {user && (
+                                  <div
+                                    className='w-full p-4 border-t-[3px] border-[#ebf2f6] cursor-pointer'
+                                    onClick={() => setPostAnswerOpened(true)}
+                                  >
+                                      <div className='bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center'>
+                                          <div className='flex space-x-2.5 items-center'>
+                                              <UserProfile user={user} className='w-7 h-7 border-none' />
+                                              <p className='text-[#4d6473]'>Add your answer</p>
+                                          </div>
+                                          <img src='/assets/images/right-arrow.svg' alt='arrow' className='w-4 h-4 mr-2' />
+                                      </div>
+                                  </div>
+                                )}
                             </div>
                             {!!answers?.length && (
-                                <div className='mb-2 px-3 flex flex-col items-center'>
-                                    <AnswerCard
-                                        answer={answers[0]}
-                                        user={answers[0]?.user_id ? users[answers[0]?.user_id] : undefined}
-                                    />
+                                <div className='mb-2 mt-3 px-3 flex flex-col items-center space-y-2.5'>
+                                    {answers?.map(answer => (
+                                      <AnswerCard
+                                        key={answer.created_at}
+                                        answer={answer}
+                                        user={answer?.user_id ? users[answer?.user_id] : undefined}
+                                      />
+                                    ))}
                                 </div>
                             )}
                         </div>

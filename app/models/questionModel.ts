@@ -37,6 +37,24 @@ export class QuestionClass {
     }
 }
 
+export function answersSorterFun (a: IAnswer, b: IAnswer) {
+    if (a.answer_status === AnswerStatus.VERIFIED) return -1;
+    const date1 = a?.created_at ? new Date(a?.created_at) : undefined;
+    const date2 = b?.created_at ? new Date(b?.created_at) : undefined;
+    if (date1 && date2) {
+        return  date1 > date2 ? 1 : -1;
+    } else {
+        if (date1) return -1;
+        if (date2) return 1;
+        return 0;
+    }
+}
+
+export enum AnswerStatus {
+    'VERIFIED' = 'VERIFIED',
+    'USER_ANSWER' = 'USER_ANSWER',
+}
+
 export interface IAnswer {
     text?: string,
     user_id?: number,
@@ -45,6 +63,7 @@ export interface IAnswer {
         step_number?: number
     }[],
     created_at?: string,
+    answer_status?: AnswerStatus,
 }
 
 export interface IQuestion {
