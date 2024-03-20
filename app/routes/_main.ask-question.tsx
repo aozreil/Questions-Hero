@@ -84,8 +84,8 @@ export default function AskQuestion() {
       if (!searchTerm) return;
       try {
         const searchRes = await searchQuestionsAPI(searchTerm)
-        if (searchRes.data) {
-          setSearchData(searchRes.data);
+        if (searchRes?.data) {
+          setSearchData(searchRes.data?.filter(item => item?.relevant_score > 0.8));
         }
       } catch (e) {
         console.log(e);
@@ -114,6 +114,8 @@ export default function AskQuestion() {
     if (textAreaRef?.current) {
       textAreaRef.current.value = '';
       setHasValue(false);
+      setSearchData([]);
+      searchRequestedWithLength.current = 0;
     }
   }, [])
 
@@ -172,8 +174,13 @@ export default function AskQuestion() {
           </div>
           {!!searchData?.length && (
             <div className='w-full lg:w-[35rem] flex flex-col text-white'>
-              <p className='text-2xl font-bold'>Hi There!</p>
-              <p className='text-lg'>We've already got answers to this question. See them below</p>
+              <div className='flex items-center space-x-3'>
+                <img src='/assets/images/search-questions-hi.svg' alt='questions' className='h-[4.1rem]' />
+                <div className='flex flex-col'>
+                  <p className='text-2xl font-bold'>Hi There!</p>
+                  <p className='text-lg'>We've already got answers to this question.<br /> See them below</p>
+                </div>
+              </div>
               <div className='w-full flex-col space-y-2 p-2.5 bg-[#1e1e1e] border border-[#99a7af] rounded-xl mt-3 text-black'>
                 {searchData.map(el => (
                   <AskQuestionSearchCard

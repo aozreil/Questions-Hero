@@ -1,7 +1,8 @@
 export interface SearchQuestionResponse {
   "id": string,
   "text": string,
-  "user_id": number
+  "user_id": number,
+  "relevant_score": number,
 }
 
 export interface SearchResponseInterface {
