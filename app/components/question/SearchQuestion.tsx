@@ -1,4 +1,4 @@
-import { IAnswer, IUser, QuestionClass } from "~/models/questionModel";
+import { IAnswer, IUser, IQuestion, QuestionClass } from "~/models/questionModel";
 import React, { useCallback, useEffect, useState } from "react";
 import { clientGetAnswer, clientGetUsers } from "~/apis/questionsAPI";
 import SearchAnswer from "~/components/question/SearchAnswer";
@@ -8,14 +8,13 @@ import { Link } from "@remix-run/react";
 import { getTextFormatted } from "~/utils/text-formatting-utils";
 
 interface IProps {
-  text: string;
-  questionId: string;
-  slug?: string;
   handleAnswerOpen?: (questionId: string) => void;
+  question: IQuestion;
 }
 
-export default function SearchQuestion({ text, questionId, slug, handleAnswerOpen }: IProps) {
+export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
   const [answers, setAnswers] = useState<IAnswer[] | undefined>(undefined);
+  const { text, id, slug, answerCount } = question;
   const [isOpen, setIsOpen] = useState(false);
   const [askedBy, setAskedBy] = useState<IUser | undefined>(undefined);
   const [formattedText] = useState(() => getTextFormatted(text))
@@ -36,7 +35,7 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
 
   const getAnswer = useCallback(() => {
     if (answers?.length)  return;
-    clientGetAnswer(questionId).then((answers) => {
+    clientGetAnswer(id).then((answers) => {
       if (answers?.length) {
         const verifiedAnswer = answers?.[0];
         if (verifiedAnswer?.user_id) {
@@ -55,29 +54,34 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
 
   return <>
     <div>
-      <div id={`q-${questionId}`} className={clsx("relative sm:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
+      <div id={`q-${id}`} className={clsx("relative sm:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
         <Link
           className={clsx(
             "thin-scrollbar border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit",
             slug && 'cursor-pointer',
             isOpen && 'lg:max-h-[75vh] lg:overflow-y-auto',
           )}
-          to={slug? `/question/${slug}` : `/question/${questionId}`}
+          to={slug? `/question/${slug}` : `/question/${id}`}
           prefetch={'intent'}
           target='_blank'
         >
-          <div className="flex justify-between pb-4">
-            <div className="flex items-center space-x-2 text-[#25b680] font-bold">
-              <img src="/assets/images/verified.svg" alt="verifed" />
-              <p>Has Verified Answer</p>
-            </div>
-            <button
-              className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
-              onClick={handleShowAnswer}
-            >
-              {isOpen ? 'Hide' : 'Show Answer'}
-              <img src='/assets/images/related-arrow.svg' alt='arrow' className={`w-4 h-4 ml-1 mt-0.5 ${isOpen ? 'rotate-180' : ''}`} />
-            </button>
+          <div className="flex items-center justify-between pb-4">
+            {answerCount && answerCount > 0
+              ? <>
+                <div className="flex items-center space-x-2 text-[#25b680] font-bold">
+                  <img src="/assets/images/verified.svg" alt="verifed" />
+                  <p>Has Verified Answer</p>
+                </div>
+                <button
+                  className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
+                  onClick={handleShowAnswer}
+                >
+                  {isOpen ? 'Hide' : 'Show Answer'}
+                  <img src='/assets/images/related-arrow.svg' alt='arrow' className={`w-4 h-4 ml-1 mt-0.5 ${isOpen ? 'rotate-180' : ''}`} />
+                </button>
+              </>
+              : <p className='text-[#99a7af] font-medium'>Not answered yet</p>
+            }
           </div>
           <hr className="mb-4" />
           <p dangerouslySetInnerHTML={{ __html: formattedText }} />
@@ -89,7 +93,7 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
               askedBy={askedBy}
               slug={slug}
               close={close}
-              handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(questionId)}
+              handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(id)}
             />
           </div>
         )}
@@ -109,7 +113,7 @@ export default function SearchQuestion({ text, questionId, slug, handleAnswerOpe
                 askedBy={askedBy}
                 slug={slug}
                 close={close}
-                handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(questionId)}
+                handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(id)}
                 mobileVersion={true}
               />
             </div>
