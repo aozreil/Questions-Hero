@@ -4,6 +4,7 @@ import {
     IInternalAnswer,
     IInternalQuestion, IObjective,
     IQuestion,
+    IQuestionInfo,
     IUser,
     QuestionClass
 } from "~/models/questionModel";
@@ -18,6 +19,11 @@ export async function getQuestionById(id: string): Promise<IQuestion> {
 
 export async function getQuestionsById(id: string): Promise<IQuestion[]> {
     const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions?ids=${id}`);
+    return response?.data;
+}
+
+export async function getQuestionsInfo(id: string): Promise<IQuestionInfo[]> {
+    const response = await AxiosServerInstance.get<IQuestionInfo[]>(`${CONTENT_CLUSTER}/questions/info?ids=${id}`);
     return response?.data;
 }
 

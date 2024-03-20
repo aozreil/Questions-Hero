@@ -78,6 +78,12 @@ export interface IQuestion {
     // Derived Props
     title?: string;
     includesLatex?: boolean;
+    answerCount?: number;
+}
+
+export interface IQuestionInfo {
+    id: string;
+    answers_count: number;
 }
 
 export interface IConcept {
