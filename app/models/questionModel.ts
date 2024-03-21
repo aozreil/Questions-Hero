@@ -127,7 +127,8 @@ export interface IInternalAnswer {
         text: string,
         step_number: number
     }[],
-    created_at: string
+    created_at: string,
+    answer_status?: AnswerStatus,
 }
 
 export interface IPostQuestion {

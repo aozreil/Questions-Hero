@@ -16,6 +16,7 @@ import {
 import { redirect, useLoaderData, useRevalidator } from "@remix-run/react";
 import {
     answersSorterFun,
+    AnswerStatus,
     IAnswer,
     IConcept,
     IInternalAnswer,
@@ -42,11 +43,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     if(!data){
         return [];
     }
-    const { canonical, question, structuredData } = data;
+    const { canonical, question, internalAnswers, answers } = data;
     return [
         ...getSeoMeta({
             title: question?.title ?? question?.text,
-            description: structuredData?.verifiedAnswer,
+            description: getAnswerText(getVerifiedAnswer(internalAnswers?.length ? internalAnswers : answers)),
             canonical,
         }),
         ...getStructuredData(data as LoaderData),
@@ -106,22 +107,8 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
         const users = userIds?.length ? await getUsersInfo(userIds).catch(() => []) : [];
 
         const canonical = `${BASE_URL}/question/${question?.slug}`;
-
-        const answer = internalAnswers?.[0] ?? answers?.[0];
-        let answerText = `Final Answer : ${answer?.text}` ?? `The Answer of ${question?.text}`;
-        if (answer?.answer_steps?.length) {
-            answerText = answerText + ', Explanation : ';
-            for (const step of answer.answer_steps) {
-                answerText = answerText + ' ' + step?.text;
-            }
-        }
-        const structuredData: StructuredData = {
-            questionText: getCleanText(internalQuestion?.text ?? question?.text),
-            verifiedAnswer: getCleanText(answerText)
-        }
-
         const sortedAnswer = answers?.sort(answersSorterFun)
-        
+
         return json({
             question: QuestionClass.questionExtraction(question),
             answers: sortedAnswer?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer)),
@@ -129,9 +116,12 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             objectives,
             users,
             canonical,
-            internalQuestion,
-            internalAnswers,
-            structuredData,
+            internalQuestion: { ...internalQuestion, text: getCleanText(internalQuestion?.text) },
+            internalAnswers: internalAnswers?.map(answer => ({
+                ...answer,
+                text: getCleanText(answer?.text),
+                answer_steps: answer?.answer_steps?.map(step => ({ ...step, text: getCleanText(step?.text) }))
+            })),
         }, {
             headers: {
                 'Cache-Control': 'max-age=86400, public',
@@ -251,20 +241,21 @@ const getStructuredData = (data: LoaderData) => {
         question,
         answers,
         internalAnswers,
+        internalQuestion,
         canonical,
         users,
-        structuredData
     } = data;
 
-    const questionBody = structuredData?.questionText;
+    const questionData = internalQuestion?.text ? internalQuestion : question;
+    const answersData = internalAnswers?.length ? internalAnswers : answers;
+    if (!questionData?.text) return [];
+
+    const questionBody = questionData?.text;
     const questionTitle = questionBody;
-    if (!questionBody) return [];
-
-    const askedBy = getUser(question?.user_id, users);
-
-    const getAnswer = (index: number) => {
-        return internalAnswers?.[index] ?? answers?.[index];
-    }
+    const questionAskedBy = getUser(question?.user_id, users);
+    const verifiedAnswer = getVerifiedAnswer(answersData);
+    const suggestedAnswers = filterSuggestedAnswers(answersData);
+    const answerFallback = `The Answer of ${questionBody}`;
 
     const Educational = {
         "@context": "https://schema.org/",
@@ -281,7 +272,7 @@ const getStructuredData = (data: LoaderData) => {
                 "text": questionBody,
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": structuredData?.verifiedAnswer,
+                    "text": getAnswerText(verifiedAnswer) ?? answerFallback,
                     "url": canonical,
                 }
             },
@@ -289,14 +280,12 @@ const getStructuredData = (data: LoaderData) => {
     }
 
     const getSuggestedAnswers = () => {
-        let suggestedAnswers = internalAnswers || answers;
-        if (suggestedAnswers?.length > 1) {
-            suggestedAnswers = suggestedAnswers?.slice(1, suggestedAnswers?.length);
+        if (suggestedAnswers?.length) {
             return {
                 "suggestedAnswer": [
                     suggestedAnswers?.map(answer => ({
                         "@type": "Answer",
-                        "text": structuredData?.verifiedAnswer,
+                        "text": getAnswerText(answer) ?? answerFallback,
                         "datePublished": answer?.created_at,
                         "author": {
                             "@type": "Person",
@@ -310,7 +299,6 @@ const getStructuredData = (data: LoaderData) => {
         return {};
     }
 
-    // note: this can also include profile link and upvotes
     const QAPage = {
         "@context": "https://schema.org",
         "@type": "QAPage",
@@ -324,16 +312,16 @@ const getStructuredData = (data: LoaderData) => {
             "datePublished": question?.created_at,
             "author": {
                 "@type": "Person",
-                "name": askedBy,
+                "name": questionAskedBy,
             },
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": structuredData?.verifiedAnswer,
+                "text": getAnswerText(verifiedAnswer) ?? answerFallback,
                 "url": `${canonical}#acceptedAnswer`,
-                "datePublished": getAnswer(0)?.created_at,
+                "datePublished": verifiedAnswer?.created_at,
                 "author": {
                     "@type": "Person",
-                    "name": getUser(getAnswer(0)?.user_id, users),
+                    "name": getUser(verifiedAnswer?.user_id, users),
                 }
             },
             ...getSuggestedAnswers(),
@@ -345,3 +333,24 @@ const getStructuredData = (data: LoaderData) => {
         { "script:ld+json": Educational },
     ];
 };
+
+const getVerifiedAnswer = (answers: IAnswer[] | IInternalAnswer[]) => {
+    const verifiedAnswer = answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED);
+    return verifiedAnswer ?? answers?.[0]
+}
+
+const filterSuggestedAnswers = (answers: IAnswer[] | IInternalAnswer[]) => {
+    return answers?.filter(answer => answer?.answer_status !== AnswerStatus.VERIFIED);
+}
+
+const getAnswerText = (answer: IAnswer | IInternalAnswer) => {
+    let answerText = `Final Answer : ${answer?.text}`;
+    if (answer?.answer_steps?.length) {
+        answerText = answerText + ', Explanation : ';
+        for (const step of answer.answer_steps) {
+            answerText = answerText + ' ' + step?.text;
+        }
+    }
+
+    return answerText;
+}
