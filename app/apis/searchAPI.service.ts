@@ -12,18 +12,18 @@ export async function searchQuestionsDetailsAPI(term: string) {
     }
   }
 
-  const questionIds = searchResponse.data.map(el => el.id).join(',');
+  const questionIds = searchResponse.data.map(el => el.id);
 
   let questionMapper: { [key: string]: string } = {};
   let questionInfoMapper: { [key: string]: { answers_count: number } } = {};
 
   const handleQuestionDetails = async () => {
-    const questionDetails = await getQuestionsById(questionIds)
+    const questionDetails = await getQuestionsById({ params: { ids: questionIds }})
     questionDetails?.forEach((question) => questionMapper[question.id] = question.slug );
   }
 
   const handleQuestionsInfo = async () => {
-    const questionInfo = await getQuestionsInfo(questionIds);
+    const questionInfo = await getQuestionsInfo({ params: { ids: questionIds }});
     questionInfo?.forEach((question) => questionInfoMapper[question.id] = { answers_count: question?.answers_count } );
   }
 

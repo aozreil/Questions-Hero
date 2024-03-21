@@ -4,6 +4,7 @@ import { isbot } from "isbot";
 import {getCookie} from "~/services/cookie.service";
 import { BASE_URL } from "~/config/enviromenet";
 import { VERSION_DATE } from "~/config/enviroment.server";
+import qs from "qs";
 
 const Axios = axios.create({
   baseURL: BASE_URL,
@@ -61,4 +62,8 @@ function prepareConfig(config?: RequestConfigCustomize) {
       is_bot: bot? bot.toString(): undefined,
     },
   };
+}
+
+export function paramsSerializerComma(params: any) {
+  return qs.stringify(params, { arrayFormat: 'comma' })
 }
