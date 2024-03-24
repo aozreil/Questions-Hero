@@ -4,6 +4,7 @@ import { postAnswer } from "~/apis/questionsAPI";
 import Loader from "~/components/UI/Loader";
 import toast from "react-hot-toast";
 import ReCAPTCHA from "react-google-recaptcha";
+import { RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
 
 interface Props {
   open: boolean;
@@ -54,7 +55,7 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
       {shouldLoadRecaptcha && (
         <ReCAPTCHA
           ref={recaptchaRef}
-          sitekey="6LeBQaIpAAAAAI4MZZySIuWtBNJ_YaOU09bC7HDa"
+          sitekey={RECAPTCHA_PUBLIC_KEY}
           size='invisible'
         />
       )}

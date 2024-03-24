@@ -11,6 +11,7 @@ import { SearchQuestionResponse } from "~/models/searchModel";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
 import ReCAPTCHA from "react-google-recaptcha";
+import { RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
 
 const CHAR_CHANGE_UPDATE = 10;
 
@@ -143,7 +144,7 @@ export default function AskQuestion() {
       {shouldLoadRecaptcha && (
         <ReCAPTCHA
           ref={recaptchaRef}
-          sitekey="6LeBQaIpAAAAAI4MZZySIuWtBNJ_YaOU09bC7HDa"
+          sitekey={RECAPTCHA_PUBLIC_KEY}
           size='invisible'
         />
       )}
