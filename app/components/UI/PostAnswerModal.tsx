@@ -1,8 +1,9 @@
 import CustomModal from "~/components/UI/CustomModal";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { postAnswer } from "~/apis/questionsAPI";
 import Loader from "~/components/UI/Loader";
 import toast from "react-hot-toast";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface Props {
   open: boolean;
@@ -15,14 +16,23 @@ interface Props {
 export default function PostAnswerModal({ open, onClose, questionText, questionId, onSuccess }: Props) {
   const [isPosting, setIsPosting] = useState(false);
   const [hasValue, setHasValue] = useState(false);
+  const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  useEffect(() => {
+    if (hasValue && !shouldLoadRecaptcha) {
+      setShouldLoadRecaptcha(true);
+    }
+  }, [hasValue, shouldLoadRecaptcha]);
 
   const handlePostAnswer = useCallback(async () => {
     try {
       const answer = textAreaRef.current ? textAreaRef.current.value : '';
-      if (answer && questionId) {
+      if (answer && questionId && recaptchaRef.current) {
         setIsPosting(true);
-        await postAnswer(answer, questionId);
+        const token = await recaptchaRef.current.executeAsync();
+        await postAnswer(answer, questionId, token);
         toast.success('Your question added successfully!');
         onSuccess();
       }
@@ -41,6 +51,13 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
 
   return (
     <CustomModal open={open} closeModal={onClose}>
+      {shouldLoadRecaptcha && (
+        <ReCAPTCHA
+          ref={recaptchaRef}
+          sitekey="6LeBQaIpAAAAAI4MZZySIuWtBNJ_YaOU09bC7HDa"
+          size='invisible'
+        />
+      )}
       <div className='w-full mx-4 sm:w-[58rem] z-10 h-[80%] max-h-[48rem] text-black bg-white rounded-2xl flex sm:space-x-5 p-5'>
         <div className='max-sm:hidden w-[40%] overflow-hidden flex flex-col'>
           <p className='text-xl font-bold mb-3'>Question</p>

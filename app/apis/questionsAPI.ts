@@ -13,9 +13,10 @@ export async function clientGetUsers (ids: number[]) {
   return response?.data;
 }
 
-export async function postQuestion (questionBody: string) {
+export async function postQuestion (questionBody: string, recaptchaToken: string | null) {
   const response = await axiosApiInstance.post<IPostQuestion>(`${ASKGRAM_BASE}/api/content/questions`, {
     question_body: questionBody,
+    recaptcha_token: recaptchaToken,
   }, {
     withCredentials: true,
     headers: {
@@ -26,10 +27,11 @@ export async function postQuestion (questionBody: string) {
   return response?.data;
 }
 
-export async function postAnswer (answerBody: string, questionId: string) {
+export async function postAnswer (answerBody: string, questionId: string, recaptchaToken: string | null) {
   const response = await axiosApiInstance.post<IUser[]>(`${ASKGRAM_BASE}/api/content/answers`, {
     answer_body: answerBody,
     question_id: questionId,
+    recaptcha_token: recaptchaToken,
   }, {
     withCredentials: true,
     headers: {

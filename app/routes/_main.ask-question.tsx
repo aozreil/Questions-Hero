@@ -10,6 +10,7 @@ import AskQuestionSearchCard from "~/components/question/AskQuestionSearchCard";
 import { SearchQuestionResponse } from "~/models/searchModel";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const CHAR_CHANGE_UPDATE = 10;
 
@@ -19,10 +20,18 @@ export default function AskQuestion() {
   const [hasValue, setHasValue] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
   const [postPendingOnUser, setPostPendingOnUser] = useState(false);
+  const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const searchRequestedWithLength = useRef(0);
   const navigate = useNavigate();
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { user, openSignUpModal } = useAuth();
+
+  useEffect(() => {
+    if (hasValue && !shouldLoadRecaptcha) {
+      setShouldLoadRecaptcha(true);
+    }
+  }, [hasValue, shouldLoadRecaptcha]);
 
   useEffect(() => {
     if (user && postPendingOnUser) {
@@ -50,10 +59,11 @@ export default function AskQuestion() {
       openSignUpModal();
       return;
     }
-    if (hasValue && textAreaRef?.current?.value) {
+    if (hasValue && textAreaRef?.current?.value && recaptchaRef.current) {
       setIsPosting(true);
       try {
-        const res = await postQuestion(textAreaRef.current.value);
+        const token = await recaptchaRef.current.executeAsync();
+        const res = await postQuestion(textAreaRef.current.value, token);
         if (res?.slug || res?.id) {
           toast.success('Your question added successfully!');
           navigate(`/question/${res?.slug ?? res?.id}`);
@@ -130,6 +140,13 @@ export default function AskQuestion() {
 
   return (
     <div className='flex-1 max-h-[calc(100vh-6rem)] overflow-y-auto bg-[#070707] px-4 md:px-10 pt-14'>
+      {shouldLoadRecaptcha && (
+        <ReCAPTCHA
+          ref={recaptchaRef}
+          sitekey="6LeBQaIpAAAAAI4MZZySIuWtBNJ_YaOU09bC7HDa"
+          size='invisible'
+        />
+      )}
       <div className='container w-full flex flex-col text-white'>
         <h1 className='text-4xl lg:text-5xl font-bold mb-4'>Ask your question</h1>
         <p className='text-2xl lg:text-3xl w-[70%]' >Need assistance with your homework? Feel free to ask your question here and get the help you need to complete your assignment!</p>
