@@ -9,6 +9,7 @@ import { debounceLeading } from "~/utils";
 import AskQuestionSearchCard from "~/components/question/AskQuestionSearchCard";
 import { SearchQuestionResponse } from "~/models/searchModel";
 import toast from "react-hot-toast";
+import { Transition } from "@headlessui/react";
 
 const CHAR_CHANGE_UPDATE = 10;
 
@@ -69,8 +70,7 @@ export default function AskQuestion() {
     const textLength = e?.target?.value?.length ?? 0;
     if (hasValue && textLength < 10) {
       setHasValue(false);
-      setSearchData([]);
-      searchRequestedWithLength.current = 0;
+      clearSearchData();
     }
     if (!hasValue && textLength >= 10) setHasValue(true);
 
@@ -117,9 +117,15 @@ export default function AskQuestion() {
     if (textAreaRef?.current) {
       textAreaRef.current.value = '';
       setHasValue(false);
+      clearSearchData();
+    }
+  }, []);
+
+  const clearSearchData = useCallback(() => {
+    setTimeout(() => {
       setSearchData([]);
       searchRequestedWithLength.current = 0;
-    }
+    }, 500);
   }, [])
 
   return (
@@ -127,7 +133,7 @@ export default function AskQuestion() {
       <div className='container w-full flex flex-col text-white'>
         <h1 className='text-4xl lg:text-5xl font-bold mb-4'>Ask your question</h1>
         <p className='text-2xl lg:text-3xl w-[70%]' >Need assistance with your homework? Feel free to ask your question here and get the help you need to complete your assignment!</p>
-        <section className='w-full flex max-lg:flex-col max-lg:space-y-5 lg:space-x-5 mt-7 pb-40'>
+        <section className='w-full flex max-lg:flex-col max-lg:space-y-5 lg:space-x-5 mt-7 pb-40 sm:pb-10'>
           <div className='w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[16rem] p-4 pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
             <section className='flex items-start justify-between space-x-2 pb-2 h-[13rem] border-b border-[#d8d8d8]'>
               <img src='/assets/images/chat-icon.svg' alt='ask' className='w-6 h-6' />
@@ -175,27 +181,37 @@ export default function AskQuestion() {
               </button>
             </section>
           </div>
-          {!!searchData?.length && (
-            <div className='w-full lg:w-[35rem] flex flex-col text-white'>
-              <div className='flex items-center space-x-3'>
-                <img src='/assets/images/search-questions-hi.svg' alt='questions' className='h-[4.1rem]' />
-                <div className='flex flex-col'>
-                  <p className='text-2xl font-bold'>Hi There!</p>
-                  <p className='text-lg'>We've already got answers to this question.<br /> See them below</p>
+          <Transition
+            show={!!searchData?.length && hasValue}
+            enter='transition-opacity duration-400'
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-400"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            {!!searchData?.length && (
+              <div className='w-full lg:w-[35rem] flex flex-col text-white'>
+                <div className='flex items-center space-x-3'>
+                  <img src='/assets/images/search-questions-hi.svg' alt='questions' className='h-[4.1rem]' />
+                  <div className='flex flex-col'>
+                    <p className='text-2xl font-bold'>Hi There!</p>
+                    <p className='text-lg'>We've already got answers to this question.<br /> See them below</p>
+                  </div>
+                </div>
+                <div className='w-full flex-col space-y-2 p-2.5 bg-[#1e1e1e] border border-[#99a7af] rounded-xl mt-3 text-black'>
+                  {searchData.map(el => (
+                    <AskQuestionSearchCard
+                      key={el.id}
+                      text={el.text}
+                      questionId={el.id}
+                      slug={el.id}
+                    />
+                  ))}
                 </div>
               </div>
-              <div className='w-full flex-col space-y-2 p-2.5 bg-[#1e1e1e] border border-[#99a7af] rounded-xl mt-3 text-black'>
-                {searchData.map(el => (
-                  <AskQuestionSearchCard
-                    key={el.id}
-                    text={el.text}
-                    questionId={el.id}
-                    slug={el.id}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+            )}
+          </Transition>
         </section>
       </div>
     </div>
