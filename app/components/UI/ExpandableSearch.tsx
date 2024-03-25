@@ -45,7 +45,8 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
 
     const calculateTextareaRows = useCallback((text?: string) => {
         if (textAreaRef.current && text !== undefined) {
-            const rows = Math.min(Math.floor(text.length / 70), 3) + 1;
+            const charactersCapacity = window.innerWidth > 600 ? 55 : 35;
+            const rows = Math.min(Math.floor(text.length / charactersCapacity), 3) + 1;
             const hasNewLines = text.includes('\n');
 
             if (hasNewLines) {
