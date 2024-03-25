@@ -56,18 +56,18 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
 
   return <>
     <div>
-      <div id={`q-${id}`} className={clsx("relative sm:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
+      <div id={`q-${id}`} className={clsx("relative w-full lg:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
         <Link
           className={clsx(
-            "thin-scrollbar border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full sm:w-[34rem] flex-shrink-0 h-fit",
+            "flex flex-col border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full lg:w-[28rem] 2xl:w-[34rem] flex-shrink-0 h-fit",
             slug && 'cursor-pointer',
-            isOpen && 'lg:max-h-[75vh] lg:overflow-y-auto',
+            isOpen && 'lg:max-h-[75vh] lg:overflow-hidden',
           )}
           to={slug? `/question/${slug}` : `/question/${id}`}
           prefetch={'intent'}
           target='_blank'
         >
-          <div className="flex items-center justify-between pb-4">
+          <div className="flex-shrink-0 overflow-hidden flex items-center justify-between pb-4">
             {answerCount && answerCount > 0
               ? <>
                   <div className="flex items-center space-x-2 text-[#25b680] font-bold">
@@ -86,10 +86,10 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
             }
           </div>
           <hr className="mb-4" />
-          <p dangerouslySetInnerHTML={{ __html: formattedText }} />
+          <p className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`} dangerouslySetInnerHTML={{ __html: formattedText }} />
         </Link>
         {isOpen && (
-          <div className="max-lg:hidden lg:absolute lg:left-[33.5rem] lg:top-0 max-sm:w-full overflow-y-auto">
+          <div className="max-lg:hidden lg:absolute lg:left-[27.5rem] 2xl:left-[33.5rem] lg:top-0 max-sm:w-full overflow-y-auto">
             <SearchAnswer
               answers={answers}
               userProfiles={userProfiles}
@@ -106,7 +106,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
               aria-hidden="true"
               onClick={close}
             />
-            <div className='absolute sm:top-0 sm:m-auto sm:max-w-[70%] sm:w-fit sm:min-h-[50vh] right-0 left-0 bottom-0 w-full h-fit rounded-t-[26px] sm:rounded-b-[26px] bg-white max-h-[80vh] overflow-y-auto'>
+            <div className='absolute sm:top-0 sm:m-auto sm:max-w-[70%] sm:w-[70%] sm:min-h-[50vh] right-0 left-0 bottom-0 w-full h-fit rounded-t-[26px] sm:rounded-b-[26px] bg-white max-h-[80vh] overflow-y-auto'>
               <div onClick={close} className='flex justify-end p-5 pb-0'>
                 <img src='/assets/images/close-button.svg' alt='close' className='w-9 h-9' />
               </div>

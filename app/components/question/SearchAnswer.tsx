@@ -24,7 +24,7 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
   return (
     <div className="relative flex h-fit max-sm:w-full items-end justify-center lg:p-4 pr-0 lg:pt-0 text-center">
       <div className={clsx(
-        "thin-scrollbar h-fit lg:max-h-[75vh] lg:overflow-y-auto bg-white w-full sm:w-[34rem] lg:w-[28rem] xl:w-[34rem] z-20",
+        "thin-scrollbar h-fit lg:max-h-[83vh] lg:overflow-y-auto bg-white w-full lg:w-[28rem] 2xl:w-[34rem] z-20",
         mobileVersion ? 'px-0' :  'border-2 border-[#5fc9a2] rounded-xl pb-4'
       )}>
         {
@@ -58,7 +58,7 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
                     <Link to={`/question/${slug}`} target='_blank' className="max-lg:hidden p-4 pt-0 text-sm mt-4 hover:text-[#070707] text-gray-500 text-center">
                       Go to question page for more information
                     </Link>
-                    <Link to={`/question/${slug}`} target='_blank' className="lg:hidden outline-none block text-white py-3 bg-[#070707] w-[90%] my-4 mx-auto rounded-2xl text-center">
+                    <Link to={`/question/${slug}`} target='_blank' className="lg:hidden outline-none block text-white py-3 bg-[#070707] w-[90%] my-4 max-sm:-mt-3 mx-auto rounded-2xl text-center">
                       Go to Question Page
                     </Link>
                   </>

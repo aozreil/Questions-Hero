@@ -90,7 +90,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
                 <img
                   src='/assets/images/search-icon.svg'
                   alt='search'
-                  className='cursor-pointer flex-shrink-0 max-sm:mt-1 w-6 h-6 sm:w-7 sm:h-7'
+                  className='cursor-pointer flex-shrink-0 mt-2 sm:mt-1 w-6 h-6 sm:w-7 sm:h-7'
                 />
             </button>
             <textarea
