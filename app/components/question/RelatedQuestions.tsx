@@ -1,25 +1,25 @@
-const RELATED = [
-    'Select the correct definition for each of the following',
-    'The body system that controls breathing is considered',
-    'The endocrine gland located at the base of the human',
-    'The bones in the region of the hip are considered to be',
-    'The nervous tissue that is surrounded by that something',
-    'The plane that divides the body into parts are called',
-    'The voice box is the',
-]
+import { Link } from "@remix-run/react";
+import ArrowIcon from "~/components/icons/ArrowIcon";
 
-export default function RelatedQuestions() {
-    return (
-        <div className='w-full mt-4 p-3 pt-[20px] border border-[#e0e0e0] rounded-lg flex flex-col bg-white'>
-            <h2 className='text-[#002237] text-[21px] font-semibold mb-3'>Related Questions</h2>
-            <div className='flex flex-col [&>*:last-child]:border-0'>
-                {RELATED.map(related => (
-                    <div className='flex justify-between items-center text-[#4d6473] text-sm py-2 border-b border-[#e0e0e0]'>
-                        <p className='truncate pr-2'>{related}</p>
-                        <img src='/assets/images/related-arrow.svg' alt='arrow' className='h-3 flex-shrink-0' />
-                    </div>
-                ))}
-            </div>
-        </div>
-    )
+interface IProps {
+  list: {
+    text: string;
+    slug: string
+  }[];
+}
+
+export default function RelatedQuestions({list}: IProps) {
+  return (
+    <div className="w-full mt-4 p-3 border rounded-lg flex flex-col bg-white border-[#e0e0e0]">
+      <h2 className=" font-semibold text-xl mb-3">Related questions</h2>
+      <div className="flex flex-col [&>*:last-child]:border-0">
+        {list.map(({text, slug}) => (
+            <Link key={slug} to={slug} className='flex justify-between items-center text-sm py-2 border-b border-[#e0e0e0] group pr-1 transitionn'>
+                <p className='truncate pr-2 text-[#4d6473] group-hover:bg-[#f8f8f8] group-hover:text-black'>{text}</p>
+                <ArrowIcon className='h-3 flex-shrink-0 group-hover:translate-x-0.5' />
+            </Link>
+        ))}
+      </div>
+    </div>
+  );
 }

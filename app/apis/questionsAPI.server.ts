@@ -16,6 +16,11 @@ export async function getQuestionById(id: string): Promise<IQuestion> {
    return response?.data;
 }
 
+export async function getRelatedQuestionById(id: string, config?: AxiosRequestConfig) {
+    const response = await AxiosServerInstance.get<{ data: IQuestion[], page: number, size: number, count: number}>(`${CONTENT_CLUSTER}/questions/${id}/related`, config);
+    return response?.data;
+}
+
 export async function getQuestionsById(id: string): Promise<IQuestion[]> {
     const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions?ids=${id}`);
     return response?.data;
