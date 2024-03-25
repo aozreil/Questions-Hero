@@ -9,7 +9,7 @@ export default function HeaderJoin() {
     !user
       ? (
         <>
-          <div className='bg-[#dfe4ea] h-5 w-0.5 max-sm:hidden' />
+          <div className='bg-[#dfe4ea] h-5 w-0.5 max-lg:hidden' />
           <button onClick={openLoginModal} className={'hidden sm:block'}>Log in</button>
           <button onClick={openSignUpModal} className='text-white px-5 py-2 rounded-2xl bg-[#070707]'>
             Join for free

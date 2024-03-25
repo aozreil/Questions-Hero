@@ -2,6 +2,7 @@ import CloseIcon from "~/components/icons/CloseIcon";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPreSignedUrls, uploadFile } from "~/apis/questionsAPI";
 import toast from "react-hot-toast";
+import { useAuth } from "~/context/AuthProvider";
 
 export enum AttachmentsStatus {
   'uploading' = 'uploading',
@@ -22,6 +23,7 @@ export interface AttachmentFile {
 
 export default function Attachments({ onChange }: Props) {
   const [files, setFiles] = useState<AttachmentFile[]>([]);
+  const { user, openSignUpModal } = useAuth();
   const isFirstLoad = useRef(true);
 
   useEffect(() => {
@@ -81,7 +83,11 @@ export default function Attachments({ onChange }: Props) {
         type="file"
         onChange={handleFileChange}
       />
-      <label className='cursor-pointer py-2 px-2.5 h-fit border border-black rounded-lg' htmlFor='upload-files'>
+      <label
+        className='cursor-pointer py-2 px-2.5 h-fit border border-black rounded-lg'
+        htmlFor={user ? 'upload-files' : ''}
+        onClick={() => !user && openSignUpModal()}
+      >
         <img src='/assets/images/attachments.svg' alt='close' className='w-4 h-4' />
       </label>
       {!!files?.length && (
