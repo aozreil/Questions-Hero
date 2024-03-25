@@ -139,3 +139,9 @@ export interface IPostQuestion {
     slug: string;
     created_at: number;
 }
+
+export interface IPreSignedURL {
+    pre_signed_url: string;
+    key: string;
+    filename: string;
+}

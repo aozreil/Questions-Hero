@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import CloseIcon from "~/components/icons/CloseIcon";
 import Loader from "~/components/UI/Loader";
 import { postQuestion } from "~/apis/questionsAPI";
 import { useNavigate } from "react-router";
@@ -12,22 +11,25 @@ import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
+import Attachments, { AttachmentFile, AttachmentsStatus } from "~/components/askQuestion/Attachments";
 
+const AttachmentsInitialState = { files: [], status: AttachmentsStatus.completed }
 const CHAR_CHANGE_UPDATE = 10;
 
 export default function AskQuestion() {
-  const [files, setFiles] = useState<File[]>([]);
   const [searchData, setSearchData] = useState<SearchQuestionResponse[]>([]);
   const [hasValue, setHasValue] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
   const [postPendingOnUser, setPostPendingOnUser] = useState(false);
   const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
+  const [attachmentsState, setAttachmentsState] = useState<{
+    files: AttachmentFile[], status: AttachmentsStatus }>(AttachmentsInitialState);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const searchRequestedWithLength = useRef(0);
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { user, openSignUpModal } = useAuth();
-
+  const isUploadingFiles = attachmentsState?.status === AttachmentsStatus.uploading;
   useEffect(() => {
     if (hasValue && !shouldLoadRecaptcha) {
       setShouldLoadRecaptcha(true);
@@ -64,7 +66,11 @@ export default function AskQuestion() {
       setIsPosting(true);
       try {
         const token = await recaptchaRef.current.executeAsync();
-        const res = await postQuestion(textAreaRef.current.value, token);
+        const attachments = attachmentsState?.files?.map(file => ({
+          filename: file.filename,
+          key: file.key
+        }));
+        const res = await postQuestion(textAreaRef.current.value, token, attachments);
         if (res?.slug || res?.id) {
           toast.success('Your question added successfully!');
           navigate(`/question/${res?.slug ?? res?.id}`);
@@ -75,7 +81,7 @@ export default function AskQuestion() {
         setIsPosting(false);
       }
     }
-  }, [hasValue, user]);
+  }, [hasValue, user, attachmentsState]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textLength = e?.target?.value?.length ?? 0;
@@ -106,23 +112,6 @@ export default function AskQuestion() {
       }
     }
   }, 600);
-
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const filteredFiles = [];
-      for (const file of e.target.files) {
-        if (!files.filter(addedFile => isSameFile(addedFile, file))?.length) {
-          filteredFiles.push(file);
-        }
-      }
-
-      setFiles([...files, ...filteredFiles]);
-    }
-  }, [files]);
-
-  const removeFile = useCallback((file: File) => {
-    setFiles(files.filter(addedFile => !isSameFile(addedFile, file)))
-  }, [files]);
 
   const clearTextArea = useCallback(() => {
     if (textAreaRef?.current) {
@@ -169,29 +158,12 @@ export default function AskQuestion() {
               />}
             </section>
             <section className='w-full flex-1 py-2 flex items-start justify-between text-sm'>
-              <div className='flex space-x-2 w-[60%]'>
-                {/*<input className='hidden' accept="image/png, image/gif, image/jpeg" multiple id="upload-files" type="file" onChange={handleFileChange} />*/}
-                {/*<label className='cursor-pointer py-2 px-2.5 h-fit border border-black rounded-lg' htmlFor='upload-files'>*/}
-                {/*  <img src='/assets/images/attachments.svg' alt='close' className='w-4 h-4' />*/}
-                {/*</label>*/}
-                {/*{!!files?.length && (*/}
-                {/*  <div className='flex-1 space-y-2 overflow-hidden '>*/}
-                {/*    {files?.map(file => (*/}
-                {/*      <div key={file.lastModified} className='overflow-hidden bg-[#dfe4ea] flex-1 rounded-lg space-x-2.5 text-[#002237] py-1.5 px-2 flex items-center justify-between'>*/}
-                {/*        <p className='truncate w-full'>{file?.name}</p>*/}
-                {/*        <CloseIcon*/}
-                {/*          colorfill='#002237'*/}
-                {/*          className='w-2.5 h-2.5 mt-1 cursor-pointer'*/}
-                {/*          onClick={() => removeFile(file)}*/}
-                {/*        />*/}
-                {/*      </div>*/}
-                {/*    ))}*/}
-                {/*  </div>*/}
-                {/*)}*/}
-              </div>
+              <Attachments
+                onChange={(status, files) => setAttachmentsState({status, files})}
+              />
               <button
-                disabled={!hasValue || isPosting}
-                className={`${hasValue ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
+                disabled={!hasValue || isPosting || isUploadingFiles}
+                className={`${hasValue && !isUploadingFiles ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
                 onClick={handleQuestionPost}
               >
                 {isPosting && <Loader className="w-5 h-5" />}
@@ -234,8 +206,4 @@ export default function AskQuestion() {
       </div>
     </div>
   )
-}
-
-const isSameFile = (file1: File, file2: File) => {
-  return file1?.name === file2?.name && file1?.size === file2?.size
 }

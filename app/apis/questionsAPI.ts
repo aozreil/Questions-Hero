@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IAnswer, IPostQuestion, IUser } from "~/models/questionModel";
+import { IAnswer, IPostQuestion, IPreSignedURL, IUser } from "~/models/questionModel";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { axiosApiInstance } from "~/interceptors/client-interceptors";
 
@@ -13,10 +13,15 @@ export async function clientGetUsers (ids: number[]) {
   return response?.data;
 }
 
-export async function postQuestion (questionBody: string, recaptchaToken: string | null) {
+export async function postQuestion (
+  questionBody: string,
+  recaptchaToken: string | null,
+  attachments: { key: string; filename: string }[],
+) {
   const response = await axiosApiInstance.post<IPostQuestion>(`${ASKGRAM_BASE}/api/content/questions`, {
     question_body: questionBody,
     recaptcha_token: recaptchaToken,
+    attachments,
   }, {
     withCredentials: true,
     headers: {
@@ -45,10 +50,9 @@ export async function postAnswer (answerBody: string, questionId: string, recapt
 export async function getPreSignedUrls (
   attachments: {
     filename: string,
-    key: string,
   }[],
 ) {
-  const response = await axiosApiInstance.post(`${ASKGRAM_BASE}/api/content/storage/attachments/pre-signed-url`, {
+  const response = await axiosApiInstance.post<IPreSignedURL[]>(`${ASKGRAM_BASE}/api/content/storage/attachments/pre-signed-url`, {
     attachments,
   }, {
     withCredentials: true,
@@ -60,7 +64,9 @@ export async function getPreSignedUrls (
   return response.data;
 }
 
-export async function uploadFile (preSignedUrl: string, file: File) {
-  const response = await axios.put(preSignedUrl, file);
+export async function uploadFile (preSignedUrl: string, file: File, onProgress: (progress?: number) => void) {
+  const response = await axios.put(preSignedUrl, file, {
+    onUploadProgress: progressEvent => onProgress && onProgress(progressEvent.progress)
+  });
   return response.data;
 }
