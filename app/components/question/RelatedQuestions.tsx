@@ -9,6 +9,9 @@ interface IProps {
 }
 
 export default function RelatedQuestions({ list }: IProps) {
+  if(!list.length){
+    return <></>
+  }
   return (
     <div className="w-full mt-4 p-3 border rounded-lg flex flex-col bg-white border-[#e0e0e0]">
       <h2 className=" font-semibold text-xl mb-3">Related questions</h2>

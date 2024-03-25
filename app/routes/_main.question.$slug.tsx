@@ -222,7 +222,7 @@ export default function QuestionPage() {
                 <div className="hidden lg:block">
                   <LearningObjectives objectives={objectives} />
                 </div>}
-              {relatedQuestions.length > 0 && <RelatedQuestions list={relatedQuestions} />}
+              {relatedQuestions?.length > 0 && <RelatedQuestions list={relatedQuestions} />}
             </div>
 
           </div>
