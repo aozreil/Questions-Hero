@@ -161,6 +161,7 @@ export default function QuestionPage() {
         objectives,
         attachments,
     } = useLoaderData<typeof loader>();
+    const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED))
     const { user } = useAuth();
     const revalidator = useRevalidator();
 
@@ -186,6 +187,7 @@ export default function QuestionPage() {
                                 <QuestionContent
                                     question={question}
                                     user={question?.user_id ? users[question.user_id] : undefined}
+                                    isVerified={isVerified}
                                 />
                                 <AttachmentsViewer attachments={attachments} />
                                 {!!concepts?.length && (
