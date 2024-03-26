@@ -92,7 +92,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       getQuestionObjectives(id).catch(() => []),
       getInternalQuestion(id, isBot, { req: request }),
       getInternalAnswers(id, isBot, { req: request }),
-      getRelatedQuestionById(id).catch(() => ({ data: [] }))
+      getRelatedQuestionById(id, {
+        params:{
+          limit: 5
+        }
+      }).catch(() => ({ data: [] }))
     ]);
 
     if (question?.error) return redirect("/");
@@ -139,7 +143,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
           text: text
         };
-      }).slice(0, 10)
+      }).slice(0, 5)
     }, {
       headers: {
         "Cache-Control": "max-age=86400, public"
