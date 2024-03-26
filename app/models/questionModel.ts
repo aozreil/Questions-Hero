@@ -96,7 +96,7 @@ export interface IObjective {
 }
 
 export interface IUser {
-    id: number,
+    id: number;
     view_name: string;
     user_id: number;
     picture: string;
@@ -144,4 +144,14 @@ export interface IPreSignedURL {
     pre_signed_url: string;
     key: string;
     filename: string;
+}
+
+export interface IQuestionAttachment {
+    id: number,
+    questionId: string,
+    key: string,
+    filename: string,
+
+    // Derived Props
+    url: string,
 }

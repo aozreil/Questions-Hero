@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { IAnswer, IPostQuestion, IPreSignedURL, IUser } from "~/models/questionModel";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { axiosApiInstance } from "~/interceptors/client-interceptors";
@@ -64,9 +64,15 @@ export async function getPreSignedUrls (
   return response.data;
 }
 
-export async function uploadFile (preSignedUrl: string, file: File, onProgress: (progress?: number) => void) {
+export async function uploadFile (
+  preSignedUrl: string,
+  file: File,
+  onProgress: (progress?: number) => void,
+  config?: AxiosRequestConfig,
+) {
   const response = await axios.put(preSignedUrl, file, {
-    onUploadProgress: progressEvent => onProgress && onProgress(progressEvent.progress)
+    onUploadProgress: progressEvent => onProgress && onProgress(progressEvent.progress),
+    ...config,
   });
   return response.data;
 }

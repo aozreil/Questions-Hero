@@ -106,32 +106,40 @@ export default function Attachments({ onChange }: Props) {
   )
 }
 
-const AttachedFile = ({ attachment, removeFile, onComplete }: {
+const AttachedFile = ({ attachment, removeFile, onComplete}: {
   attachment: AttachmentFile,
   removeFile: (file: File) => void,
   onComplete: (key: string) => void,
 }) => {
   const [progress, setProgress] = useState(0);
-  const isFirstLoad = useRef(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (isFirstLoad.current) {
-      isFirstLoad.current = false;
-      handleUpload();
-    }
-  }, []);
-  
-  const handleUpload = useCallback(async () => {
-    try {
-      await uploadFile(attachment?.pre_signed_url, attachment?.file, (progress) =>
-        progress && setProgress(Math.ceil(progress * 100))
-      );
-      onComplete(attachment?.key);
-    } catch (e) {
-      console.log(e);
-      toast.error(`Uploading file failed, please try again`);
+    if (error) {
       removeFile(attachment?.file);
     }
+  }, [removeFile, error]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    uploadFile(
+      attachment?.pre_signed_url,
+      attachment?.file,
+      (progress) => progress && setProgress(Math.ceil(progress * 100)),
+      { signal: controller.signal },
+    ).catch((e) => {
+      if (e?.code !== "ERR_CANCELED") {
+        console.log(e);
+        toast.error(`Uploading file failed, please try again`);
+        setError(true);
+      }
+    }).finally(() => {
+      onComplete(attachment?.key);
+    });
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   return (

@@ -3,11 +3,11 @@ import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
 import { useCallback, useState } from "react";
-import ExpandImage from "~/components/question/ExpandImage";
 import {
   getAnswerById,
   getInternalAnswers,
   getInternalQuestion,
+  getQuestionAttachments,
   getQuestionById,
   getQuestionConcepts,
   getQuestionObjectives,
@@ -38,6 +38,8 @@ import { LoaderFunctionArgs } from "@remix-run/router";
 import UserProfile from "~/components/UI/UserProfile";
 import { useAuth } from "~/context/AuthProvider";
 import PostAnswerModal from "~/components/UI/PostAnswerModal";
+import AttachmentsViewer from "~/components/question/AttachmentsViewer";
+import MainContainer from "~/components/UI/MainContainer";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
     if(!data){
@@ -52,6 +54,12 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
         }),
         ...getStructuredData(data as LoaderData),
         ...[ question?.includesLatex ? getKatexLink() : {} ],
+        ...data?.attachments?.map(file => ({
+            tagName: "link",
+            rel: 'preload',
+            href: file?.url,
+            as: 'image',
+        }))
     ];
 };
 
@@ -87,13 +95,15 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
             objectives,
             internalQuestion,
             internalAnswers,
+            attachments
         ] = await Promise.all([
             getQuestionById(id),
             getAnswerById(id).catch(() => []),
             getQuestionConcepts(id).catch(() => []),
             getQuestionObjectives(id).catch(() => []),
             getInternalQuestion(id, isBot, { req: request }),
-            getInternalAnswers(id, isBot, { req: request })
+            getInternalAnswers(id, isBot, { req: request }),
+            getQuestionAttachments(id).catch(() => []),
         ]);
 
         if (question?.error) return redirect('/');
@@ -122,6 +132,7 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
                 text: getCleanText(answer?.text),
                 answer_steps: answer?.answer_steps?.map(step => ({ ...step, text: getCleanText(step?.text) }))
             })),
+            attachments,
         }, {
             headers: {
                 'Cache-Control': 'max-age=86400, public',
@@ -141,9 +152,15 @@ export const headers: HeadersFunction = () => ({
 });
 
 export default function QuestionPage() {
-    const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined);
     const [postAnswerOpened, setPostAnswerOpened] = useState(false);
-    const {question, answers, users, concepts, objectives} = useLoaderData<typeof loader>() ;
+    const {
+        question,
+        answers,
+        users,
+        concepts,
+        objectives,
+        attachments,
+    } = useLoaderData<typeof loader>();
     const { user } = useAuth();
     const revalidator = useRevalidator();
 
@@ -153,7 +170,7 @@ export default function QuestionPage() {
     }, [])
 
     return (
-        <>
+        <MainContainer>
             <PostAnswerModal
               open={postAnswerOpened}
               onClose={() => setPostAnswerOpened(false)}
@@ -161,7 +178,6 @@ export default function QuestionPage() {
               questionId={question?.id}
               onSuccess={handlePostAnswerSuccess}
             />
-            <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
             <main className='container max-sm:max-w-full max-sm:mx-0 aligned-with-search max-xs:mx-0 w-full h-fit flex flex-col max-lg:items-center sm:pt-4 sm:py-4'>
                 <div className='w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit xl:-ml-2'>
                     <div className='flex flex-col lg:flex-row justify-center gap-4'>
@@ -171,6 +187,7 @@ export default function QuestionPage() {
                                     question={question}
                                     user={question?.user_id ? users[question.user_id] : undefined}
                                 />
+                                <AttachmentsViewer attachments={attachments} />
                                 {!!concepts?.length && (
                                     <QuestionSection
                                         title='Definitions'
@@ -232,7 +249,7 @@ export default function QuestionPage() {
                     </div>
                 </div>
             </main>
-        </>
+        </MainContainer>
     )
 }
 
