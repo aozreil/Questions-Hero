@@ -4,10 +4,14 @@ import {
     IInternalAnswer,
     IInternalQuestion, IObjective,
     IQuestion,
+    IQuestionInfo,
     IUser,
     QuestionClass
 } from "~/models/questionModel";
-import AxiosServerInstance, {RequestConfigCustomize} from "~/interceptors/http-interceptors.server";
+import AxiosServerInstance, {
+    paramsSerializerComma,
+    RequestConfigCustomize
+} from "~/interceptors/http-interceptors.server";
 import {CONTENT_CLUSTER, USERS_CLUSTER} from "~/config/enviroment.server";
 import { AxiosRequestConfig } from "axios";
 
@@ -16,8 +20,19 @@ export async function getQuestionById(id: string): Promise<IQuestion> {
    return response?.data;
 }
 
-export async function getQuestionsById(id: string): Promise<IQuestion[]> {
-    const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions?ids=${id}`);
+export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
+    const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions`, {
+        ...config,
+        paramsSerializer: paramsSerializerComma,
+    });
+    return response?.data;
+}
+
+export async function getQuestionsInfo(config: AxiosRequestConfig): Promise<IQuestionInfo[]> {
+    const response = await AxiosServerInstance.get<IQuestionInfo[]>(`${CONTENT_CLUSTER}/questions/info`, {
+        ...config,
+        paramsSerializer: paramsSerializerComma,
+    });
     return response?.data;
 }
 

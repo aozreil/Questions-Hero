@@ -113,9 +113,7 @@ export default function SearchPage() {
                       }
                       return <SearchQuestion
                         key={el.id}
-                        text={el.text}
-                        questionId={el.id}
-                        slug={el.slug}
+                        question={el}
                         handleAnswerOpen={handleAnswerOpen}
                       />;
                     })}
