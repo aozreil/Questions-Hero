@@ -1,4 +1,4 @@
-import { HeadersFunction, json, MetaFunction } from "@remix-run/node";
+import { ActionFunctionArgs, HeadersFunction, json, MetaFunction } from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
@@ -13,7 +13,7 @@ import {
   getQuestionObjectives,
   getUsersInfo,
 } from "~/apis/questionsAPI.server";
-import { redirect, useLoaderData, useRevalidator } from "@remix-run/react";
+import { redirect, useLoaderData } from "@remix-run/react";
 import {
     answersSorterFun,
     AnswerStatus,
@@ -147,6 +147,13 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
     }
 }
 
+export async function action({
+ request,
+}: ActionFunctionArgs) {
+  const body = await request.formData();
+  return { postedAnswer: body.get('postedAnswer') };
+}
+
 export const headers: HeadersFunction = () => ({
     "Cache-Control": "max-age=86400, s-maxage=86400",
 });
@@ -163,10 +170,8 @@ export default function QuestionPage() {
     } = useLoaderData<typeof loader>();
     const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED))
     const { user } = useAuth();
-    const revalidator = useRevalidator();
 
     const handlePostAnswerSuccess = useCallback(() => {
-        revalidator.revalidate();
         setPostAnswerOpened(false);
     }, [])
 

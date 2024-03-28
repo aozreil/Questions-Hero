@@ -5,6 +5,7 @@ import Loader from "~/components/UI/Loader";
 import toast from "react-hot-toast";
 import ReCAPTCHA from "react-google-recaptcha";
 import { RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
+import { useSubmit } from "@remix-run/react";
 
 interface Props {
   open: boolean;
@@ -18,6 +19,7 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
   const [isPosting, setIsPosting] = useState(false);
   const [hasValue, setHasValue] = useState(false);
   const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
+  const submit = useSubmit();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
@@ -34,7 +36,12 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
         setIsPosting(true);
         const token = await recaptchaRef.current.executeAsync();
         await postAnswer(answer, questionId, token);
-        toast.success('Your question added successfully!');
+
+        const formData = new FormData();
+        formData.append("postedAnswer", answer);
+        submit(formData, { method: "post" });
+
+        toast.success('Your answer added successfully!');
         onSuccess();
       }
     } catch (e) {
