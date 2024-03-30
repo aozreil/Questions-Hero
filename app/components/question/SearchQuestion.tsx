@@ -20,6 +20,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
   const [userProfiles, setUserProfiles] = useState<IUsers | undefined>(undefined);
   const [formattedText] = useState(() => getTextFormatted(text))
   const { focusedOverlayStyles, overlayVisible, setOverlayVisible } = useOverlay();
+  const shouldHideQuestionLink = !!question?.aiAnswer && answers?.length === 1;
   const hasVerifiedAnswer = question?.answerStatuses?.includes(AnswerStatus.VERIFIED);
 
   useEffect(() => {
@@ -35,6 +36,17 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
     getAnswer();
   }, [isOpen]);
 
+  const getAiAnswer = useCallback((): IAnswer[] => {
+    if (question?.aiAnswer) {
+      return [{
+        text: question.aiAnswer,
+        answer_status: AnswerStatus.AI_ANSWER,
+      }]
+    } else {
+      return []
+    }
+  }, []);
+
   const getAnswer = useCallback(() => {
     if (answers?.length)  return;
     clientGetAnswer(id).then((answers) => {
@@ -46,7 +58,14 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
         !!userIds?.length && clientGetUsers(userIds).then((users) => {
           !!users.length && setUserProfiles(QuestionClass.usersExtraction(users));
         });
-        setAnswers(answers?.map(answer => QuestionClass.answerExtraction(answer))?.sort(answersSorterFun));
+        setAnswers(
+          [
+            ...answers?.map(answer => QuestionClass.answerExtraction(answer)),
+            ...getAiAnswer(),
+          ]?.sort(answersSorterFun)
+        );
+      } else {
+        setAnswers([...getAiAnswer()]);
       }
     });
   }, [answers]);
@@ -59,15 +78,11 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
   return <>
     <div>
       <div id={`q-${id}`} className={clsx("relative w-full lg:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
-        <Link
+        <div
           className={clsx(
             "flex flex-col border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full lg:w-[28rem] 2xl:w-[34rem] flex-shrink-0 h-fit",
-            slug && 'cursor-pointer',
             isOpen && 'lg:max-h-[75vh] lg:overflow-hidden',
           )}
-          to={slug? `/question/${slug}` : `/question/${id}`}
-          prefetch={'intent'}
-          target='_blank'
         >
           <div className="flex-shrink-0 overflow-hidden flex items-center justify-between pb-4">
             <QuestionType
@@ -85,9 +100,19 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
               </button>
             )}
           </div>
-          <hr className="mb-4" />
-          <p className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`} dangerouslySetInnerHTML={{ __html: formattedText }} />
-        </Link>
+          <Link
+            to={slug? `/question/${slug}` : `/question/${id}`}
+            prefetch={'intent'}
+            target='_blank'
+            className={shouldHideQuestionLink ? 'pointer-events-none' : ''}
+          >
+            <hr className="mb-4" />
+            <p
+              className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`}
+              dangerouslySetInnerHTML={{ __html: formattedText }}
+            />
+          </Link>
+        </div>
         {isOpen && (
           <div className="max-lg:hidden lg:absolute lg:left-[27.5rem] 2xl:left-[33.5rem] lg:top-0 max-sm:w-full overflow-y-auto">
             <SearchAnswer
@@ -96,6 +121,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
               slug={slug}
               close={close}
               handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(id)}
+              shouldHideQuestionLink={shouldHideQuestionLink}
             />
           </div>
         )}
@@ -117,6 +143,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
                 close={close}
                 handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(id)}
                 mobileVersion={true}
+                shouldHideQuestionLink={shouldHideQuestionLink}
               />
             </div>
           </div>

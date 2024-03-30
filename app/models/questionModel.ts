@@ -80,7 +80,13 @@ export interface IQuestion {
     // Derived Props
     title?: string;
     includesLatex?: boolean;
-    answerCount?: number;
+}
+
+export interface ISearchQuestion extends IQuestion {
+    // Derived Props
+    answerCount: number;
+    aiAnswer?: string;
+    relevant_score?: number;
 }
 
 export interface IQuestionInfo {

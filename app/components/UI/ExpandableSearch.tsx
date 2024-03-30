@@ -1,8 +1,9 @@
-import { useCallback, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useRef, useState } from "react";
 import { Form } from "@remix-run/react";
 import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import CloseIcon from "~/components/icons/CloseIcon";
+const UploadImage = lazy(() => import('~/components/UI/OcrSearch'));
 
 interface Props {
     setIsSearchFocused: (isFocused: boolean) => void;
@@ -10,6 +11,7 @@ interface Props {
 
 export default function ExpandableSearch({ setIsSearchFocused }: Props) {
     const [hasValue, setHasValue] = useState(false);
+    const [ocrOpened, setOcrOpened] = useState(false);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const submitButton = useRef<HTMLButtonElement>(null);
@@ -78,7 +80,13 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
         onBlur();
     }, []);
 
+    const handleOcrClose = useCallback(() => {
+        setOcrOpened(false);
+        setOverlayVisible(false);
+    }, [])
+
     return (
+      <>
         <Form
           action='/search'
           ref={formRef}
@@ -105,11 +113,20 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
               onFocus={onFocus}
               required={true}
             />
-            {hasValue && (
+            {hasValue ? (
               <button type='button' className='h-full flex items-center' onClick={handleCancelClick}>
                 <CloseIcon colorfill='#000' className='mt-2.5 w-3.5 h-3.5' />
               </button>
+            ) : (
+              <button onClick={() => setOcrOpened(true)}>
+                  <img src='/assets/images/search-ocr.svg' alt='search-by-image' className='w-7 h-7 mt-1' />
+              </button>
             )}
+
         </Form>
+        {ocrOpened && <Suspense>
+            <UploadImage onClose={handleOcrClose} />
+        </Suspense>}
+      </>
     )
 }

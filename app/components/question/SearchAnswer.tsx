@@ -14,10 +14,10 @@ interface Props {
   close: () => void;
   handleAnswerOpen?: () => void;
   mobileVersion?: boolean;
+  shouldHideQuestionLink?: boolean;
 }
 
-export default function SearchAnswer({ answers, userProfiles, slug, close, handleAnswerOpen, mobileVersion }: Props) {
-  const verifiedAnswer = answers?.[0];
+export default function SearchAnswer({ answers, userProfiles, slug, close, handleAnswerOpen, mobileVersion, shouldHideQuestionLink }: Props) {
   useEffect(() => {
     handleAnswerOpen && handleAnswerOpen();
   }, []);
@@ -28,7 +28,7 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
         mobileVersion ? 'px-0' :  'border-2 border-[#5fc9a2] rounded-xl pb-4'
       )}>
         {
-          !!answers?.length
+          answers !== undefined
             ? (
               <>
                 {!mobileVersion && (
@@ -47,13 +47,16 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
                 {answers?.map((answer, index) => (
                   <Fragment key={answer?.created_at}>
                     {!!index && <div className='w-full border-t border-t-0.5 border-t-[#c4c5c5] mb-2' />}
-                    <Answer
-                      answer={answer}
-                      askedBy={userProfiles?.[answer?.user_id ?? 0]}
-                    />
+                    {answer?.answer_status === AnswerStatus.AI_ANSWER
+                      ? <AIAnswer aiAnswer={answer?.text} />
+                      : <Answer
+                        answer={answer}
+                        askedBy={userProfiles?.[answer?.user_id ?? 0]}
+                      />
+                    }
                   </Fragment>
                 ))}
-                {!!slug && (
+                {!!slug && !shouldHideQuestionLink && (
                   <>
                     <Link to={`/question/${slug}`} onClick={close} className="max-lg:hidden p-4 pt-0 text-sm mt-4 hover:text-[#070707] text-gray-500 text-center">
                       Go to question page for more information
@@ -74,6 +77,20 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
     </div>
   )
 }
+
+const AIAnswer = ({ aiAnswer }: { aiAnswer?: string }) => (
+  <div className='flex flex-col space-y-4 p-4 pb-2'>
+    <p className='font-bold mr-auto'>Askgram AI Answer</p>
+    <div className='w-full max-sm:pb-5'>
+      <div className="f2f4f5 text-left p-4 rounded-xl mb-3 bg-[#ffd394]">
+        <p className='max-sm:text-lg'>
+          <span className='font-medium'>Final Answer : </span>
+          <span>{aiAnswer}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+)
 
 const Answer = ({ askedBy, answer }: {
   askedBy?: IUser;

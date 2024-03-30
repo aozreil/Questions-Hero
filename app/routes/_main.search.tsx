@@ -8,11 +8,12 @@ import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
 import { BASE_URL } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
-import { Await, defer, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
+import { Await, defer, useLoaderData, useLocation, useNavigation, useSearchParams } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { useAnalytics } from "~/hooks/useAnalytics";
 import { useOverlay } from "~/context/OverlayProvider";
+import { ISearchQuestion } from "~/models/questionModel";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -49,8 +50,10 @@ export default function SearchPage() {
   const navigation = useNavigation();
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
   const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get('term');
   const { trackEvent } = useAnalytics();
   const { overlayVisible } = useOverlay();
+  const location = useLocation();
 
   useEffect(() => {
     const search_term = searchParams.get('term');
@@ -69,6 +72,30 @@ export default function SearchPage() {
     }
   }
 
+  const getDataWithAiAnswer = (data: ISearchQuestion[]): ISearchQuestion[] => {
+    const ACCEPTED_SCORE = 0.9; // if first question score is higher than this then AI answer will be merged to it
+    const firstQuestionScore = data?.[0]?.relevant_score;
+    const aiAnswer = location?.state?.ai_answer;
+    if (!aiAnswer) return data;
+
+    if (firstQuestionScore && firstQuestionScore > ACCEPTED_SCORE) {
+        data[0].aiAnswer = aiAnswer;
+        data[0].answerCount = data[0].answerCount + 1;
+        return data;
+    } else {
+      return [
+        {
+          id: 'ai-answer',
+          text: searchTerm ?? '',
+          slug: './',
+          answerCount: 1,
+          aiAnswer: aiAnswer,
+        },
+        ...data,
+      ]
+    }
+  }
+
   return (
     <section
       className={`pb-40 search-page-scroll max-h-[calc(100vh-6rem)] ${overlayVisible ? 'overflow-hidden pr-[12px]' : 'overflow-y-auto'}`}
@@ -81,12 +108,14 @@ export default function SearchPage() {
         }>
           {isLoadingData ? <SearchLoading /> : (
           ({ data, count }) => {
+            const dataWithAiAnswer = getDataWithAiAnswer(data as ISearchQuestion[]);
+
             return <>
-              {data.length === 0 && <>
+              {dataWithAiAnswer.length === 0 && <>
                 <EmptyResultsSearch />
               </>}
 
-              {data.length > 0 && <>
+              {dataWithAiAnswer.length > 0 && <>
                 {showVerifiedAnswer &&
                   <SuccessAlert className='sm:px-0'>
                     <section className={`container aligned-with-search max-sm:px-2 max-md:px-4 max-xl:px-10 w-full flex items-center`}>
@@ -107,7 +136,7 @@ export default function SearchPage() {
                     {count} <span className="font-bold">Result{count > 1 ? "s" : ""} found</span>
                   </p>
                   <div className="pt-4 space-y-4">
-                    {data.map((el) => {
+                    {dataWithAiAnswer.map((el) => {
                       if(!el){
                         return <></>
                       }
