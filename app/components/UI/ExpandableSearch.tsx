@@ -1,9 +1,9 @@
-import { lazy, Suspense, useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Form } from "@remix-run/react";
 import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import CloseIcon from "~/components/icons/CloseIcon";
-const UploadImage = lazy(() => import('~/components/UI/OcrSearch'));
+import { useModals } from "~/context/ModalsProvider";
 
 interface Props {
     setIsSearchFocused: (isFocused: boolean) => void;
@@ -11,11 +11,15 @@ interface Props {
 
 export default function ExpandableSearch({ setIsSearchFocused }: Props) {
     const [hasValue, setHasValue] = useState(false);
-    const [ocrOpened, setOcrOpened] = useState(false);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const submitButton = useRef<HTMLButtonElement>(null);
     const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
+    const { ocrOpened, setOcrOpened } = useModals();
+
+    useEffect(() => {
+        setIsSearchFocused(ocrOpened);
+    }, [ocrOpened]);
 
     const onFocus = useCallback(() => {
         setIsSearchFocused(true);
@@ -34,6 +38,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
       (e: any) => {
           const currentTarget = e.currentTarget;
 
+          if (ocrOpened) return;
           // Give browser time to focus the next element
           requestAnimationFrame(() => {
               // Check if the new focused element is a child of the original container
@@ -42,7 +47,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
               }
           });
       },
-      [onBlur]
+      [onBlur, ocrOpened]
     );
 
     const calculateTextareaRows = useCallback((text?: string) => {
@@ -80,10 +85,10 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
         onBlur();
     }, []);
 
-    const handleOcrClose = useCallback(() => {
-        setOcrOpened(false);
-        setOverlayVisible(false);
-    }, [])
+    const handleSubmit = useCallback((e: any) => {
+        if (!textAreaRef?.current?.value) e.preventDefault();
+        onBlur();
+    }, []);
 
     return (
       <>
@@ -93,7 +98,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
           className={clsx(`z-10 py-2 sm:py-3.5 px-5 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%]
            md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
           onBlur={handleBlur}
-          onSubmit={onBlur}
+          onSubmit={handleSubmit}
         >
             <button ref={submitButton} className='flex-shrink-0' type='submit'>
                 <img
@@ -111,22 +116,17 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               onFocus={onFocus}
-              required={true}
             />
             {hasValue ? (
               <button type='button' className='h-full flex items-center' onClick={handleCancelClick}>
                 <CloseIcon colorfill='#000' className='mt-2.5 w-3.5 h-3.5' />
               </button>
             ) : (
-              <button onClick={() => setOcrOpened(true)}>
+              <button type='button' onClick={() => setOcrOpened(true)}>
                   <img src='/assets/images/search-ocr.svg' alt='search-by-image' className='w-7 h-7 mt-1' />
               </button>
             )}
-
         </Form>
-        {ocrOpened && <Suspense>
-            <UploadImage onClose={handleOcrClose} />
-        </Suspense>}
       </>
     )
 }

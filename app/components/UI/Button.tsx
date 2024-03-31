@@ -6,7 +6,7 @@ interface Props {
   onClick?: () => void;
 }
 
-export default function CustomButton({ children, className, onClick }: Props) {
+export default function Button({ children, className, onClick }: Props) {
   return (
     <button
       className={clsx('flex items-center justify-center', className)}

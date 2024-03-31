@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Cropper, ReactCropperElement } from "react-cropper";
 import CustomModal from "~/components/UI/CustomModal";
-import CustomButton from "~/components/UI/CustomButton";
+import Button from "~/components/UI/Button";
 import Compressor from 'compressorjs';
 import { getPreSignedUrls, uploadFile } from "~/apis/questionsAPI";
 import { searchByImage } from "~/apis/searchAPI";
@@ -108,73 +108,76 @@ export default function OcrSearch({ onClose }: Props) {
   }, [imageFile]);
 
   return (
-    <CustomModal open={true} closeModal={onClose} className='max-sm:items-start max-sm:mt-10'>
-      {!!imageFile && (
-        <ReCAPTCHA
-          ref={recaptchaRef}
-          sitekey={RECAPTCHA_PUBLIC_KEY}
-          size='invisible'
-        />
-      )}
-      <div className='w-[95vw] max-w-[60rem] h-[80vh] z-50 bg-white rounded-md px-5 py-6 flex flex-col'>
-        <div className='flex justify-between items-start'>
-          <div className='flex flex-col text-black'>
-            <p className='text-xl font-bold'>Search by image</p>
-            <p className='text-sm'>Crop your image to get the best search results</p>
+    <>
+      <link rel='stylesheet' href='/assets/cropper.min.css' />
+      <CustomModal open={true} closeModal={onClose} className='max-sm:items-start max-sm:mt-10'>
+        {!!imageFile && (
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={RECAPTCHA_PUBLIC_KEY}
+            size='invisible'
+          />
+        )}
+        <div className='w-[95vw] max-w-[60rem] h-[80vh] z-50 bg-white rounded-md px-5 py-6 flex flex-col'>
+          <div className='flex justify-between items-start'>
+            <div className='flex flex-col text-black'>
+              <p className='text-xl font-bold'>Search by image</p>
+              <p className='text-sm'>Crop your image to get the best search results</p>
+            </div>
+            <button onClick={onClose}>
+              <img src='/assets/images/close-rounded.svg' alt='close' className='w-7 h-7' />
+            </button>
           </div>
-          <button onClick={onClose}>
-            <img src='/assets/images/close-rounded.svg' alt='close' className='w-7 h-7' />
-          </button>
-        </div>
-        <div className='w-full border-t border-[#f4f4f4] my-4' />
-        <input
-          ref={inputFileRef}
-          type="file"
-          onChange={onChange}
-          className='hidden'
-          accept="image/png, image/gif, image/jpeg"
-          id="ocr-image"
-        />
-        <div className='flex-1 rounded-md overflow-hidden'>
+          <div className='w-full border-t border-[#f4f4f4] my-4' />
+          <input
+            ref={inputFileRef}
+            type="file"
+            onChange={onChange}
+            className='hidden'
+            accept="image/png, image/gif, image/jpeg"
+            id="ocr-image"
+          />
+          <div className='flex-1 rounded-md overflow-hidden'>
+            {uiState === UIState.IMAGE_PICKING && (
+              imageDataURL
+                ? <Cropper
+                  ref={cropperRef}
+                  style={{ height: "100%", width: "100%" }}
+                  src={imageDataURL}
+                  initialAspectRatio={1}
+                  guides={true}
+                  dragMode='move'
+                  viewMode={2}
+                />
+                : <div
+                  className='h-full w-full bg-gray-300 text-xl font-medium cursor-pointer flex items-center justify-center'
+                  onClick={handleImageChange}
+                >
+                  Upload Image here
+                </div>
+            )}
+            {uiState === UIState.UPLOADING && <StateLoader text='Uploading...' />}
+            {uiState === UIState.PROCESSING && <StateLoader text='Proccessing Your Image...' />}
+          </div>
           {uiState === UIState.IMAGE_PICKING && (
-            imageDataURL
-              ? <Cropper
-                ref={cropperRef}
-                style={{ height: "100%", width: "100%" }}
-                src={imageDataURL}
-                initialAspectRatio={1}
-                guides={true}
-                dragMode='move'
-                viewMode={2}
-              />
-              : <div
-                className='h-full w-full bg-gray-300 text-xl font-medium cursor-pointer flex items-center justify-center'
+            <div className='flex space-x-2 mt-5'>
+              <Button
+                className='flex-1 h-10 text-black bg-[#f8f8f8] rounded-xl'
                 onClick={handleImageChange}
               >
-                Upload Image here
-              </div>
+                {imageDataURL ? 'Change Image' : 'Upload Image'}
+              </Button>
+              <Button
+                className='flex-1 h-10 text-white font-semibold bg-black rounded-xl'
+                onClick={getCropData}
+              >
+                Search
+              </Button>
+            </div>
           )}
-          {uiState === UIState.UPLOADING && <StateLoader text='Uploading...' />}
-          {uiState === UIState.PROCESSING && <StateLoader text='Proccessing Your Image...' />}
         </div>
-        {uiState === UIState.IMAGE_PICKING && (
-          <div className='flex space-x-2 mt-5'>
-            <CustomButton
-              className='flex-1 h-10 text-black bg-[#f8f8f8] rounded-xl'
-              onClick={handleImageChange}
-            >
-              {imageDataURL ? 'Change Image' : 'Upload Image'}
-            </CustomButton>
-            <CustomButton
-              className='flex-1 h-10 text-white font-semibold bg-black rounded-xl'
-              onClick={getCropData}
-            >
-              Search
-            </CustomButton>
-          </div>
-        )}
-      </div>
-    </CustomModal>
+      </CustomModal>
+    </>
   )
 }
 

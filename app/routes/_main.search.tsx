@@ -1,12 +1,12 @@
 import { json, MetaFunction } from "@remix-run/node";
 import { searchQuestionsDetailsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import SearchQuestion from "~/components/question/SearchQuestion";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
-import { BASE_URL } from "~/config/enviromenet";
+import { AI_ANSWER_ACCEPTED_SCORE, BASE_URL } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
 import { Await, defer, useLoaderData, useLocation, useNavigation, useSearchParams } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
@@ -73,12 +73,12 @@ export default function SearchPage() {
   }
 
   const getDataWithAiAnswer = (data: ISearchQuestion[]): ISearchQuestion[] => {
-    const ACCEPTED_SCORE = 0.9; // if first question score is higher than this then AI answer will be merged to it
     const firstQuestionScore = data?.[0]?.relevant_score;
     const aiAnswer = location?.state?.ai_answer;
     if (!aiAnswer) return data;
 
-    if (firstQuestionScore && firstQuestionScore > ACCEPTED_SCORE) {
+    // if first question score is higher than AI_ANSWER_ACCEPTED_SCORE, then AI answer will be merged to it
+    if (firstQuestionScore && firstQuestionScore > AI_ANSWER_ACCEPTED_SCORE) {
         data[0].aiAnswer = aiAnswer;
         data[0].answerCount = data[0].answerCount + 1;
         return data;

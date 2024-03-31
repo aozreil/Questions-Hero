@@ -1,4 +1,4 @@
-import { LinksFunction, MetaFunction } from "@remix-run/node";
+import { MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
 import Footer from "~/components/UI/Footer";
 import LandingAboutSlide from "~/components/widgets/LandingAboutSlide";
@@ -12,10 +12,6 @@ export const meta: MetaFunction = () => ([
     canonical: `${BASE_URL}/`,
   }),
 ]);
-
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: '/assets/cropper.min.css' },
-]
 
 const NUMBER_OF_SLIDES = 2;
 

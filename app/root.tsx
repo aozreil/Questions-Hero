@@ -20,6 +20,7 @@ import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
 import AuthProvider from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
 import OverlayProvider from "~/context/OverlayProvider";
+import ModalsProvider from "~/context/ModalsProvider";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({}),
@@ -54,7 +55,9 @@ function Document({children}: {children: ReactNode}) {
   <body>
     <AuthProvider>
       <OverlayProvider>
-        {children}
+        <ModalsProvider>
+          {children}
+        </ModalsProvider>
       </OverlayProvider>
     </AuthProvider>
   </body>
