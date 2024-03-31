@@ -209,3 +209,8 @@ input[type="search"]:focus::-webkit-search-cancel-button {
         padding-left: 15.5rem;
     }
 }
+
+.katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+}

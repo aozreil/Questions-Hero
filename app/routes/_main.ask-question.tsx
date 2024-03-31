@@ -22,6 +22,7 @@ export default function AskQuestion() {
   const [isPosting, setIsPosting] = useState(false);
   const [postPendingOnUser, setPostPendingOnUser] = useState(false);
   const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
+  const [isDescriptionVisible, setIsDescriptionVisible] = useState(true);
   const [attachmentsState, setAttachmentsState] = useState<{
     files: AttachmentFile[], status: AttachmentsStatus }>(AttachmentsInitialState);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -29,7 +30,17 @@ export default function AskQuestion() {
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { user, openSignUpModal } = useAuth();
+  const textareaHistory = useRef('');
   const isUploadingFiles = attachmentsState?.status === AttachmentsStatus.uploading;
+
+  useEffect(() => {
+    if (searchData?.length && isDescriptionVisible) {
+      if (window.innerWidth < 640) {
+        setIsDescriptionVisible(false);
+      }
+    }
+  }, [searchData, isDescriptionVisible]);
+
   useEffect(() => {
     if (hasValue && !shouldLoadRecaptcha) {
       setShouldLoadRecaptcha(true);
@@ -115,6 +126,7 @@ export default function AskQuestion() {
 
   const clearTextArea = useCallback(() => {
     if (textAreaRef?.current) {
+      textareaHistory.current = textAreaRef.current.value;
       textAreaRef.current.value = '';
       setHasValue(false);
       clearSearchData();
@@ -126,10 +138,20 @@ export default function AskQuestion() {
       setSearchData([]);
       searchRequestedWithLength.current = 0;
     }, 500);
-  }, [])
+  }, []);
+
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+      if (textareaHistory.current && textAreaRef.current) {
+        event.preventDefault();
+        textAreaRef.current.value = textareaHistory.current;
+        textareaHistory.current = '';
+      }
+    }
+  }, []);
 
   return (
-    <div className='flex-1 max-h-[calc(100vh-6rem)] overflow-y-auto bg-[#070707] px-4 md:px-10 pt-14'>
+    <div className='flex-1 max-h-[calc(100vh-6rem)] overflow-y-auto bg-[#070707] pt-4 sm:pt-14'>
       {shouldLoadRecaptcha && (
         <ReCAPTCHA
           ref={recaptchaRef}
@@ -137,17 +159,26 @@ export default function AskQuestion() {
           size='invisible'
         />
       )}
-      <div className='container w-full flex flex-col text-white'>
-        <h1 className='text-4xl lg:text-5xl font-bold mb-4'>Ask your question</h1>
-        <p className='text-2xl lg:text-3xl w-[70%]' >Need assistance with your homework? Feel free to ask your question here and get the help you need to complete your assignment!</p>
-        <section className='w-full flex max-lg:flex-col max-lg:space-y-5 lg:space-x-5 mt-7 pb-40 sm:pb-10'>
-          <div className='w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[16rem] p-4 pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
-            <section className='flex items-start justify-between space-x-2 pb-2 h-[13rem] border-b border-[#d8d8d8]'>
+      <div className='container w-full flex flex-col text-white px-4 md:px-10'>
+        <Transition
+          show={isDescriptionVisible}
+          leave="transition-[opacity,max-height] duration-400"
+          leaveFrom="opacity-1 max-h-96"
+          leaveTo="opacity-0 max-h-0"
+        >
+          <h1 className='text-4xl lg:text-5xl font-bold mb-4'>Ask your question</h1>
+          <p className='text-xl lg:text-3xl w-full mb-7' >Need assistance with your homework? Feel free to ask your question here
+            and get the help<br className='max-xl:hidden' /> you need to complete your assignment!</p>
+        </Transition>
+        <section className='w-full flex max-lg:flex-col max-lg:space-y-5 lg:space-x-5 pb-40 sm:pb-10'>
+          <div className='w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[8rem] sm:min-h-[13rem] p-4 pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
+            <section className='flex items-start justify-between space-x-2 pb-2 h-[8rem] sm:h-[13rem] border-b border-[#d8d8d8]'>
               <img src='/assets/images/chat-icon.svg' alt='ask' className='w-6 h-6' />
               <textarea
                 ref={textAreaRef}
                 placeholder='Type your question here'
                 className='h-full flex-1 text-md text-[#4d6473] bg-[#f8f8f8] p-1 focus:outline-none resize-none'
+                onKeyDown={handleKeyDown}
                 onChange={handleChange}
               />
               {hasValue && <img
@@ -181,7 +212,7 @@ export default function AskQuestion() {
             leaveTo="opacity-0"
           >
             {!!searchData?.length && (
-              <div className='w-full lg:w-[35rem] flex flex-col text-white'>
+              <div className='w-full lg:w-[28rem] xl:w-[35rem] flex flex-col text-white'>
                 <div className='flex items-center space-x-3'>
                   <img src='/assets/images/search-questions-hi.svg' alt='questions' className='h-[4.1rem]' />
                   <div className='flex flex-col'>
