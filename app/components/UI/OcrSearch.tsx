@@ -10,6 +10,7 @@ import { useNavigate } from "react-router";
 import ContentLoader from "~/components/UI/ContentLoader";
 import { ATTACHMENTS_BASE, RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
 import ReCAPTCHA from "react-google-recaptcha";
+import clsx from "clsx";
 
 enum UIState {
   'IMAGE_PICKING' = 'IMAGE_PICKING',
@@ -20,6 +21,8 @@ enum UIState {
 interface Props {
   onClose: () => void;
 }
+
+const ACCEPTED_FILES = ['image/png', 'image/jpeg'];
 
 export default function OcrSearch({ onClose }: Props) {
   const [imageDataURL, setImageDataURL] = useState<string | undefined>(undefined);
@@ -46,6 +49,15 @@ export default function OcrSearch({ onClose }: Props) {
       setImageDataURL(reader.result as any);
     };
     reader.readAsDataURL(files[0]);
+  }, []);
+
+  const handleFileDrop = useCallback((file: File) => {
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageDataURL(reader.result as any);
+    };
+    reader.readAsDataURL(file);
   }, []);
 
   const handleImageChange = useCallback(() => {
@@ -87,7 +99,8 @@ export default function OcrSearch({ onClose }: Props) {
                     navigate({
                       pathname: '/search',
                       search: `?term=${searchRes.data?.ocr_result}`
-                    }, { state: { ai_answer: searchRes.data?.answer } })
+                    }, { state: { ai_answer: searchRes.data?.answer } });
+                    onClose();
                   }
                 } catch (e) {
                   setUiState(UIState.IMAGE_PICKING);
@@ -134,7 +147,7 @@ export default function OcrSearch({ onClose }: Props) {
             type="file"
             onChange={onChange}
             className='hidden'
-            accept="image/png, image/gif, image/jpeg"
+            accept="image/png, image/jpeg"
             id="ocr-image"
           />
           <div className='flex-1 rounded-md overflow-hidden'>
@@ -149,12 +162,7 @@ export default function OcrSearch({ onClose }: Props) {
                   dragMode='move'
                   viewMode={2}
                 />
-                : <div
-                  className='h-full w-full bg-gray-300 text-xl font-medium cursor-pointer flex items-center justify-center'
-                  onClick={handleImageChange}
-                >
-                  Upload Image here
-                </div>
+                : <FileDrop onClick={handleImageChange} onFileDrop={handleFileDrop} />
             )}
             {uiState === UIState.UPLOADING && <StateLoader text='Uploading...' />}
             {uiState === UIState.PROCESSING && <StateLoader text='Proccessing Your Image...' />}
@@ -178,6 +186,62 @@ export default function OcrSearch({ onClose }: Props) {
         </div>
       </CustomModal>
     </>
+  )
+}
+
+const FileDrop = ({ onClick, onFileDrop }: {
+  onClick: () => void;
+  onFileDrop: (file: File) => void;
+}) => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+
+    const files = e.dataTransfer.files;
+
+    if (files?.[0]) {
+      if (ACCEPTED_FILES.includes(files[0].type)) {
+        onFileDrop(files[0]);
+      } else {
+        toast.error('Please upload supported image files');
+      }
+    }
+
+    setTimeout(() => {
+      setIsDragging(false);
+    }, 2000);
+  };
+
+  return (
+    <div
+      className={clsx(
+        'h-full w-full text-xl font-medium cursor-pointer flex items-center justify-center',
+        isDragging ? 'bg-gray-400' : 'bg-gray-200',
+      )
+    }
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      onClick={onClick}
+    >
+      <p className='max-sm:hidden'>{isDragging ? 'Drop Image' : 'Upload Or Drag Image here'}</p>
+      <p className='sm:hidden'>Upload Image here</p>
+    </div>
   )
 }
 
