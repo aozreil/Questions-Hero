@@ -145,6 +145,11 @@ export default function AskQuestion() {
       if (textareaHistory.current && textAreaRef.current) {
         event.preventDefault();
         textAreaRef.current.value = textareaHistory.current;
+        const textLength = textareaHistory.current.length;
+
+        if (!hasValue && textLength >= 10) setHasValue(true);
+        shouldRequestSearch(textLength);
+
         textareaHistory.current = '';
       }
     }
