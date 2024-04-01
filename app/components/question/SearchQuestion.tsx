@@ -20,7 +20,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
   const [userProfiles, setUserProfiles] = useState<IUsers | undefined>(undefined);
   const [formattedText] = useState(() => getTextFormatted(text))
   const { focusedOverlayStyles, overlayVisible, setOverlayVisible } = useOverlay();
-  const shouldHideQuestionLink = !!question?.aiAnswer && answers?.length === 1;
+  const onlyHaveAIAnswer = !!question?.aiAnswer && answers?.length === 1;
   const hasVerifiedAnswer = question?.answerStatuses?.includes(AnswerStatus.VERIFIED);
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
             to={slug? `/question/${slug}` : `/question/${id}`}
             prefetch={'intent'}
             target='_blank'
-            className={shouldHideQuestionLink ? 'pointer-events-none' : ''}
+            className={onlyHaveAIAnswer ? 'pointer-events-none' : ''}
           >
             <hr className="mb-4" />
             <p
@@ -121,7 +121,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
               slug={slug}
               close={close}
               handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(id)}
-              shouldHideQuestionLink={shouldHideQuestionLink}
+              onlyHaveAIAnswer={onlyHaveAIAnswer}
             />
           </div>
         )}
@@ -143,7 +143,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
                 close={close}
                 handleAnswerOpen={() => handleAnswerOpen && handleAnswerOpen(id)}
                 mobileVersion={true}
-                shouldHideQuestionLink={shouldHideQuestionLink}
+                onlyHaveAIAnswer={onlyHaveAIAnswer}
               />
             </div>
           </div>
