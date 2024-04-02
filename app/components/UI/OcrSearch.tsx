@@ -176,7 +176,8 @@ export default function OcrSearch({ onClose }: Props) {
                 {imageDataURL ? 'Change Image' : 'Upload Image'}
               </Button>
               <Button
-                className='flex-1 h-10 text-white font-semibold bg-black rounded-xl'
+                className={clsx('flex-1 h-10 text-white font-semibold rounded-xl', imageFile ? 'bg-black' : 'bg-[#afafb0]' )}
+                disabled={!imageFile}
                 onClick={getCropData}
               >
                 Search
