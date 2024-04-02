@@ -35,7 +35,7 @@ export default function AskQuestionSearchCard({ questionId, slug, text }: Props)
         </button>
       </div>
       <hr className="mb-4" />
-      <p dangerouslySetInnerHTML={{ __html: formattedText }} />
+      <div className='line-clamp-3' dangerouslySetInnerHTML={{ __html: formattedText }} />
     </Link>
   )
 }

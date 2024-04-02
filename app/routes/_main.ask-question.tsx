@@ -4,14 +4,26 @@ import { postQuestion } from "~/apis/questionsAPI";
 import { useNavigate } from "react-router";
 import { useAuth } from "~/context/AuthProvider";
 import { searchQuestionsAPI } from "~/apis/searchAPI";
-import { debounceLeading } from "~/utils";
+import { countRealCharacters, debounceLeading } from "~/utils";
 import AskQuestionSearchCard from "~/components/question/AskQuestionSearchCard";
 import { SearchQuestionResponse } from "~/models/searchModel";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
+import { BASE_URL, RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
 import Attachments, { AttachmentFile, AttachmentsStatus } from "~/components/askQuestion/Attachments";
+import { MetaFunction } from "@remix-run/node";
+import { getSeoMeta } from "~/utils/seo";
+import { loader } from "~/routes/_main.search";
+
+export const meta: MetaFunction<typeof loader> = ({ location }) => {
+  return [
+    ...getSeoMeta({
+      title: 'Askgram - Ask Question',
+      canonical: `${BASE_URL}/ask-question`
+    }),
+  ];
+};
 
 const AttachmentsInitialState = { files: [], status: AttachmentsStatus.completed }
 const CHAR_CHANGE_UPDATE = 10;
@@ -95,7 +107,8 @@ export default function AskQuestion() {
   }, [hasValue, user, attachmentsState]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const textLength = e?.target?.value?.length ?? 0;
+    const text = e?.target?.value;
+    const textLength = text?.length ? countRealCharacters(text) : 0;
     if (hasValue && textLength < 10) {
       setHasValue(false);
       clearSearchData();

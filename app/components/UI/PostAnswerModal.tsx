@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import ReCAPTCHA from "react-google-recaptcha";
 import { RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
 import { useSubmit } from "@remix-run/react";
+import { countRealCharacters } from "~/utils";
 
 interface Props {
   open: boolean;
@@ -53,8 +54,10 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (hasValue && !e?.target?.value?.length) setHasValue(false);
-    if (!hasValue && e?.target?.value?.length) setHasValue(true);
+    const text = e?.target?.value;
+    const textLength = countRealCharacters(text)
+    if (hasValue && textLength < 10) setHasValue(false);
+    if (!hasValue && textLength >= 10) setHasValue(true);
   }
 
   return (

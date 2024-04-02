@@ -96,7 +96,7 @@ const Answer = ({ askedBy, answer }: {
       <hr className="my-3 border-t border-t-[#f4f4f4] opacity-75" />
       <div className='w-full max-sm:pb-5'>
         <div className={
-          clsx("f2f4f5 text-left p-4 rounded-xl mb-3", isVerified ? 'bg-[#d3f0e5]' : 'bg-[#f2f4f5]')}
+          clsx("f2f4f5 text-left p-4 rounded-xl mb-3 overflow-x-hidden", isVerified ? 'bg-[#d3f0e5]' : 'bg-[#f2f4f5]')}
         >
           {isVerified && (
             <div className="flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0">

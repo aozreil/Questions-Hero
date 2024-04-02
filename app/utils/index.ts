@@ -64,3 +64,8 @@ export function debounceLeading<T extends (...args: any[]) => any>(
         timeoutId = setTimeout(() => func(...args), delay);
     };
 }
+
+export function countRealCharacters(str: string) {
+    const realString = str.replace(/\s/g, '');
+    return realString.length;
+}
