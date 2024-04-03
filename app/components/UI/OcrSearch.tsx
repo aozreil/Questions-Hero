@@ -37,6 +37,10 @@ export default function OcrSearch({ onClose }: Props) {
     e.preventDefault();
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
+    if (!ACCEPTED_FILES.includes(selectedFile.type)) {
+      toast.error('Please upload supported image files');
+      return;
+    }
     let files;
     if (e.dataTransfer) {
       files = e.dataTransfer.files;
