@@ -21,6 +21,8 @@ export interface AttachmentFile {
   filename: string;
 }
 
+const SUPPORTED_FILES = ["image/png", "image/jpeg", "image/webp"];
+
 export default function Attachments({ onChange }: Props) {
   const [files, setFiles] = useState<AttachmentFile[]>([]);
   const { user, openSignUpModal } = useAuth();
@@ -37,11 +39,15 @@ export default function Attachments({ onChange }: Props) {
 
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      // filtered files without duplicates
+      // filtered files without duplicates & with correct format
       const filteredFiles: File[] = [];
       for (const file of e.target.files) {
-        if (!files.filter(addedFile => isSameFile(addedFile?.file, file))?.length) {
-          filteredFiles.push(file);
+        if (SUPPORTED_FILES.includes(file.type)) {
+          if (!files.filter(addedFile => isSameFile(addedFile?.file, file))?.length) {
+            filteredFiles.push(file);
+          }
+        } else {
+          toast.error(`${file.type} not supported yet`);
         }
       }
 
@@ -78,7 +84,7 @@ export default function Attachments({ onChange }: Props) {
     <div className='flex space-x-2 w-[60%]'>
       <input
         className='hidden'
-        accept="image/png, image/gif, image/jpeg"
+        accept="image/png, image/jpeg, image/webp"
         multiple id="upload-files"
         type="file"
         onChange={handleFileChange}

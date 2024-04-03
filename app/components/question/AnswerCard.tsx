@@ -34,7 +34,7 @@ export default function AnswerCard({ answer, user }: Props) {
               {answer?.text && (
                 <p>
                   <span className='font-medium'>Final Answer : </span>
-                  <span dangerouslySetInnerHTML={{ __html: answer?.text }} />
+                  <span className='relative' dangerouslySetInnerHTML={{ __html: answer?.text }} />
                 </p>
               )}
               {!!answer?.answer_steps?.length && (

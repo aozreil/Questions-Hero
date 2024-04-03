@@ -15,6 +15,8 @@ import Attachments, { AttachmentFile, AttachmentsStatus } from "~/components/ask
 import { MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
 import { loader } from "~/routes/_main.search";
+import Footer from "~/components/UI/Footer";
+import { getKatexLink } from "~/utils/external-links";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   return [
@@ -22,6 +24,7 @@ export const meta: MetaFunction<typeof loader> = ({ location }) => {
       title: 'Askgram - Ask Question',
       canonical: `${BASE_URL}/ask-question`
     }),
+    ...getKatexLink(),
   ];
 };
 
@@ -93,7 +96,8 @@ export default function AskQuestion() {
           filename: file.filename,
           key: file.key
         }));
-        const res = await postQuestion(textAreaRef.current.value, token, attachments);
+        const questionBody = textAreaRef.current.value?.trim();
+        const res = await postQuestion(questionBody, token, attachments);
         if (res?.slug || res?.id) {
           toast.success('Your question added successfully!');
           navigate(`/question/${res?.slug ?? res?.id}`);
@@ -169,7 +173,7 @@ export default function AskQuestion() {
   }, []);
 
   return (
-    <div className='flex-1 max-h-[calc(100vh-6rem)] overflow-y-auto bg-[#070707] pt-4 sm:pt-14'>
+    <div className='flex-1 relative max-h-[calc(100vh-6rem)] flex flex-col overflow-y-auto bg-[#070707] pt-4 sm:pt-14'>
       {shouldLoadRecaptcha && (
         <ReCAPTCHA
           ref={recaptchaRef}
@@ -252,6 +256,9 @@ export default function AskQuestion() {
             )}
           </Transition>
         </section>
+      </div>
+      <div className='mt-auto w-full'>
+        <Footer />
       </div>
     </div>
   )
