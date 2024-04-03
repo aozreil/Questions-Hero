@@ -75,7 +75,7 @@ export default function SearchPage() {
   const getDataWithAiAnswer = (data: ISearchQuestion[]): ISearchQuestion[] => {
     const firstQuestionScore = data?.[0]?.relevant_score;
     const aiAnswer = location?.state?.ai_answer;
-    if (!aiAnswer) return data;
+    if (!aiAnswer || !searchTerm) return data;
 
     // if first question score is higher than AI_ANSWER_ACCEPTED_SCORE, then AI answer will be merged to it
     if (firstQuestionScore && firstQuestionScore > AI_ANSWER_ACCEPTED_SCORE) {
