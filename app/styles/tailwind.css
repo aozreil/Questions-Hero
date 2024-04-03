@@ -213,4 +213,9 @@ input[type="search"]:focus::-webkit-search-cancel-button {
 .katex-display {
     overflow-x: auto;
     overflow-y: hidden;
+    padding: 5px 0;
+}
+
+.cropper-crop-box {
+    background: white;
 }
