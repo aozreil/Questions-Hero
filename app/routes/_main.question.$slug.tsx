@@ -133,10 +133,6 @@ export async function loader ({ params, request }: LoaderFunctionArgs) {
                 answer_steps: answer?.answer_steps?.map(step => ({ ...step, text: getCleanText(step?.text) }))
             })),
             attachments,
-        }, {
-            headers: {
-                'Cache-Control': 'max-age=86400, public',
-            }
         });
     } catch (e) {
         console.error(e)
