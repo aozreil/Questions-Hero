@@ -81,7 +81,7 @@ export default function Attachments({ onChange }: Props) {
   }, [setFiles])
 
   return (
-    <div className='flex space-x-2 w-[60%]'>
+    <div className='flex space-x-2 w-[50%]'>
       <input
         className='hidden'
         accept="image/png, image/jpeg, image/webp"

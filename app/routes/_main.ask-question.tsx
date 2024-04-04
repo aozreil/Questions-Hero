@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Loader from "~/components/UI/Loader";
-import { clientGetQuestionsInfo, postQuestion } from "~/apis/questionsAPI";
+import { postQuestion } from "~/apis/questionsAPI";
 import { useNavigate } from "react-router";
 import { useAuth } from "~/context/AuthProvider";
-import { searchQuestionsAPI } from "~/apis/searchAPI";
 import { countRealCharacters, debounceLeading } from "~/utils";
-import AskQuestionSearchCard from "~/components/question/AskQuestionSearchCard";
-import { SearchQuestionResponse } from "~/models/searchModel";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -17,7 +14,7 @@ import { getSeoMeta } from "~/utils/seo";
 import { loader } from "~/routes/_main.search";
 import Footer from "~/components/UI/Footer";
 import { getKatexLink } from "~/utils/external-links";
-import { IQuestionInfo } from "~/models/questionModel";
+import SimilarQuestions from "~/components/askQuestion/SimilarQuestions";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   return [
@@ -33,9 +30,10 @@ const AttachmentsInitialState = { files: [], status: AttachmentsStatus.completed
 const CHAR_CHANGE_UPDATE = 10;
 
 export default function AskQuestion() {
-  const [searchData, setSearchData] = useState<SearchQuestionResponse[]>([]);
-  const [searchQuestionsInfo, setSearchQuestionsInfo] = useState<IQuestionInfo[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [hasExactMatch, setHasExactMatch] = useState(false);
   const [hasValue, setHasValue] = useState(false);
+  const [isSearchingForSimilar, setIsSearchingForSimilar] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
   const [postPendingOnUser, setPostPendingOnUser] = useState(false);
   const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
@@ -49,14 +47,7 @@ export default function AskQuestion() {
   const { user, openSignUpModal } = useAuth();
   const textareaHistory = useRef('');
   const isUploadingFiles = attachmentsState?.status === AttachmentsStatus.uploading;
-
-  useEffect(() => {
-    if (searchData?.length && isDescriptionVisible) {
-      if (window.innerWidth < 640) {
-        setIsDescriptionVisible(false);
-      }
-    }
-  }, [searchData, isDescriptionVisible]);
+  const isPostingDisabled = !hasValue || isPosting || isUploadingFiles || hasExactMatch || isSearchingForSimilar;
 
   useEffect(() => {
     if (hasValue && !shouldLoadRecaptcha) {
@@ -130,21 +121,8 @@ export default function AskQuestion() {
       textLength && Math.abs(textLength - prevLength) > CHAR_CHANGE_UPDATE
     )) {
       searchRequestedWithLength.current = textLength;
-      const searchTerm = textAreaRef.current ? textAreaRef.current.value : undefined;
-      if (!searchTerm) return;
-      try {
-        const searchRes = await searchQuestionsAPI(searchTerm)
-        if (searchRes?.data) {
-          const filteredQuestions = searchRes.data?.filter(item => item?.relevant_score > 0.8);
-          if (filteredQuestions?.length) {
-            const questionsInfo = await clientGetQuestionsInfo({ params: { ids: filteredQuestions?.map(question => question?.id) }});
-            setSearchQuestionsInfo(questionsInfo)
-            setSearchData(filteredQuestions);
-          }
-        }
-      } catch (e) {
-        console.log(e);
-      }
+      const userText = textAreaRef.current ? textAreaRef.current.value : undefined;
+      userText && setSearchTerm(userText)
     }
   }, 600);
 
@@ -159,7 +137,7 @@ export default function AskQuestion() {
 
   const clearSearchData = useCallback(() => {
     setTimeout(() => {
-      setSearchData([]);
+      setSearchTerm('');
       searchRequestedWithLength.current = 0;
     }, 500);
   }, []);
@@ -222,47 +200,23 @@ export default function AskQuestion() {
                 onChange={(status, files) => setAttachmentsState({status, files})}
               />
               <button
-                disabled={!hasValue || isPosting || isUploadingFiles}
-                className={`${hasValue && !isUploadingFiles ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
+                disabled={isPostingDisabled}
+                className={`${!isPostingDisabled ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
                 onClick={handleQuestionPost}
+                title={hasExactMatch ? 'An exact match to your question is found.' : ''}
               >
                 {isPosting && <Loader className="w-5 h-5" />}
-                <p>{isPosting ? 'Posting...' : 'Ask your question'}</p>
+                <p>{isPosting ? 'Posting...' : isSearchingForSimilar ? 'Searching for similar questions' : 'Ask your question'}</p>
               </button>
             </section>
           </div>
-          <Transition
-            show={!!searchData?.length && hasValue}
-            enter='transition-opacity duration-400'
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-400"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            {!!searchData?.length && (
-              <div className='w-full lg:w-[28rem] xl:w-[35rem] flex flex-col text-white'>
-                <div className='flex items-center space-x-3'>
-                  <img src='/assets/images/search-questions-hi.svg' alt='questions' className='h-[4.1rem]' />
-                  <div className='flex flex-col'>
-                    <p className='text-2xl font-bold'>Hi There!</p>
-                    <p className='text-lg'>We've already got answers to this question.<br /> See them below</p>
-                  </div>
-                </div>
-                <div className='w-full flex-col space-y-2 p-2.5 bg-[#1e1e1e] border border-[#99a7af] rounded-xl mt-3 text-black'>
-                  {searchData.map(el => (
-                    <AskQuestionSearchCard
-                      key={el.id}
-                      text={el.text}
-                      questionId={el.id}
-                      slug={el.id}
-                      questionInfo={searchQuestionsInfo?.find((question => question?.id === el?.id))}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </Transition>
+          <SimilarQuestions
+            searchTerm={searchTerm}
+            setIsDescriptionVisible={setIsDescriptionVisible}
+            textareaHasValue={hasValue}
+            setHasExactMatch={setHasExactMatch}
+            setIsSearchingForSimilar={setIsSearchingForSimilar}
+          />
         </section>
       </div>
       <div className='mt-auto w-full'>
