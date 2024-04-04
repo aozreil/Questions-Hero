@@ -274,7 +274,9 @@ const getStructuredData = (data: LoaderData) => {
     const questionTitle = questionBody;
     const questionAskedBy = getUser(question?.user_id, users);
     const verifiedAnswer = getVerifiedAnswer(answersData);
-    const suggestedAnswers = filterSuggestedAnswers(answersData);
+    const suggestedAnswers = filterSuggestedAnswers(answersData).filter(
+      question => question?.created_at !== verifiedAnswer?.created_at
+    );
     const answerFallback = `The Answer of ${questionBody}`;
 
     const Educational = {
