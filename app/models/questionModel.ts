@@ -39,6 +39,7 @@ export class QuestionClass {
 
 export function answersSorterFun (a: IAnswer, b: IAnswer) {
     if (a.answer_status === AnswerStatus.VERIFIED) return -1;
+    if (a.answer_status === AnswerStatus.AI_ANSWER) return 0;
     const date1 = a?.created_at ? new Date(a?.created_at) : undefined;
     const date2 = b?.created_at ? new Date(b?.created_at) : undefined;
     if (date1 && date2) {
@@ -53,6 +54,7 @@ export function answersSorterFun (a: IAnswer, b: IAnswer) {
 export enum AnswerStatus {
     'VERIFIED' = 'VERIFIED',
     'USER_ANSWER' = 'USER_ANSWER',
+    'AI_ANSWER' = 'AI_ANSWER',
 }
 
 export interface IAnswer {
@@ -78,12 +80,20 @@ export interface IQuestion {
     // Derived Props
     title?: string;
     includesLatex?: boolean;
-    answerCount?: number;
+}
+
+export interface ISearchQuestion extends IQuestion {
+    // Derived Props
+    answerCount: number;
+    aiAnswer?: string;
+    relevant_score?: number;
+    answerStatuses?: AnswerStatus[];
 }
 
 export interface IQuestionInfo {
     id: string;
     answers_count: number;
+    answers_statuses: AnswerStatus[];
 }
 
 export interface IConcept {
@@ -96,10 +106,10 @@ export interface IObjective {
 }
 
 export interface IUser {
-    id: number;
-    view_name: string;
-    user_id: number;
-    picture: string;
+    id?: number;
+    view_name?: string;
+    user_id?: number;
+    picture?: string;
 }
 
 export interface IUsers {

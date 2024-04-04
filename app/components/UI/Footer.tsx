@@ -1,5 +1,6 @@
 import { Link } from "@remix-run/react";
 import { TERMS_NAVIGATION_LINKS } from "~/components/UI/Terms";
+import { Fragment } from "react";
 
 interface Props {
   slidesNavigator?: React.ReactNode;
@@ -19,7 +20,7 @@ export default function Footer({slidesNavigator}: Props) {
         {!!slidesNavigator && slidesNavigator}
         <div className="flex items-center space-x-3 [&>*:last-child]:hidden">
           {TERMS_NAVIGATION_LINKS?.map(term =>
-            <>
+            <Fragment key={term.text}>
             <Link
               key={term.text}
               to={term.link}
@@ -28,7 +29,7 @@ export default function Footer({slidesNavigator}: Props) {
                 {term.text}
               </Link>
               <div className='sm:hidden border-r border-[#979da4] h-4' />
-            </>
+            </Fragment>
           )}
         </div>
       </div>

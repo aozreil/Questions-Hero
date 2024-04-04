@@ -2,15 +2,19 @@ import clsx from "clsx";
 import { Link } from "@remix-run/react";
 import React, { useState } from "react";
 import { getTextFormatted } from "~/utils/text-formatting-utils";
+import { AnswerStatus, IQuestionInfo } from "~/models/questionModel";
+import QuestionType from "~/components/question/QuestionType";
 
 interface Props {
   text: string;
   questionId: string;
   slug?: string;
+  questionInfo?: IQuestionInfo;
 }
 
-export default function AskQuestionSearchCard({ questionId, slug, text }: Props) {
+export default function AskQuestionSearchCard({ questionId, slug, text, questionInfo }: Props) {
   const [formattedText] = useState(() => getTextFormatted(text));
+  const hasVerifiedAnswer = questionInfo?.answers_statuses?.includes(AnswerStatus.VERIFIED);
 
   return (
     <Link
@@ -23,10 +27,10 @@ export default function AskQuestionSearchCard({ questionId, slug, text }: Props)
       target='_blank'
     >
       <div className="flex justify-between pb-4">
-        <div className="flex items-center space-x-2 text-[#25b680] font-bold">
-          <img src="/assets/images/verified.svg" alt="verifed" />
-          <p>Has Verified Answer</p>
-        </div>
+        <QuestionType
+          answerCount={questionInfo?.answers_count ?? 0}
+          hasVerifiedAnswer={hasVerifiedAnswer}
+        />
         <button
           className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
         >

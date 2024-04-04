@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { IAnswer, IPostQuestion, IPreSignedURL, IUser } from "~/models/questionModel";
+import { IAnswer, IPostQuestion, IPreSignedURL, IQuestionInfo, IUser } from "~/models/questionModel";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
-import { axiosApiInstance } from "~/interceptors/client-interceptors";
+import { axiosApiInstance, paramsSerializerComma } from "~/interceptors/client-interceptors";
 
 export async function clientGetAnswer (id: string) {
   const response = await axios.get<IAnswer[]>(`${ASKGRAM_BASE}/api/content/answers/question/${id}`);
@@ -11,6 +11,14 @@ export async function clientGetAnswer (id: string) {
 export async function clientGetUsers (ids: number[]) {
   const response = await axios.get<IUser[]>(`${ASKGRAM_BASE}/api/users/users/public?ids=${ids?.join()}`);
   return response?.data;
+}
+
+export async function clientGetQuestionsInfo(config: AxiosRequestConfig): Promise<IQuestionInfo[]> {
+  const response = await axios.get<IQuestionInfo[]>(`${ASKGRAM_BASE}/api/content/questions/info`, {
+    ...config,
+    paramsSerializer: paramsSerializerComma,
+  });
+  return response.data
 }
 
 export async function postQuestion (

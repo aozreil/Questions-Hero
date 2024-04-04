@@ -1,4 +1,4 @@
-import { answersSorterFun, IAnswer, IQuestion, IUsers, QuestionClass } from "~/models/questionModel";
+import { answersSorterFun, IAnswer, IUsers, QuestionClass, ISearchQuestion, AnswerStatus } from "~/models/questionModel";
 import React, { useCallback, useEffect, useState } from "react";
 import { clientGetAnswer, clientGetUsers } from "~/apis/questionsAPI";
 import SearchAnswer from "~/components/question/SearchAnswer";
@@ -6,10 +6,11 @@ import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import { Link } from "@remix-run/react";
 import { getTextFormatted } from "~/utils/text-formatting-utils";
+import QuestionType from "~/components/question/QuestionType";
 
 interface IProps {
   handleAnswerOpen?: (questionId: string) => void;
-  question: IQuestion;
+  question: ISearchQuestion;
 }
 
 export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
@@ -19,6 +20,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
   const [userProfiles, setUserProfiles] = useState<IUsers | undefined>(undefined);
   const [formattedText] = useState(() => getTextFormatted(text))
   const { focusedOverlayStyles, overlayVisible, setOverlayVisible } = useOverlay();
+  const hasVerifiedAnswer = question?.answerStatuses?.includes(AnswerStatus.VERIFIED);
 
   useEffect(() => {
     if (window.innerWidth > 1024 && !overlayVisible && isOpen) {
@@ -68,22 +70,20 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
           target='_blank'
         >
           <div className="flex-shrink-0 overflow-hidden flex items-center justify-between pb-4">
-            {answerCount && answerCount > 0
-              ? <>
-                  <div className="flex items-center space-x-2 text-[#25b680] font-bold">
-                    <img src="/assets/images/verified.svg" alt="verifed" />
-                    <p>Has Verified Answer</p>
-                  </div>
-                  <button
-                    className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
-                    onClick={handleShowAnswer}
-                  >
-                    {isOpen ? 'Hide' : 'Show Answer'}
-                    <img src='/assets/images/related-arrow.svg' alt='arrow' className={`w-4 h-4 ml-1 mt-0.5 ${isOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                </>
-              : <p className='text-[#99a7af] font-medium'>Not answered yet</p>
-            }
+            <QuestionType
+              answerCount={answerCount}
+              hasAiAnswer={!!question?.aiAnswer}
+              hasVerifiedAnswer={hasVerifiedAnswer}
+            />
+            {answerCount > 0 && (
+              <button
+                className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
+                onClick={handleShowAnswer}
+              >
+                {isOpen ? 'Hide' : 'Show Answer'}
+                <img src='/assets/images/related-arrow.svg' alt='arrow' className={`w-4 h-4 ml-1 mt-0.5 ${isOpen ? 'rotate-180' : ''}`} />
+              </button>
+            )}
           </div>
           <hr className="mb-4" />
           <p className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`} dangerouslySetInnerHTML={{ __html: formattedText }} />

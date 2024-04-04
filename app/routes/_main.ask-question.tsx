@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Loader from "~/components/UI/Loader";
-import { postQuestion } from "~/apis/questionsAPI";
+import { clientGetQuestionsInfo, postQuestion } from "~/apis/questionsAPI";
 import { useNavigate } from "react-router";
 import { useAuth } from "~/context/AuthProvider";
 import { searchQuestionsAPI } from "~/apis/searchAPI";
@@ -17,6 +17,7 @@ import { getSeoMeta } from "~/utils/seo";
 import { loader } from "~/routes/_main.search";
 import Footer from "~/components/UI/Footer";
 import { getKatexLink } from "~/utils/external-links";
+import { IQuestionInfo } from "~/models/questionModel";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   return [
@@ -33,6 +34,7 @@ const CHAR_CHANGE_UPDATE = 10;
 
 export default function AskQuestion() {
   const [searchData, setSearchData] = useState<SearchQuestionResponse[]>([]);
+  const [searchQuestionsInfo, setSearchQuestionsInfo] = useState<IQuestionInfo[]>([]);
   const [hasValue, setHasValue] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
   const [postPendingOnUser, setPostPendingOnUser] = useState(false);
@@ -133,7 +135,12 @@ export default function AskQuestion() {
       try {
         const searchRes = await searchQuestionsAPI(searchTerm)
         if (searchRes?.data) {
-          setSearchData(searchRes.data?.filter(item => item?.relevant_score > 0.8));
+          const filteredQuestions = searchRes.data?.filter(item => item?.relevant_score > 0.8);
+          if (filteredQuestions?.length) {
+            const questionsInfo = await clientGetQuestionsInfo({ params: { ids: filteredQuestions?.map(question => question?.id) }});
+            setSearchQuestionsInfo(questionsInfo)
+            setSearchData(filteredQuestions);
+          }
         }
       } catch (e) {
         console.log(e);
@@ -249,6 +256,7 @@ export default function AskQuestion() {
                       text={el.text}
                       questionId={el.id}
                       slug={el.id}
+                      questionInfo={searchQuestionsInfo?.find((question => question?.id === el?.id))}
                     />
                   ))}
                 </div>
