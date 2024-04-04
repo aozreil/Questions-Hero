@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useCallback, useContext, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { useLocation } from "@remix-run/react";
 
 interface IOverlayContext {
   overlayVisible: boolean;
@@ -16,6 +17,13 @@ interface Props {
 export default function OverlayProvider({ children }: Props) {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const hideOverlay = useCallback(() => setOverlayVisible(false), []);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (overlayVisible) {
+      setOverlayVisible(false);
+    }
+  }, [location]);
 
   return (
     <div className="relative min-h-screen bg-[#f7f8fa] flex flex-col">
