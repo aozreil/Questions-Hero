@@ -1,6 +1,6 @@
 import { IQuestion, IUser } from "~/models/questionModel";
 import {format} from "date-fns";
-import {useState} from "react";
+import { useMemo } from "react";
 
 interface Props {
     question?: IQuestion;
@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function QuestionContent({ question, user }: Props) {
-    const [createdAt] = useState(() => getCreatedAtDate(question));
+    const createdAt = useMemo(() => getCreatedAtDate(question), [question]);
     return (
         <div className='flex flex-col w-full p-4'>
             <div className='w-full flex flex-col-reverse sm:flex-row flex-wrap sm:justify-between sm:items-center mb-3'>
