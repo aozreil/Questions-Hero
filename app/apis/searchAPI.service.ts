@@ -15,7 +15,6 @@ export async function searchQuestionsDetailsAPI(term: string) {
   }
 
   const questionIds = searchResponse.data.map(el => el.id);
-
   let questionMapper: { [key: string]: string } = {};
   let questionInfoMapper: { [key: string]: { answers_count: number, answers_statuses: AnswerStatus[] } } = {};
 

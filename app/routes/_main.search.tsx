@@ -51,7 +51,6 @@ export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const { trackEvent } = useAnalytics();
   const { overlayVisible } = useOverlay();
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const search_term = searchParams.get('term');
@@ -65,17 +64,13 @@ export default function SearchPage() {
   const handleAnswerOpen = (questionId: string) => {
     if (window.innerWidth < 1024) return;
     const element = document.getElementById(`q-${questionId}`);
-    if (element && containerRef.current) {
-      containerRef.current.scroll({
-        top: element?.offsetTop - 150,
-        behavior: 'smooth'
-      })
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
   return (
     <section
-      ref={containerRef}
       className={`pb-40 search-page-scroll max-h-[calc(100vh-6rem)] ${overlayVisible ? 'overflow-hidden pr-[12px]' : 'overflow-y-auto'}`}
     >
       <Suspense fallback={

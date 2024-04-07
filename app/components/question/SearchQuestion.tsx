@@ -1,4 +1,4 @@
-import { answersSorterFun, IAnswer, IUsers, QuestionClass, ISearchQuestion, AnswerStatus } from "~/models/questionModel";
+import { answersSorterFun, IAnswer, IUsers, IQuestion, QuestionClass, ISearchQuestion, AnswerStatus } from "~/models/questionModel";
 import React, { useCallback, useEffect, useState } from "react";
 import { clientGetAnswer, clientGetUsers } from "~/apis/questionsAPI";
 import SearchAnswer from "~/components/question/SearchAnswer";

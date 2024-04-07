@@ -35,10 +35,6 @@ export async function getQuestionsInfo(config: AxiosRequestConfig): Promise<IQue
     });
     return response.data
 }
-export async function getRelatedQuestionById(id: string, config?: AxiosRequestConfig) {
-    const response = await AxiosServerInstance.get<{ data: IQuestion[], page: number, size: number, count: number}>(`${CONTENT_CLUSTER}/questions/${id}/related`, config);
-    return response?.data;
-}
 
 export async function getQuestionAttachments(id: string, config?: AxiosRequestConfig): Promise<IQuestionAttachment[]> {
     const response = await AxiosServerInstance.get<IQuestionAttachment[]>(`${CONTENT_CLUSTER}/questions/${id}/attachments`, config);
