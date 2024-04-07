@@ -34,6 +34,7 @@ export default function SimilarQuestions({
     if (!searchTerm) {
       setSearchData([]);
       setSearchQuestionsInfo([]);
+      setHasExactMatch(false);
       return;
     }
 
@@ -44,9 +45,9 @@ export default function SimilarQuestions({
         if (searchRes?.data) {
           const filteredQuestions = searchRes.data?.filter(
             item => item?.relevant_score > ASK_QUESTION_SIMILAR_SCORE);
+          setHasExactMatch(filteredQuestions?.[0]?.relevant_score > 0.9);
           if (filteredQuestions?.length) {
             const questionsInfo = await clientGetQuestionsInfo({ params: { ids: filteredQuestions?.map(question => question?.id) }});
-            setHasExactMatch(filteredQuestions?.[0]?.relevant_score > 0.9);
             setSearchQuestionsInfo(questionsInfo);
             setSearchData(filteredQuestions);
           }
