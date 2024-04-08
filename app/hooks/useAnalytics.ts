@@ -39,9 +39,7 @@ export function useAnalytics() {
     analytics.forEach(el => {
       try {
         el.identifyUserById(userId);
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) { /* empty */ }
     });
   }
 

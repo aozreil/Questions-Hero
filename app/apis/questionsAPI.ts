@@ -1,14 +1,14 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { IAnswer, IPostQuestion, IPreSignedURL, IQuestionInfo, IUser } from "~/models/questionModel";
+import { IAnswer, IPostQuestion, IPreSignedURL, IQuestion, IQuestionInfo, IUser } from "~/models/questionModel";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { axiosApiInstance, paramsSerializerComma } from "~/interceptors/client-interceptors";
 
-export async function clientGetAnswer (id: string) {
+export async function clientGetAnswer(id: string) {
   const response = await axios.get<IAnswer[]>(`${ASKGRAM_BASE}/api/content/answers/question/${id}`);
   return response?.data;
 }
 
-export async function clientGetUsers (ids: number[]) {
+export async function clientGetUsers(ids: number[]) {
   const response = await axios.get<IUser[]>(`${ASKGRAM_BASE}/api/users/users/public?ids=${ids?.join()}`);
   return response?.data;
 }
@@ -85,12 +85,18 @@ export async function uploadFile (
   return response.data;
 }
 
-export async function getMyAskedQuestions() {
-  const response = await axios.get<IQuestion[]>(`${ASKGRAM_BASE}/api/content/me/questions`);
+export async function getMyAskedQuestions(config?: AxiosRequestConfig) {
+  const response = await axios.get<{data: IQuestion[], count: number, page: number, size: number}>(`${ASKGRAM_BASE}/api/content/me/questions`, {
+    ...config,
+    withCredentials: true
+  });
   return response?.data;
 }
 
-export async function getMyAnswersForQuestions() {
-  const response = await axios.get<IAnswer[]>(`${ASKGRAM_BASE}/api/content/me/answers`);
+export async function getMyAnswersForQuestions(config?: AxiosRequestConfig) {
+  const response = await axios.get<{data: IAnswer[], count: number, page: number, size: number}>(`${ASKGRAM_BASE}/api/content/me/answers`, {
+    ...config,
+    withCredentials: true
+  });
   return response?.data;
 }

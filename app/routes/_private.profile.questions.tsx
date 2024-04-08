@@ -3,18 +3,17 @@ import { getMyAskedQuestions } from "~/apis/questionsAPI";
 
 
 export const clientLoader = async () => {
-  return [];
+  return await getMyAskedQuestions();
 };
 
 
 export default function UserProfileQuestionsPage() {
-  const data = useLoaderData<typeof clientLoader>();
-  const questionsList = data;
+  const { data, count } = useLoaderData<typeof clientLoader>();
   return <div>
     <p className="font-bold text-4xl text-black mb-10">
-      Questions ({questionsList.length})
+      Questions ({count})
     </p>
-    {questionsList.length === 0 && (
+    {data.length === 0 && (
       <div className="text-center space-y-4">
         <p>
           You haven’t asked any questions yet!
@@ -24,6 +23,11 @@ export default function UserProfileQuestionsPage() {
         </Link>
 
       </div>
+    )}
+    {data.length > 0 && (
+      <>
+
+      </>
     )}
   </div>;
 }

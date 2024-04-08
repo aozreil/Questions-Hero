@@ -22,8 +22,8 @@ export default function UserProfilePage() {
   if (!user) {
     return <div>Loading...</div>;
   }
-  return <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4">
-    <div className="items-center p-4">
+  return <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-44">
+    <div className="items-center p-4 sticky h-max top-24">
       <div className="md:space-y-4 md:space-x-0 space-x-4 flex md:block items-center">
         <UserProfile user={user} className="md:w-36 md:h-36 border-0 shadow-md" />
         <p className="capitalize text-black font-bold text-2xl text-center">
