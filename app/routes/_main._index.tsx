@@ -47,7 +47,7 @@ export default function Index() {
 
   return (
     <div className='flex-1 flex flex-col relative'>
-      <div className={`flex-1 flex ${currentSlide === 1 ? 'lg:items-start 2xl:items-center' : 'sm:items-center'} overflow-y-auto max-xl:pb-10`}>
+      <div className={`flex-1 flex items-start sm:pt-[5vh] 2xl:pt-[10vh] overflow-y-auto max-xl:pb-10`}>
         {getHomeContent()}
       </div>
       <div className='sticky w-full bottom-0 z-40 bg-[#f7f8fa] h-fit flex flex-col items-center'>

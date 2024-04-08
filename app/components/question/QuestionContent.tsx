@@ -5,9 +5,10 @@ import {useState} from "react";
 interface Props {
     question?: IQuestion;
     user?: IUser;
+    isVerified: boolean;
 }
 
-export default function QuestionContent({ question, user }: Props) {
+export default function QuestionContent({ question, user, isVerified }: Props) {
     const [createdAt] = useState(() => getCreatedAtDate(question));
     return (
         <div className='flex flex-col w-full p-4'>
@@ -20,10 +21,12 @@ export default function QuestionContent({ question, user }: Props) {
                         </span>
                     </p>
                 )}
-                <div className='flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0'>
-                    <img src='/assets/images/verified.svg' alt='verifed' />
-                    <p>Verified</p>
-                </div>
+                {isVerified && (
+                  <div className='flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0'>
+                      <img src='/assets/images/verified.svg' alt='verifed' />
+                      <p>Verified</p>
+                  </div>
+                )}
             </div>
             {question?.text && (
                 <h1

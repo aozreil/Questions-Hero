@@ -3,12 +3,16 @@ import {
     IConcept,
     IInternalAnswer,
     IInternalQuestion, IObjective,
-    IQuestion,
+    IQuestion, IQuestionAttachment,
+    IQuestionInfo,
     IUser,
     QuestionClass
 } from "~/models/questionModel";
-import AxiosServerInstance, {RequestConfigCustomize} from "~/interceptors/http-interceptors.server";
-import {CONTENT_CLUSTER, USERS_CLUSTER} from "~/config/enviroment.server";
+import AxiosServerInstance, {
+    paramsSerializerComma,
+    RequestConfigCustomize
+} from "~/interceptors/http-interceptors.server";
+import { ATTACHMENTS_BASE, CONTENT_CLUSTER, USERS_CLUSTER } from "~/config/enviroment.server";
 import { AxiosRequestConfig } from "axios";
 
 export async function getQuestionById(id: string): Promise<IQuestion> {
@@ -16,9 +20,25 @@ export async function getQuestionById(id: string): Promise<IQuestion> {
    return response?.data;
 }
 
-export async function getQuestionsById(id: string): Promise<IQuestion[]> {
-    const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions?ids=${id}`);
+export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
+    const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions`, {
+        ...config,
+        paramsSerializer: paramsSerializerComma,
+    });
     return response?.data;
+}
+
+export async function getQuestionsInfo(config: AxiosRequestConfig): Promise<IQuestionInfo[]> {
+    const response = await AxiosServerInstance.get<IQuestionInfo[]>(`${CONTENT_CLUSTER}/questions/info`, {
+        ...config,
+        paramsSerializer: paramsSerializerComma,
+    });
+    return response.data
+}
+
+export async function getQuestionAttachments(id: string, config?: AxiosRequestConfig): Promise<IQuestionAttachment[]> {
+    const response = await AxiosServerInstance.get<IQuestionAttachment[]>(`${CONTENT_CLUSTER}/questions/${id}/attachments`, config);
+    return response?.data?.map(file => ({ ...file, url: `${ATTACHMENTS_BASE}/${file?.key}` }));
 }
 
 export async function getQuestionConcepts(id: string): Promise<IConcept[]> {

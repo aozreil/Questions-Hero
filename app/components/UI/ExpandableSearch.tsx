@@ -45,7 +45,8 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
 
     const calculateTextareaRows = useCallback((text?: string) => {
         if (textAreaRef.current && text !== undefined) {
-            const rows = Math.min(Math.floor(text.length / 70), 3) + 1;
+            const charactersCapacity = window.innerWidth > 600 ? 55 : 35;
+            const rows = Math.min(Math.floor(text.length / charactersCapacity), 3) + 1;
             const hasNewLines = text.includes('\n');
 
             if (hasNewLines) {
@@ -90,7 +91,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
                 <img
                   src='/assets/images/search-icon.svg'
                   alt='search'
-                  className='cursor-pointer flex-shrink-0 max-sm:mt-1 w-6 h-6 sm:w-7 sm:h-7'
+                  className='cursor-pointer flex-shrink-0 mt-2 sm:mt-1 w-6 h-6 sm:w-7 sm:h-7'
                 />
             </button>
             <textarea

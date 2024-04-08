@@ -21,7 +21,7 @@ export default function LandingAboutSlide() {
   return (
     <div className="container max-sm:py-16">
       <section className="px-4 flex flex-col items-center text-[#070707]">
-        <h1 className="text-xl sm:text-2xl md:text-4xl font-medium py-3 text-center">
+        <h1 className="max-sm:text-2xl text-xl sm:text-2xl md:text-4xl font-medium py-3 text-center">
           A simple path to feeling better today.
         </h1>
         <h2 className="text-4xl md:text-6xl lg:text-4xl 2xl:text-6xl font-bold">How it Works</h2>

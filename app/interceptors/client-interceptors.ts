@@ -1,5 +1,6 @@
 import axios from "axios";
 import { refreshToken } from "~/apis/userAPI";
+import qs from "qs";
 
 export const axiosApiInstance = axios.create();
 
@@ -19,3 +20,7 @@ axiosApiInstance.interceptors.response.use((response) => {
   }
   return Promise.reject(error);
 });
+
+export function paramsSerializerComma(params: any) {
+  return qs.stringify(params, { arrayFormat: 'comma' })
+}
