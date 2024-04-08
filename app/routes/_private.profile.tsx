@@ -4,16 +4,17 @@ import { NavLink, Outlet } from "@remix-run/react";
 import clsx from "clsx";
 
 
-const LINKS = [{
-  title: "About",
-  slug: "/profile"
-}, {
-  title: "Answers",
-  slug: "/profile/answers"
-}, {
-  title: "Questions",
-  slug: "/profile/questions"
-}
+const LINKS = [
+  {
+    title: "About",
+    slug: "/profile"
+  }, {
+    title: "Answers",
+    slug: "/profile/answers"
+  }, {
+    title: "Questions",
+    slug: "/profile/questions"
+  }
 ];
 
 export default function UserProfilePage() {
