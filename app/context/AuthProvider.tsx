@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import LoginModal from "~/components/LoginModal";
 import { getMe, loginWithGoogle, logoutAPI } from "~/apis/userAPI";
-import { AxiosError } from "axios";
 import { IUser } from "~/models/questionModel";
 import { useAnalytics } from "~/hooks/useAnalytics";
+import { CanceledError } from "axios";
 
 interface Props {
   children: ReactNode;
@@ -23,7 +23,7 @@ export default function AuthProvider({ children }: Props) {
   const [authModal, setAuthModal] = useState<undefined | "LOGIN" | "SIGNUP">(undefined);
   const [user, setUser] = useState<undefined | IUser>(undefined);
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
-  const {trackSignUpEvent, trackLoginEvent, trackEvent, identifyUserById} = useAnalytics()
+  const { trackSignUpEvent, trackLoginEvent, trackEvent, identifyUserById } = useAnalytics();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -32,11 +32,14 @@ export default function AuthProvider({ children }: Props) {
     }).then((data) => {
       if (data?.view_name) {
         setUser(data);
+        setIsLoadingUserData(false);
+      } else {
+        setIsLoadingUserData(false);
       }
-    }).catch(() => {
-
-    }).finally(() => {
-      setIsLoadingUserData(false);
+    }).catch((e) => {
+      if (!(e instanceof CanceledError)) {
+        setIsLoadingUserData(false);
+      }
     });
     return () => {
       controller.abort();
@@ -45,14 +48,14 @@ export default function AuthProvider({ children }: Props) {
 
 
   useEffect(() => {
-    if(user?.id){
-      identifyUserById(`${user.id}`)
+    if (user?.id) {
+      identifyUserById(`${user.id}`);
     }
   }, [user]);
 
   const logout = async () => {
     setUser(undefined);
-    trackEvent('logout')
+    trackEvent("logout");
     await logoutAPI();
   };
 
@@ -60,7 +63,7 @@ export default function AuthProvider({ children }: Props) {
     if (user) {
       return;
     }
-    trackEvent('login_open_login')
+    trackEvent("login_open_login");
     setAuthModal("LOGIN");
   };
 
@@ -68,7 +71,7 @@ export default function AuthProvider({ children }: Props) {
     if (user) {
       return;
     }
-    trackEvent('login_open_sign_up')
+    trackEvent("login_open_sign_up");
     setAuthModal("SIGNUP");
   };
 
@@ -76,18 +79,18 @@ export default function AuthProvider({ children }: Props) {
     const user = await loginWithGoogle(credential);
     if (user?.id) {
       setUser(user);
-      if(authModal === 'LOGIN'){
-        trackLoginEvent('Google')
-      }else if(authModal === 'SIGNUP'){
-        trackSignUpEvent('Google')
-      }else {
-        trackSignUpEvent('Google')
+      if (authModal === "LOGIN") {
+        trackLoginEvent("Google");
+      } else if (authModal === "SIGNUP") {
+        trackSignUpEvent("Google");
+      } else {
+        trackSignUpEvent("Google");
       }
     }
   };
 
-  const closeModal =() => {
-    trackEvent('login_close_login')
+  const closeModal = () => {
+    trackEvent("login_close_login");
     setAuthModal(undefined);
   };
 
