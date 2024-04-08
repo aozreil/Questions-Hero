@@ -88,8 +88,8 @@ export default function SearchPage() {
 
               {data.length > 0 && <>
                 {showVerifiedAnswer &&
-                  <SuccessAlert>
-                    <section className="container w-full flex items-center">
+                  <SuccessAlert className='sm:px-0'>
+                    <section className={`container aligned-with-search max-sm:px-2 max-md:px-4 max-xl:px-10 w-full flex items-center`}>
                       <img src="/assets/images/verified.svg" alt="verifed" className="mr-3" />
                       <p>Verified Answers: Curated by experts, our search results highlight accurate and detailed
                         information.</p>
@@ -102,7 +102,7 @@ export default function SearchPage() {
                     </section>
                   </SuccessAlert>
                 }
-                <div className="container px-2 xl:pl-14 w-full mt-4">
+                <div className="container aligned-with-search max-sm:px-2 max-md:px-4 max-xl:px-10 w-full mt-4">
                   <p>
                     {count} <span className="font-bold">Result{count > 1 ? "s" : ""} found</span>
                   </p>
