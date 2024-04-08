@@ -12,9 +12,14 @@ html {
     }
 }
 
+.btn-primary {
 
-input[type=search]::-webkit-search-cancel-button{
-    position:relative;
+    @apply bg-blue-600 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600;
+}
+
+
+input[type=search]::-webkit-search-cancel-button {
+    position: relative;
     -webkit-appearance: none;
     height: 1em;
     width: 1em;
@@ -22,6 +27,7 @@ input[type=search]::-webkit-search-cancel-button{
     background: url('/assets/images/search-cancel.svg') no-repeat 50% 50%;
     background-size: contain;
 }
+
 input[type="search"]:focus::-webkit-search-cancel-button {
     opacity: .3;
     pointer-events: all;
@@ -72,22 +78,34 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     position: relative;
 }
 
-@keyframes placeHolderShimmer{
-    0%{
+@keyframes placeHolderShimmer {
+    0% {
         background-position: -1200px 0
     }
-    100%{
+    100% {
         background-position: 1200px 0
     }
 }
 
 @keyframes name-of-animation {
-    0%    { filter: hue-rotate(60deg) }
-    20%   { filter: hue-rotate(120deg) }
-    40%   { filter: hue-rotate(180deg) }
-    60%   { filter: hue-rotate(240deg) }
-    80%   { filter: hue-rotate(300deg) }
-    100%  { filter: hue-rotate(360deg) }
+    0% {
+        filter: hue-rotate(60deg)
+    }
+    20% {
+        filter: hue-rotate(120deg)
+    }
+    40% {
+        filter: hue-rotate(180deg)
+    }
+    60% {
+        filter: hue-rotate(240deg)
+    }
+    80% {
+        filter: hue-rotate(300deg)
+    }
+    100% {
+        filter: hue-rotate(360deg)
+    }
 }
 
 .bg-effect {

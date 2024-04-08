@@ -7,12 +7,18 @@ interface IProps {
 }
 
 
-const InfoToDisplay = [{ title: "Name", key: "view_name" }, { title: "Email Address", key: "email" }];
+const InfoToDisplay: { title: string, key: keyof IUser }[] = [
+  {
+    title: "Name",
+    key: "view_name"
+  }
+//   {
+//   title: "Email Address",
+//   key: "email"
+// }
+];
 export default function AboutUsSection({ user }: IProps) {
   return <div>
-    <p className="font-bold text-4xl text-black mb-10">
-      About
-    </p>
     {InfoToDisplay.map(({ title, key }) => {
       if (!(key in user)) {
         return <Fragment key={key}></Fragment>;
@@ -25,12 +31,9 @@ export default function AboutUsSection({ user }: IProps) {
           <p className={"font-bold"}>
             {user[key]}
           </p>
-
         </div>
         <hr />
       </div>;
-
     })}
-  </div>
-    ;
+  </div>;
 }

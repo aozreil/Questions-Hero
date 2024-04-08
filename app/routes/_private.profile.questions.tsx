@@ -1,17 +1,30 @@
-import { isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
+import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from "@remix-run/react";
 import { getMyAskedQuestions } from "~/apis/questionsAPI";
 
 
 export const clientLoader = async () => {
-  return await getMyAskedQuestions();
+  return [];
 };
 
 
 export default function UserProfileQuestionsPage() {
   const data = useLoaderData<typeof clientLoader>();
-  console.log(data);
+  const questionsList = data;
   return <div>
-    Questions pages
+    <p className="font-bold text-4xl text-black mb-10">
+      Questions ({questionsList.length})
+    </p>
+    {questionsList.length === 0 && (
+      <div className="text-center space-y-4">
+        <p>
+          You haven’t asked any questions yet!
+        </p>
+        <Link className="btn-primary" to="/ask-question">
+          Ask Question
+        </Link>
+
+      </div>
+    )}
   </div>;
 }
 
