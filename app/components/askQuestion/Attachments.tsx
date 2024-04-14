@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getPreSignedUrls, uploadFile } from "~/apis/questionsAPI";
 import toast from "react-hot-toast";
 import { useAuth } from "~/context/AuthProvider";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 export enum AttachmentsStatus {
   'uploading' = 'uploading',
@@ -27,6 +28,7 @@ export default function Attachments({ onChange }: Props) {
   const [files, setFiles] = useState<AttachmentFile[]>([]);
   const { user, openSignUpModal } = useAuth();
   const isFirstLoad = useRef(true);
+  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
     if (isFirstLoad.current) { isFirstLoad.current = false; return }
@@ -62,6 +64,7 @@ export default function Attachments({ onChange }: Props) {
         }))
 
         setFiles([...files, ...addedFiles as AttachmentFile[] ]);
+        trackEvent("ask-question-attached-files");
       } catch (e) {
         console.log(e);
         toast.error('Something went wrong, please try again');

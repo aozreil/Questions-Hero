@@ -2,7 +2,7 @@ import { ActionFunctionArgs, HeadersFunction, json, MetaFunction } from "@remix-
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getAnswerById,
   getInternalAnswers,
@@ -40,6 +40,7 @@ import { useAuth } from "~/context/AuthProvider";
 import PostAnswerModal from "~/components/UI/PostAnswerModal";
 import AttachmentsViewer from "~/components/question/AttachmentsViewer";
 import MainContainer from "~/components/UI/MainContainer";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
     if(!data){
@@ -166,6 +167,11 @@ export default function QuestionPage() {
     } = useLoaderData<typeof loader>();
     const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED))
     const { user } = useAuth();
+    const { trackEvent } = useAnalytics();
+
+    useEffect(() => {
+      trackEvent('question-page-view');
+    }, []);
 
     const handlePostAnswerSuccess = useCallback(() => {
         setPostAnswerOpened(false);
