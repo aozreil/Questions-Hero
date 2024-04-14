@@ -20,7 +20,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
   const [userProfiles, setUserProfiles] = useState<IUsers | undefined>(undefined);
   const [formattedText] = useState(() => getTextFormatted(text))
   const { focusedOverlayStyles, overlayVisible, setOverlayVisible } = useOverlay();
-  const onlyHaveAIAnswer = !!question?.aiAnswer && answers?.length === 1;
+  const onlyHaveAIAnswer = !!question?.aiAnswer && question?.answerStatuses?.length === 1 && question?.answerStatuses?.[0] === AnswerStatus.AI_ANSWER;
   const hasVerifiedAnswer = question?.answerStatuses?.includes(AnswerStatus.VERIFIED);
 
   useEffect(() => {

@@ -13,7 +13,7 @@ import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { useAnalytics } from "~/hooks/useAnalytics";
 import { useOverlay } from "~/context/OverlayProvider";
-import { ISearchQuestion } from "~/models/questionModel";
+import { AnswerStatus, ISearchQuestion } from "~/models/questionModel";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -90,6 +90,7 @@ export default function SearchPage() {
           slug: './',
           answerCount: 1,
           aiAnswer: aiAnswer,
+          answerStatuses: [AnswerStatus.AI_ANSWER],
         },
         ...data,
       ]
@@ -109,6 +110,7 @@ export default function SearchPage() {
           {isLoadingData ? <SearchLoading /> : (
           ({ data, count }) => {
             const dataWithAiAnswer = getDataWithAiAnswer(data as ISearchQuestion[]);
+            const resultsCount = count ? count : dataWithAiAnswer?.length;
 
             return <>
               {dataWithAiAnswer.length === 0 && <>
@@ -133,7 +135,7 @@ export default function SearchPage() {
                 }
                 <div className="container aligned-with-search max-sm:px-2 max-md:px-4 max-xl:px-10 w-full mt-4">
                   <p>
-                    {count} <span className="font-bold">Result{count > 1 ? "s" : ""} found</span>
+                    {resultsCount} <span className="font-bold">Result{resultsCount > 1 ? "s" : ""} found</span>
                   </p>
                   <div className="pt-4 space-y-4">
                     {dataWithAiAnswer.map((el) => {
