@@ -6,11 +6,12 @@ interface Props {
   slidesNavigator?: React.ReactNode;
 }
 
-export default function Footer({slidesNavigator}: Props) {
+export default function Footer({ slidesNavigator }: Props) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-[#f7f8fa] text-base border-t-2 border-[#ebf2f6] text-[#6e777f]"
+    <footer
+      className="w-full bg-[#f7f8fa] text-base border-t-2 border-[#ebf2f6] text-[#6e777f]"
     >
       <div className='container w-full flex justify-center sm:justify-between items-center gap-y-4 max-lg:flex-col px-4 md:px-10 py-4 max-sm:pb-8'>
         <p>
@@ -22,13 +23,12 @@ export default function Footer({slidesNavigator}: Props) {
           {TERMS_NAVIGATION_LINKS?.map(term =>
             <Fragment key={term.text}>
             <Link
-              key={term.text}
               to={term.link}
-              className='text-center hover:text-[#070707]'
+              className="text-center hover:text-[#070707]"
               >
                 {term.text}
               </Link>
-              <div className='sm:hidden border-r border-[#979da4] h-4' />
+              <div className="sm:hidden border-r border-[#979da4] h-4" />
             </Fragment>
           )}
         </div>
