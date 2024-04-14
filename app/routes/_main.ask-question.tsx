@@ -15,6 +15,7 @@ import { loader } from "~/routes/_main.search";
 import Footer from "~/components/UI/Footer";
 import { getKatexLink } from "~/utils/external-links";
 import SimilarQuestions from "~/components/askQuestion/SimilarQuestions";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   return [
@@ -48,6 +49,11 @@ export default function AskQuestion() {
   const textareaHistory = useRef('');
   const isUploadingFiles = attachmentsState?.status === AttachmentsStatus.uploading;
   const isPostingDisabled = !hasValue || isPosting || isUploadingFiles || hasExactMatch || isSearchingForSimilar;
+  const { trackEvent } = useAnalytics();
+
+  useEffect(() => {
+    trackEvent("ask-question-view-page");
+  }, []);
 
   useEffect(() => {
     if (hasValue && !shouldLoadRecaptcha) {
@@ -92,11 +98,13 @@ export default function AskQuestion() {
         const questionBody = textAreaRef.current.value?.trim();
         const res = await postQuestion(questionBody, token, attachments);
         if (res?.slug || res?.id) {
+          trackEvent("ask-question-post-success");
           toast.success('Your question added successfully!');
           navigate(`/question/${res?.slug ?? res?.id}`);
         }
       } catch (e) {
         console.error(e);
+        trackEvent("ask-question-post-failure");
         toast.error('Something went wrong, please try again');
         setIsPosting(false);
       }
@@ -128,6 +136,7 @@ export default function AskQuestion() {
 
   const clearTextArea = useCallback(() => {
     if (textAreaRef?.current) {
+      trackEvent("ask-question-clear-input");
       textareaHistory.current = textAreaRef.current.value;
       textAreaRef.current.value = '';
       setHasValue(false);
