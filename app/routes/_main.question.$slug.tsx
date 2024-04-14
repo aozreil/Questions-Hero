@@ -1,14 +1,13 @@
-import { HeadersFunction, json, MetaFunction } from "@remix-run/node";
+import { ActionFunctionArgs, HeadersFunction, json, MetaFunction } from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
-import { useState } from "react";
-import ExpandImage from "~/components/question/ExpandImage";
+import { useCallback,useState } from "react";
 import {
   getAnswerById,
   getInternalAnswers,
   getInternalQuestion,
-  getQuestionById,
+  getQuestionAttachments,getQuestionById,
   getQuestionConcepts,
   getQuestionObjectives,
   getRelatedQuestionById,
@@ -16,7 +15,8 @@ import {
 } from "~/apis/questionsAPI.server";
 import { redirect, useLoaderData } from "@remix-run/react";
 import {
-  IAnswer,
+  answersSorterFun,
+    AnswerStatus,IAnswer,
   IConcept,
   IInternalAnswer,
   IInternalQuestion,
@@ -34,22 +34,33 @@ import invariant from "tiny-invariant";
 import { getKatexLink } from "~/utils/external-links";
 import { getCleanText, title } from "~/utils/text-formatting-utils";
 import { LoaderFunctionArgs } from "@remix-run/router";
+import UserProfile from "~/components/UI/UserProfile";
+import { useAuth } from "~/context/AuthProvider";
+import PostAnswerModal from "~/components/UI/PostAnswerModal";
+import AttachmentsViewer from "~/components/question/AttachmentsViewer";
+import MainContainer from "~/components/UI/MainContainer";
 import RelatedQuestions from "~/components/question/RelatedQuestions";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [];
   }
-  const { canonical, question, structuredData } = data;
+  const { canonical, question, internalAnswers, answers } = data;
   return [
     ...getSeoMeta({
       title: question?.title ?? question?.text,
-      description: structuredData?.verifiedAnswer,
+      description: getAnswerText(getVerifiedAnswer(internalAnswers?.length ? internalAnswers : answers)),
       canonical
     }),
     ...getStructuredData(data as LoaderData),
     ...[question?.includesLatex ? getKatexLink() : {}]
-  ];
+  ...data?.attachments?.map(file => ({
+            tagName: "link",
+            rel: 'preload',
+            href: file?.url,
+            as: 'image',
+        }))
+    ];
 };
 
 interface StructuredData {
@@ -74,88 +85,88 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const { slug } = params;
   invariant(slug, "Not Found");
 
-  const isBot = isbot(request.headers.get("user-agent"));
-  const id = slug.split("-").pop() || slug;
-  try {
-    const [
-      question,
-      answers,
-      concepts,
-      objectives,
-      internalQuestion,
-      internalAnswers,
-      relatedQuestions
-    ] = await Promise.all([
-      getQuestionById(id),
-      getAnswerById(id).catch(() => []),
-      getQuestionConcepts(id).catch(() => []),
-      getQuestionObjectives(id).catch(() => []),
-      getInternalQuestion(id, isBot, { req: request }),
-      getInternalAnswers(id, isBot, { req: request }),
-      getRelatedQuestionById(id, {
-        params:{
-          limit: 5
-        }
-      }).catch(() => ({ data: [] }))
-    ]);
+    const isBot = isbot(request.headers.get("user-agent"));
+    const id = slug.split('-').pop() || slug;
+    try {
+        const [
+            question,
+            answers,
+            concepts,
+            objectives,
+            internalQuestion,
+            internalAnswers,
+            attachments,
+          relatedQuestions
+        ] = await Promise.all([
+            getQuestionById(id),
+            getAnswerById(id).catch(() => []),
+            getQuestionConcepts(id).catch(() => []),
+            getQuestionObjectives(id).catch(() => []),
+            getInternalQuestion(id, isBot, { req: request }),
+            getInternalAnswers(id, isBot, { req: request }),
+            getQuestionAttachments(id).catch(() => []),
+          getRelatedQuestionById(id, {
+            params:{
+              limit: 5
+            }
+          }).catch(() => ({ data: [] }))
+
+        ]);
 
     if (question?.error) return redirect("/");
     if (question?.slug?.includes("-") && question?.slug !== slug) return redirect(`/question/${question?.slug}`);
 
     const userIds = [];
     if (question?.user_id) userIds.push(question.user_id);
-    if (answers?.[0]?.user_id) userIds.push(answers[0].user_id);
+    for (const answer of answers) {
+            if (answer?.user_id) userIds.push(answer.user_id)
+        }
     const users = userIds?.length ? await getUsersInfo(userIds).catch(() => []) : [];
 
-    const canonical = `${BASE_URL}/question/${question?.slug}`;
+        const canonical = `${BASE_URL}/question/${question?.slug}`;
+        const sortedAnswer = answers?.sort(answersSorterFun)
 
-    const answer = internalAnswers?.[0] ?? answers?.[0];
-    let answerText = `Final Answer : ${answer?.text}` ?? `The Answer of ${question?.text}`;
-    if (answer?.answer_steps?.length) {
-      answerText = answerText + ", Explanation : ";
-      for (const step of answer.answer_steps) {
-        answerText = answerText + " " + step?.text;
-      }
+        return json({
+            question: QuestionClass.questionExtraction(question),
+            answers: sortedAnswer?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer)),
+            concepts,
+            objectives,
+            users,
+            canonical,
+            internalQuestion: { ...internalQuestion, text: getCleanText(internalQuestion?.text) },
+            internalAnswers: internalAnswers?.map(answer => ({
+                ...answer,
+                text: getCleanText(answer?.text),
+                answer_steps: answer?.answer_steps?.map(step => ({ ...step, text: getCleanText(step?.text) }))
+            })),
+            attachments,
+          relatedQuestions: relatedQuestions.data.map(el => {
+            let text = title(el.text);
+            // Only return the first 10 words
+            if (text.split(" ").length > 10) {
+              text = text.split(" ").slice(0, 10).join(" ") + " ...";
+            }
+            return {
+              slug: el.slug,
+
+              text: text
+            };
+          }).slice(0, 5)
+        });
+    } catch (e) {
+        console.error(e)
+        throw new Response(null, {
+            status: 404,
+            statusText: "Not Found",
+        });
     }
-    const structuredData: StructuredData = {
-      questionText: getCleanText(internalQuestion?.text ?? question?.text),
-      verifiedAnswer: getCleanText(answerText)
-    };
+}
 
-    return json({
-      question: QuestionClass.questionExtraction(question),
-      answers: answers?.map((answer: IAnswer | undefined) => QuestionClass.answerExtraction(answer)),
-      concepts,
-      objectives,
-      users,
-      canonical,
-      internalQuestion,
-      internalAnswers,
-      structuredData,
-      relatedQuestions: relatedQuestions.data.map(el => {
-        let text = title(el.text);
-        // Only return the first 10 words
-        if (text.split(" ").length > 10) {
-          text = text.split(" ").slice(0, 10).join(" ") + " ...";
-        }
-        return {
-          slug: el.slug,
-
-          text: text
-        };
-      }).slice(0, 5)
-    }, {
-      headers: {
-        "Cache-Control": "max-age=86400, public"
-      }
-    });
-  } catch (e) {
-    console.error(e);
-    throw new Response(null, {
-      status: 404,
-      statusText: "Not Found"
-    });
-  }
+export async function action({
+ request,
+}: ActionFunctionArgs) {
+  const body = await request.formData();
+  return { postedAnswer: body.get('postedAnswer') };
 }
 
 export const headers: HeadersFunction = () => ({
@@ -163,77 +174,111 @@ export const headers: HeadersFunction = () => ({
 });
 
 export default function QuestionPage() {
-  const [expandedImage, setExpandedImage] = useState<string | undefined>(undefined);
-  const { question, answers, users, concepts, objectives, relatedQuestions } = useLoaderData<typeof loader>();
+    const [postAnswerOpened, setPostAnswerOpened] = useState(false);
+    const {
+        question,
+        answers,
+        users,
+        concepts,
+        objectives,
+        attachments,
+      relatedQuestions,
+    } = useLoaderData<typeof loader>();
+    const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED))
+    const { user } = useAuth();
 
-  return (
-    <>
-      <ExpandImage expandedImage={expandedImage} onClose={() => setExpandedImage(undefined)} />
-      <main className="sm:container max-xs:mx-0 w-full h-fit flex flex-col items-center sm:pt-4 sm:py-4 sm:px-4 mb-20">
-        <div className="w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit">
-          <div className="flex flex-col lg:flex-row justify-center gap-4">
-            <div
-              className="w-full h-fit sm:max-w-[34rem] lg:w-[34rem] flex flex-col bg-[#f1f5fb] sm:border sm:border-[#00000038] sm:rounded-xl overflow-hidden">
-              <div
-                className="flex flex-col items-center w-full rounded-b-xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]">
-                <QuestionContent
-                  question={question}
-                  user={question?.user_id ? users[question.user_id] : undefined}
-                />
-                {!!concepts?.length && (
-                  <QuestionSection
-                    title="Definitions"
-                    content={(
-                      <>
-                        {concepts?.map((concept) => (
-                          !concept?.definition ? null : (
-                            <div key={concept?.concept} className="text-sm mt-4">
-                              <p className="mb-1 font-bold">{concept?.concept}</p>
-                              <p className="text-[#4d6473]">{concept?.definition}</p>
+    const handlePostAnswerSuccess = useCallback(() => {
+        setPostAnswerOpened(false);
+    }, [])
+
+    return (
+        <MainContainer>
+            <PostAnswerModal
+              open={postAnswerOpened}
+              onClose={() => setPostAnswerOpened(false)}
+              questionText={question?.text}
+              questionId={question?.id}
+              onSuccess={handlePostAnswerSuccess}
+            />
+            <main className='container max-sm:max-w-full max-sm:mx-0 aligned-with-search max-xs:mx-0 w-full h-fit flex flex-col max-lg:items-center sm:pt-4 sm:py-4'>
+                <div className='w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit xl:-ml-2'>
+                    <div className='flex flex-col lg:flex-row justify-center gap-4'>
+                        <div className='w-full h-fit sm:max-w-[34rem] lg:w-[34rem] flex flex-col bg-[#f1f5fb] sm:border sm:border-[#00000038] sm:rounded-xl overflow-hidden'>
+                            <div className='flex flex-col items-center w-full rounded-b-xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]'>
+                                <QuestionContent
+                                    question={question}
+                                    user={question?.user_id ? users[question.user_id] : undefined}
+                                    isVerified={isVerified}
+                                />
+                                <AttachmentsViewer attachments={attachments} />
+                                {!!concepts?.length && (
+                                    <QuestionSection
+                                        title='Definitions'
+                                        content={(
+                                            <>
+                                                {concepts?.map((concept) => (
+                                                    !concept?.definition ? null : (
+                                                        <div key={concept?.concept} className='text-sm mt-4'>
+                                                            <p className='mb-1 font-bold'>{concept?.concept}</p>
+                                                            <p className='text-[#4d6473]'>{concept?.definition}</p>
+                                                        </div>
+                                                    )
+                                                ))}
+                                            </>
+                                        )}
+                                    />
+                                )}
+                                {!!objectives?.length && (
+                                    <QuestionSection
+                                        title='Learning Objectives'
+                                        className='lg:hidden'
+                                        content={(
+                                            <div className='text-sm mt-4'>
+                                                <ul className='list-disc ml-4 text-[#4d6473]'>
+                                                    {objectives?.map((objective, index) => <li key={index} className='mb-2'>{objective?.text}</li>)}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    />
+                                )}
+                                {user && (
+                                  <div
+                                    className='w-full p-4 border-t-[3px] border-[#ebf2f6] cursor-pointer'
+                                    onClick={() => setPostAnswerOpened(true)}
+                                  >
+                                      <div className='bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center'>
+                                          <div className='flex space-x-2.5 items-center'>
+                                              <UserProfile user={user} className='w-7 h-7 border-none' />
+                                              <p className='text-[#4d6473]'>Add your answer</p>
+                                          </div>
+                                          <img src='/assets/images/right-arrow.svg' alt='arrow' className='w-4 h-4 mr-2' />
+                                      </div>
+                                  </div>
+                                )}
                             </div>
-                          )
-                        ))}
-                      </>
-                    )}
-                  />
-                )}
-                {!!objectives?.length && (
-                  <QuestionSection
-                    title="Learning Objectives"
-                    className="lg:hidden"
-                    content={(
-                      <div className="text-sm mt-4">
-                        <ul className="list-disc ml-4 text-[#4d6473]">
-                          {objectives?.map((objective, index) => <li key={index}
-                                                                     className="mb-2">{objective?.text}</li>)}
-                        </ul>
-                      </div>
-                    )}
-                  />
-                )}
-              </div>
-              {!!answers?.length && (
-                <div className="mb-2 px-3 flex flex-col items-center">
-                  <AnswerCard
-                    answer={answers[0]}
-                    user={answers[0]?.user_id ? users[answers[0]?.user_id] : undefined}
-                  />
+                            {!!answers?.length && (
+                                <div className='mb-2 mt-3 px-3 flex flex-col items-center space-y-2.5'>
+                                    {answers?.map(answer => (
+                                      <AnswerCard
+                                        key={answer.created_at}
+                                        answer={answer}
+                                        user={answer?.user_id ? users[answer?.user_id] : undefined}
+                                      />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                      <div className="block w-full lg:w-[22rem]">
+                        {!!objectives?.length &&
+                          <div className="hidden lg:block">
+                            <LearningObjectives objectives={objectives} />
+                          </div>}
+                        {relatedQuestions?.length > 0 && <RelatedQuestions list={relatedQuestions} />}
+                      </div>                    </div>
                 </div>
-              )}
-            </div>
-            <div className="block w-full lg:w-[22rem]">
-              {!!objectives?.length &&
-                <div className="hidden lg:block">
-                  <LearningObjectives objectives={objectives} />
-                </div>}
-              {relatedQuestions?.length > 0 && <RelatedQuestions list={relatedQuestions} />}
-            </div>
-
-          </div>
-        </div>
-      </main>
-    </>
-  );
+            </main>
+        </MainContainer>
+    )
 }
 
 const getStructuredData = (data: LoaderData) => {
@@ -241,20 +286,23 @@ const getStructuredData = (data: LoaderData) => {
     question,
     answers,
     internalAnswers,
-    canonical,
+    internalQuestion,canonical,
     users,
-    structuredData
+
   } = data;
 
-  const questionBody = structuredData?.questionText;
-  const questionTitle = questionBody;
-  if (!questionBody) return [];
+    const questionData = internalQuestion?.text ? internalQuestion : question;
+    const answersData = internalAnswers?.length ? internalAnswers : answers;
+    if (!questionData?.text) return [];
 
-  const askedBy = getUser(question?.user_id, users);
-
-  const getAnswer = (index: number) => {
-    return internalAnswers?.[index] ?? answers?.[index];
-  };
+    const questionBody = questionData?.text;
+    const questionTitle = questionBody;
+    const questionAskedBy = getUser(question?.user_id, users);
+    const verifiedAnswer = getVerifiedAnswer(answersData);
+    const suggestedAnswers = filterSuggestedAnswers(answersData).filter(
+      question => question?.created_at !== verifiedAnswer?.created_at
+    );
+    const answerFallback = `The Answer of ${questionBody}`;
 
   const Educational = {
     "@context": "https://schema.org/",
@@ -271,7 +319,7 @@ const getStructuredData = (data: LoaderData) => {
         "text": questionBody,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": structuredData?.verifiedAnswer,
+          "text": getAnswerText(verifiedAnswer) ?? answerFallback,
           "url": canonical
         }
       }
@@ -279,14 +327,13 @@ const getStructuredData = (data: LoaderData) => {
   };
 
   const getSuggestedAnswers = () => {
-    let suggestedAnswers = internalAnswers || answers;
-    if (suggestedAnswers?.length > 1) {
-      suggestedAnswers = suggestedAnswers?.slice(1, suggestedAnswers?.length);
+
+    if (suggestedAnswers?.length) {
       return {
         "suggestedAnswer": [
           suggestedAnswers?.map(answer => ({
             "@type": "Answer",
-            "text": structuredData?.verifiedAnswer,
+            "text": getAnswerText(answer) ?? answerFallback,
             "datePublished": answer?.created_at,
             "author": {
               "@type": "Person",
@@ -300,33 +347,33 @@ const getStructuredData = (data: LoaderData) => {
     return {};
   };
 
-  // note: this can also include profile link and upvotes
-  const QAPage = {
-    "@context": "https://schema.org",
-    "@type": "QAPage",
-    name: questionTitle,
-    description: questionBody,
-    "mainEntity": {
-      "@type": "Question",
-      "name": questionTitle,
-      "text": questionBody,
-      "answerCount": 1,
-      "datePublished": question?.created_at,
-      "author": {
-        "@type": "Person",
-        "name": askedBy
-      },
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": structuredData?.verifiedAnswer,
-        "url": `${canonical}#acceptedAnswer`,
-        "datePublished": getAnswer(0)?.created_at,
-        "author": {
-          "@type": "Person",
-          "name": getUser(getAnswer(0)?.user_id, users)
+    const QAPage = {
+        "@context": "https://schema.org",
+        "@type": "QAPage",
+        name: questionTitle,
+        description: questionBody,
+        "mainEntity": {
+            "@type": "Question",
+            "name": questionTitle,
+            "text": questionBody,
+            "answerCount": 1,
+            "datePublished": question?.created_at,
+            "author": {
+                "@type": "Person",
+                "name": questionAskedBy,
+            },
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": getAnswerText(verifiedAnswer) ?? answerFallback,
+                "url": `${canonical}#acceptedAnswer`,
+                "datePublished": verifiedAnswer?.created_at,
+                "author": {
+                    "@type": "Person",
+                    "name": getUser(verifiedAnswer?.user_id, users),
+                }
+            },
+            ...getSuggestedAnswers(),
         }
-      },
-      ...getSuggestedAnswers()
     }
   };
 
@@ -335,3 +382,24 @@ const getStructuredData = (data: LoaderData) => {
     { "script:ld+json": Educational }
   ];
 };
+
+const getVerifiedAnswer = (answers: IAnswer[] | IInternalAnswer[]) => {
+    const verifiedAnswer = answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED);
+    return verifiedAnswer ?? answers?.[0]
+}
+
+const filterSuggestedAnswers = (answers: IAnswer[] | IInternalAnswer[]) => {
+    return answers?.filter(answer => answer?.answer_status !== AnswerStatus.VERIFIED);
+}
+
+const getAnswerText = (answer: IAnswer | IInternalAnswer) => {
+    let answerText = `Final Answer : ${answer?.text}`;
+    if (answer?.answer_steps?.length) {
+        answerText = answerText + ', Explanation : ';
+        for (const step of answer.answer_steps) {
+            answerText = answerText + ' ' + step?.text;
+        }
+    }
+
+    return answerText;
+}
