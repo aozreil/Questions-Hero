@@ -6,7 +6,6 @@ import Loader from "~/components/UI/Loader";
 
 
 export const clientLoader = async () => {
-
   return await getMyAnswersForQuestions();
 };
 

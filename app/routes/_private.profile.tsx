@@ -2,6 +2,7 @@ import UserProfile from "~/components/UI/UserProfile";
 import { useAuth } from "~/context/AuthProvider";
 import { NavLink, Outlet } from "@remix-run/react";
 import clsx from "clsx";
+import Loader from "~/components/UI/Loader";
 
 
 const LINKS = [
@@ -20,7 +21,10 @@ const LINKS = [
 export default function UserProfilePage() {
   const { user } = useAuth();
   if (!user) {
-    return <div>Loading...</div>;
+    //ToDo: Add Loading skeleton
+    return <div className='container flex justify-center mt-20'>
+      <Loader/>
+    </div>;
   }
   return <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-44">
     <div className="items-center p-4 sticky h-max top-24">

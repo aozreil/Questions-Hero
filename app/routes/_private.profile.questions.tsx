@@ -1,5 +1,8 @@
 import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from "@remix-run/react";
 import { getMyAskedQuestions } from "~/apis/questionsAPI";
+import { useAuth } from "~/context/AuthProvider";
+import Loader from "~/components/UI/Loader";
+import AskQuestionSearchCard from "~/components/question/AskQuestionSearchCard";
 
 
 export const clientLoader = async () => {
@@ -9,6 +12,12 @@ export const clientLoader = async () => {
 
 export default function UserProfileQuestionsPage() {
   const { data, count } = useLoaderData<typeof clientLoader>();
+  const { user } = useAuth();
+  if (!user) {
+    return <div className="w-full h-full flex justify-center items-center">
+      <Loader className="fill-[#5fc9a2] w-12 h-12" />
+    </div>;
+  }
   return <div>
     <p className="font-bold text-4xl text-black mb-10">
       Questions ({count})
@@ -24,11 +33,11 @@ export default function UserProfileQuestionsPage() {
 
       </div>
     )}
-    {data.length > 0 && (
-      <>
-
-      </>
-    )}
+    <div className={"grid grid-cols-1 gap-4"}>
+      {data.map((el) => {
+        return <AskQuestionSearchCard key={el.text} questionId={el.id} text={el.text} slug={el.slug}  />;
+      })}
+    </div>
   </div>;
 }
 

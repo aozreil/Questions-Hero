@@ -8,7 +8,7 @@ export default function PrivatePage() {
   const navigator = useNavigate();
   useEffect(() => {
     if (!user && !isLoadingUserData) {
-      //TODO: Need to check expected in this case
+      //TODO: Need to check expected in this case 0r move to loader
       navigator("/");
     }
   }, [navigator, user, isLoadingUserData]);

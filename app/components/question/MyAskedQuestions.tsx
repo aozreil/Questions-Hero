@@ -1,22 +1,21 @@
-import { IAnswer, IUser } from "~/models/questionModel";
+import { IAnswer, IQuestion, IUser } from "~/models/questionModel";
 import UserProfile from "~/components/UI/UserProfile";
 import { Link } from "@remix-run/react";
 import { formatDate } from "date-fns";
 
 interface IProps {
-  answer: IAnswer;
+  question: IQuestion;
   user: IUser;
 }
 
-export default function MyAnswers({ answer, user }: IProps) {
+export default function MyAskedQuestions({ question, user }: IProps) {
   return <div className="rounded-md p-4 border border-[#BEC7CC]">
     <div className={"flex justify-between items-center"}>
       <div className="flex space-x-2">
         <UserProfile user={user} className="h-10 w-10" />
-        <div>
-          <p className="text-[#344f60]">You answered <span className="font-bold text-black">Question text</span></p>
-          {answer.created_at && <p className="text-[#99a7af] text-sm">
-            On {formatDate(answer.created_at, "MMM dd, yyyy")}
+        <div className='flex items-center'>
+          {question.created_at && <p className="text-[#99a7af] text-sm">
+            On {formatDate(question.created_at, "MMM dd, yyyy")}
           </p>}
         </div>
       </div>
@@ -26,11 +25,9 @@ export default function MyAnswers({ answer, user }: IProps) {
         </Link>
       </div>
     </div>
-
-
     <hr className="my-3" />
-    <p className="">
-      {answer.text}
+    <p>
+      {question.text}
     </p>
 
   </div>;
