@@ -219,3 +219,15 @@ input[type="search"]:focus::-webkit-search-cancel-button {
 .cropper-crop-box {
     background: white;
 }
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+.text-underline {
+    text-decoration: underline;
+}

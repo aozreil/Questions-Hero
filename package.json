@@ -19,6 +19,7 @@
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.511.0",
     "@headlessui/react": "^1.7.18",
+    "@lexical/react": "^0.14.3",
     "@remix-run/css-bundle": "^2.5.1",
     "@remix-run/express": "^2.7.2",
     "@remix-run/node": "^2.5.1",

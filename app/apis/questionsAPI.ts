@@ -40,9 +40,10 @@ export async function postQuestion (
   return response?.data;
 }
 
-export async function postAnswer (answerBody: string, questionId: string, recaptchaToken: string | null) {
+export async function postAnswer (answerBody: string, answerText: string, questionId: string, recaptchaToken: string | null) {
   const response = await axiosApiInstance.post<IUser[]>(`${ASKGRAM_BASE}/api/content/answers`, {
     answer_body: answerBody,
+    answer_text: answerText,
     question_id: questionId,
     recaptcha_token: recaptchaToken,
   }, {
