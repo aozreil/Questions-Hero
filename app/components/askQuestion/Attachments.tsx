@@ -26,7 +26,6 @@ const SUPPORTED_FILES = ["image/png", "image/jpeg", "image/webp"];
 
 export default function Attachments({ onChange }: Props) {
   const [files, setFiles] = useState<AttachmentFile[]>([]);
-  const { user, openSignUpModal } = useAuth();
   const isFirstLoad = useRef(true);
   const { trackEvent } = useAnalytics();
 
@@ -94,8 +93,7 @@ export default function Attachments({ onChange }: Props) {
       />
       <label
         className='cursor-pointer py-2 px-2.5 h-fit border border-black rounded-lg'
-        htmlFor={user ? 'upload-files' : ''}
-        onClick={() => !user && openSignUpModal()}
+        htmlFor='upload-files'
       >
         <img src='/assets/images/attachments.svg' alt='close' className='w-4 h-4' />
       </label>
