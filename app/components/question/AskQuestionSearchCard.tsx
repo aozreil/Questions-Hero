@@ -1,9 +1,10 @@
 import clsx from "clsx";
 import { Link } from "@remix-run/react";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { getTextFormatted } from "~/utils/text-formatting-utils";
 import { AnswerStatus, IQuestionInfo } from "~/models/questionModel";
 import QuestionType from "~/components/question/QuestionType";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 interface Props {
   text: string;
@@ -15,6 +16,11 @@ interface Props {
 export default function AskQuestionSearchCard({ questionId, slug, text, questionInfo }: Props) {
   const [formattedText] = useState(() => getTextFormatted(text));
   const hasVerifiedAnswer = questionInfo?.answers_statuses?.includes(AnswerStatus.VERIFIED);
+  const { trackEvent } = useAnalytics();
+
+  const onQuestionClick = useCallback(() => {
+    trackEvent("ask-question-similar-question click");
+  }, []);
 
   return (
     <Link
@@ -25,6 +31,7 @@ export default function AskQuestionSearchCard({ questionId, slug, text, question
       to={slug? `/question/${slug}` : `/question/${questionId}`}
       prefetch={'intent'}
       target='_blank'
+      onClick={onQuestionClick}
     >
       <div className="flex justify-between pb-4">
         <QuestionType
@@ -33,6 +40,7 @@ export default function AskQuestionSearchCard({ questionId, slug, text, question
         />
         <button
           className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
+          onClick={onQuestionClick}
         >
           {'Open'}
           <img src='/assets/images/related-arrow.svg' alt='arrow' className={`w-4 h-4 ml-1 mt-0.5`} />

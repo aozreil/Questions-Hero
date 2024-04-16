@@ -23,7 +23,6 @@ export default function Footer({ slidesNavigator }: Props) {
           {TERMS_NAVIGATION_LINKS?.map(term =>
             <Fragment key={term.text}>
             <Link
-
               to={term.link}
               className="text-center hover:text-[#070707]"
               >

@@ -7,6 +7,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
 import { useSubmit } from "@remix-run/react";
 import { countRealCharacters } from "~/utils";
+import { useAnalytics } from "~/hooks/useAnalytics";
 
 interface Props {
   open: boolean;
@@ -23,6 +24,7 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
   const submit = useSubmit();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
     if (hasValue && !shouldLoadRecaptcha) {
@@ -43,11 +45,13 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
         submit(formData, { method: "post" });
 
         toast.success('Your answer added successfully!');
+        trackEvent('question-page-post-answer-success');
         onSuccess();
       }
     } catch (e) {
       console.log(e);
       toast.error('Something went wrong, please try again');
+      trackEvent('question-page-post-answer-failure');
     }
 
     setIsPosting(false);
