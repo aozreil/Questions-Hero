@@ -30,6 +30,7 @@ export default function AuthProvider({ children }: Props) {
     getMe({
       signal: controller.signal
     }).then((data) => {
+      console.log(data)
       if (data?.view_name) {
         setUser(data);
         setIsLoadingUserData(false);

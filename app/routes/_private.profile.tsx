@@ -1,24 +1,33 @@
 import UserProfile from "~/components/UI/UserProfile";
 import { useAuth } from "~/context/AuthProvider";
-import { NavLink, Outlet } from "@remix-run/react";
+import { NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import clsx from "clsx";
 import Loader from "~/components/UI/Loader";
+import { getMeStats, getMyAnswersForQuestions } from "~/apis/questionsAPI";
 
 
 const LINKS = [
   {
     title: "About",
-    slug: "/profile"
+    slug: "/profile",
+    key: ''
   }, {
     title: "Answers",
-    slug: "/profile/answers"
+    slug: "/profile/answers",
+    key: 'answers_count'
   }, {
     title: "Questions",
-    slug: "/profile/questions"
+    slug: "/profile/questions",
+    key: 'questions_count'
   }
 ];
 
+export const clientLoader = async () => {
+  return await getMeStats();
+};
+
 export default function UserProfilePage() {
+  const data = useLoaderData<typeof clientLoader>()
   const { user } = useAuth();
   if (!user) {
     //ToDo: Add Loading skeleton
@@ -36,7 +45,7 @@ export default function UserProfilePage() {
       </div>
 
       <div className="grid grid-cols-3 md:grid-cols-1 gap-4 mt-4">
-        {LINKS.map(({ title, slug }) => {
+        {LINKS.map(({ title, slug, key }) => {
           return <NavLink className={({ isActive }) => {
             return clsx("text-xl relative text-center md:text-left", {
               "text-black font-medium	": isActive,
@@ -47,10 +56,9 @@ export default function UserProfilePage() {
               return <>
                 {isActive && <div
                   className="absolute bottom-0 h-1.5 -mb-2 md:mb-0 w-full md:w-2 md:h-full md:left-0 md:-ml-4 bg-black"></div>}
-                {title}
+                {title} {key && key in data && (<span>({data[key]})</span>)}
               </>;
             }}
-
           </NavLink>;
         })}
       </div>

@@ -3,6 +3,7 @@ import { getMyAskedQuestions } from "~/apis/questionsAPI";
 import { useAuth } from "~/context/AuthProvider";
 import Loader from "~/components/UI/Loader";
 import AskQuestionSearchCard from "~/components/question/AskQuestionSearchCard";
+import MyAskedQuestions from "~/components/question/MyAskedQuestions";
 
 
 export const clientLoader = async () => {
@@ -35,7 +36,7 @@ export default function UserProfileQuestionsPage() {
     )}
     <div className={"grid grid-cols-1 gap-4"}>
       {data.map((el) => {
-        return <AskQuestionSearchCard key={el.text} questionId={el.id} text={el.text} slug={el.slug}  />;
+        return <MyAskedQuestions key={el.text} question={el} user={user}  />;
       })}
     </div>
   </div>;

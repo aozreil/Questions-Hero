@@ -21,7 +21,7 @@ export default function MyAnswers({ answer, user }: IProps) {
         </div>
       </div>
       <div>
-        <Link className={"btn-gray"} to="/">
+        <Link className={"btn-gray"} to={`/question/${answer.question_id}`}>
           View Question
         </Link>
       </div>

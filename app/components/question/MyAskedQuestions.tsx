@@ -1,4 +1,4 @@
-import { IAnswer, IQuestion, IUser } from "~/models/questionModel";
+import { IQuestion, IUser } from "~/models/questionModel";
 import UserProfile from "~/components/UI/UserProfile";
 import { Link } from "@remix-run/react";
 import { formatDate } from "date-fns";
@@ -20,7 +20,7 @@ export default function MyAskedQuestions({ question, user }: IProps) {
         </div>
       </div>
       <div>
-        <Link className={"btn-gray"} to="/">
+        <Link className={"btn-gray"} to={`/question/${question.slug}`}>
           View Question
         </Link>
       </div>
