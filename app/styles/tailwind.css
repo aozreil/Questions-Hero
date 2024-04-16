@@ -220,14 +220,24 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     background: white;
 }
 
-.text-bold {
+.lexicalEditorTheme-text-bold {
     font-weight: bold;
 }
 
-.text-italic {
+.lexicalEditorTheme-text-italic {
     font-style: italic;
 }
 
-.text-underline {
+.lexicalEditorTheme-text-underline {
     text-decoration: underline;
+}
+
+.lexicalEditorTheme-unOrdered-list {
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
+.lexicalEditorTheme-ordered-list {
+    list-style-type: decimal;
+    list-style-position: inside;
 }

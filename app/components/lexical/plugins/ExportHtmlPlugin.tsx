@@ -15,14 +15,26 @@ export const ExportHtmlPlugin = forwardRef((props, ref) => {
 
       editor.update(() => {
         htmlOutput = $generateHtmlFromNodes(editor);
-        const jsonState = editor.toJSON();
+        const jsonState = editor.getEditorState().toJSON();
 
         textOutput = '';
-        for (const child of jsonState?.editorState?.root?.children) {
-          // @ts-ignore
-          for (const subChild of child.children) {
-            if (subChild.type === 'text' && subChild.text) {
-              textOutput = textOutput + ' ' + subChild.text;
+        for (const child of jsonState?.root?.children) {
+          if (child.type === 'paragraph' && child.children?.length) {
+            for (const subChild of child.children) {
+              if (subChild.type === 'text' && subChild.text) {
+                textOutput = textOutput + subChild.text;
+              }
+            }
+          } else if (child.type === 'paragraph') {
+            textOutput += '\n'
+          } else if (child.type === 'user_image') {
+            textOutput += `[user-image=${child.awsSrc}]`;
+          } else if (child.type === 'list' && child.children?.length) {
+            for (const subChild of child.children) {
+              const listItem = subChild?.children?.[0];
+              if (subChild.type === 'listitem' && listItem?.type === 'text') {
+                textOutput = textOutput + ' ' + listItem.text;
+              }
             }
           }
         }

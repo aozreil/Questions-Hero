@@ -5,10 +5,14 @@ import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import { ImageNode } from "./nodes/ImageNode";
+import {ListItemNode, ListNode} from '@lexical/list';
 import { CustomImagePlugin } from "./plugins/CustomImagePlugin";
 import { CustomTextActions } from "./actions/CustomTextActions";
 import { CustomImageActions } from "./actions/CustomImageActions";
 import { ExportHtmlPlugin } from "~/components/lexical/plugins/ExportHtmlPlugin";
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { CustomListActions } from "~/components/lexical/actions/CustomListActions";
+import { CustomFontSizeActions } from "~/components/lexical/actions/CustomFontSizeActions";
 
 interface Props {
   onFocus?: () => void;
@@ -33,19 +37,23 @@ const LexicalEditor = forwardRef(({ onFocus }: Props, ref) => {
   }, []);
 
   const lexicalConfig: InitialConfigType = {
-    namespace: 'My Rich Text Editor',
+    namespace: 'AskGram Rich Text Editor',
     theme: {
       text: {
-        bold: "text-bold",
-        italic: "text-italic",
-        underline: "text-underline",
+        bold: "lexicalEditorTheme-text-bold",
+        italic: "lexicalEditorTheme-text-italic",
+        underline: "lexicalEditorTheme-text-underline",
       },
-      user_image: 'user_image',
+      user_image: 'lexicalEditorTheme-user_image',
+      list: {
+        ol: 'lexicalEditorTheme-ordered-list',
+        ul: 'lexicalEditorTheme-unOrdered-list'
+      }
     },
-    nodes: [ImageNode],
+    nodes: [ImageNode, ListItemNode, ListNode],
     onError: (e) => {
       console.log('ERROR:', e)
-    }
+    },
   }
 
   return (
@@ -59,10 +67,13 @@ const LexicalEditor = forwardRef(({ onFocus }: Props, ref) => {
           />
           <HistoryPlugin />
           <CustomImagePlugin />
+          <ListPlugin />
           <ExportHtmlPlugin ref={ref} />
           <div className='absolute bottom-0 left-0 w-full h-10 bg-white rounded-t-xl
            border-t border-[#99a7af] flex items-center justify-between px-5'>
             <CustomTextActions />
+            <CustomFontSizeActions />
+            <CustomListActions />
             <CustomImageActions />
           </div>
         </LexicalComposer>

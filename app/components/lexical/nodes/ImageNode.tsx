@@ -119,7 +119,12 @@ export class ImageNode extends ElementNode {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    return new ImageNode(serializedNode.file, serializedNode.dataURL);
+    return new ImageNode(
+      serializedNode.file,
+      serializedNode.dataURL,
+      serializedNode.awsSrc,
+      serializedNode.preSignedKey,
+    );
   }
 
   exportJSON(): SerializedImageNode {
