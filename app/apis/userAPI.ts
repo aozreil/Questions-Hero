@@ -22,7 +22,7 @@ export async function loginWithGoogle(jwt_token: string) {
 
 export async function getMe(config?: AxiosRequestConfig) {
   const res = await axiosApiInstance.get<IUser>(
-    `${ASKGRAM_BASE}/api/users/users/me`,
+    `${ASKGRAM_BASE}/api/users/me`,
     {
       ...config,
       withCredentials: true,

@@ -116,6 +116,7 @@ export interface IUser {
     view_name?: string;
     user_id?: number;
     picture?: string;
+    email?: string
 }
 
 export interface IUsers {
