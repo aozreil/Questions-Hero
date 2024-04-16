@@ -145,7 +145,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       attachments,
       relatedQuestions: relatedQuestions.data.map(el => {
         let text = title(el.text);
-        text = text.split(" ").slice(0, 10).join(" ") + " ...";
+        // Only return the first 10 words
+        if (el.text.split(" ").length > 10) {
+          text = text.split(" ").slice(0, 10).join(" ") + " ...";
+        }
         return {
           slug: el.slug,
           text: text
