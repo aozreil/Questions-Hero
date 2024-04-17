@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { UserDegreeEnum } from "~/models/general";
 import Dropdown from "~/components/UI/Dropdown";
+import { UserDegreeEnum } from "~/models/questionModel";
 
 
-function degreeEnumMapper(key: UserDegreeEnum) {
+export function degreeEnumMapper(key: UserDegreeEnum) {
   switch (key) {
     case UserDegreeEnum.BACHELOR:
       return "Bachelor";
@@ -27,11 +27,16 @@ const DEGREE_OPTIONS = Object.values(UserDegreeEnum).map((key: UserDegreeEnum) =
   };
 });
 
-export function DegreeDropDown() {
-  const [selected, setSelected] = useState<{title: string, value: string} | undefined>(undefined);
+interface IProps {
+  defaultValue?: string | { title: string, value: string };
+}
+
+export function DegreeDropDown({ defaultValue }: IProps) {
+  const [selected, setSelected] = useState<string | { title: string, value: string } | undefined>(undefined);
   return <>
-    <Dropdown items={DEGREE_OPTIONS} selected={selected} setSelected={setSelected}/>
-    <input className='hidden' name='degree' id='degree' value={selected?.value}/>
-  </>
+    <Dropdown items={DEGREE_OPTIONS} selected={selected ?? defaultValue} setSelected={setSelected} />
+    <input className="hidden" name="degree" id="degree" required
+           value={(typeof selected === "string" ? selected : selected?.value) ?? (typeof defaultValue === "string" ? defaultValue : defaultValue?.value)} />
+  </>;
 
 }

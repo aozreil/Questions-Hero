@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import LoginModal from "~/components/LoginModal";
 import { getMe, loginWithGoogle, logoutAPI } from "~/apis/userAPI";
-import { IUser } from "~/models/questionModel";
+import { IMeUser } from "~/models/questionModel";
 import { useAnalytics } from "~/hooks/useAnalytics";
 import { CanceledError } from "axios";
 
@@ -12,35 +12,57 @@ interface Props {
 export interface AuthContextType {
   openLoginModal: () => void;
   openSignUpModal: () => void;
-  user?: IUser;
+  user?: IMeUser;
   logout: () => void;
   isLoadingUserData: boolean;
+  updateUserInfo: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export default function AuthProvider({ children }: Props) {
   const [authModal, setAuthModal] = useState<undefined | "LOGIN" | "SIGNUP">(undefined);
-  const [user, setUser] = useState<undefined | IUser>(undefined);
+  const [user, setUser] = useState<undefined | IMeUser>(undefined);
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
   const { trackSignUpEvent, trackLoginEvent, trackEvent, identifyUserById } = useAnalytics();
 
-  useEffect(() => {
-    const controller = new AbortController();
-    getMe({
-      signal: controller.signal
-    }).then((data) => {
+  async function getMeUser(controller?: AbortController) {
+    try {
+      const data = await getMe({
+        signal: controller?.signal
+      });
       if (data?.view_name) {
-        setUser(data);
+        setUser({
+          ...data, user_info: {
+            ...data.user_info,
+
+            //TODO: Remove in the future
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-expect-error
+            graduation_year: data?.user_info?.graduationYear,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-expect-error
+            study_field: data?.user_info?.studyField
+            
+          }
+        });
         setIsLoadingUserData(false);
       } else {
         setIsLoadingUserData(false);
       }
-    }).catch((e) => {
+    } catch (e) {
       if (!(e instanceof CanceledError)) {
         setIsLoadingUserData(false);
       }
-    });
+    }
+  }
+
+  useEffect(() => {
+    const controller = new AbortController();
+    getMeUser(controller)
+      .then(() => {
+
+      });
     return () => {
       controller.abort();
     };
@@ -65,6 +87,10 @@ export default function AuthProvider({ children }: Props) {
     }
     trackEvent("login_open_login");
     setAuthModal("LOGIN");
+  };
+
+  const updateUserInfo = async () => {
+    return await getMeUser();
   };
 
   const openSignUpModal = () => {
@@ -101,7 +127,8 @@ export default function AuthProvider({ children }: Props) {
         openSignUpModal,
         user,
         logout,
-        isLoadingUserData
+        isLoadingUserData,
+        updateUserInfo
       }}
     >
       {children}

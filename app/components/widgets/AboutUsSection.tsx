@@ -1,5 +1,5 @@
-import { IUser } from "~/models/questionModel";
-import { Fragment, HTMLProps, JSX, ReactNode } from "react";
+import { IMeUser } from "~/models/questionModel";
+import { HTMLProps, JSX, ReactNode } from "react";
 import UserIcon from "~/components/icons/UserIcon";
 import EmailIcon from "~/components/icons/EmailIcon";
 import EduHatIcon from "~/components/icons/EduHatIcon";
@@ -7,63 +7,53 @@ import UniBuildingIcon from "~/components/icons/UniBuildingIcon";
 import CalenderIcon from "~/components/icons/CalenderIcon";
 import StudyLevelIcon from "~/components/icons/StudyLevelIcon";
 import clsx from "clsx";
-import { DegreeDropDown } from "~/components/widgets/DegreeDropDown";
+import { DegreeDropDown, degreeEnumMapper } from "~/components/widgets/DegreeDropDown";
 
 
 interface IProps {
-  user: IUser;
+  user: IMeUser;
   editMode?: boolean;
 }
 
-
-const InfoToDisplay = [
-  {
-    title: "Name",
-    key: "view_name",
-    Icon: UserIcon
-  },
-  {
-    title: "Email address",
-    key: "email",
-    Icon: EmailIcon
-  }
-];
-
-
 export default function AboutUsSection({ user, editMode }: IProps) {
   return <div>
-    {InfoToDisplay.map(({ title, key, Icon }) => {
-      if (!(key in user)) {
-        return <Fragment key={key}></Fragment>;
-      }
-      return <div key={key}>
-        <AboutUsItem Icon={Icon} title={title}>
-          {user[key]}
-        </AboutUsItem>
-        <hr />
-      </div>;
-    })}
+    <AboutUsItem Icon={UserIcon} title={"Name"}>
+      {user.view_name}
+    </AboutUsItem>
+    <hr />
+    <AboutUsItem Icon={EmailIcon} title={"Email address"}>
+      {user.email}
+    </AboutUsItem>
+    <hr />
     <AboutUsItem Icon={EduHatIcon} title={"Education"}>
       {
-        editMode ? <InputField name="study_field" id="study_field" /> : <EmptyFieldValue />
+        editMode ?
+          <InputField name="study_field" id="study_field" required defaultValue={user.user_info?.study_field} /> :
+          user.user_info?.study_field ? user.user_info.study_field : <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
     <AboutUsItem Icon={StudyLevelIcon} title={"Study level"}>
       {
-        editMode ? <DegreeDropDown /> : <EmptyFieldValue />
+        editMode ? <DegreeDropDown defaultValue={user.user_info?.degree} /> :
+          user.user_info?.degree ? degreeEnumMapper(user.user_info.degree) : <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
     <AboutUsItem Icon={UniBuildingIcon} title={"University/School"}>
       {
-        editMode ? <InputField name="university" id="university" /> : <EmptyFieldValue />
+        editMode ?
+          <InputField name="university" id="university" required defaultValue={user.user_info?.university} /> :
+          user.user_info?.university ? user.user_info?.university : <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
     <AboutUsItem Icon={CalenderIcon} title={"Academic year"}>
       {
-        editMode ? <InputField name="graduation_year" id="graduation_year" /> : <EmptyFieldValue />
+        editMode ?
+          <InputField name="graduation_year" id="graduation_year" required
+                      defaultValue={user.user_info?.graduation_year} /> :
+          user.user_info?.graduation_year ? user.user_info.graduation_year : <EmptyFieldValue />
       }
     </AboutUsItem>
   </div>;

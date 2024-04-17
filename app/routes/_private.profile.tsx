@@ -3,36 +3,45 @@ import { useAuth } from "~/context/AuthProvider";
 import { NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import clsx from "clsx";
 import Loader from "~/components/UI/Loader";
-import { getMeStats, getMyAnswersForQuestions } from "~/apis/questionsAPI";
+import { getMeStats } from "~/apis/questionsAPI";
+import { json } from "@remix-run/node";
 
 
 const LINKS = [
   {
     title: "About",
     slug: "/profile",
-    key: ''
+    key: ""
   }, {
     title: "Answers",
     slug: "/profile/answers",
-    key: 'answers_count'
+    key: "answers_count"
   }, {
     title: "Questions",
     slug: "/profile/questions",
-    key: 'questions_count'
+    key: "questions_count"
   }
 ];
 
 export const clientLoader = async () => {
-  return await getMeStats();
+  try {
+    return await getMeStats();
+  } catch (e) {
+    return json({
+      "answers_count": 0,
+      "questions_count": 0
+    });
+  }
+
 };
 
 export default function UserProfilePage() {
-  const data = useLoaderData<typeof clientLoader>()
+  const data = useLoaderData<typeof clientLoader>();
   const { user } = useAuth();
   if (!user) {
     //ToDo: Add Loading skeleton
-    return <div className='container flex justify-center mt-20'>
-      <Loader/>
+    return <div className="container flex justify-center mt-20">
+      <Loader />
     </div>;
   }
   return <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-44">

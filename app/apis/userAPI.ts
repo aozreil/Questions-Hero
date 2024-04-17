@@ -1,8 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { axiosApiInstance } from "~/interceptors/client-interceptors";
-import { IUser } from "~/models/questionModel";
-import { UserDegreeEnum } from "~/models/general";
+import { IMeUser, IUser, IUserInfo } from "~/models/questionModel";
 
 export async function loginWithGoogle(jwt_token: string) {
   const res = await axios.post<IUser>(
@@ -22,7 +21,7 @@ export async function loginWithGoogle(jwt_token: string) {
 }
 
 export async function getMe(config?: AxiosRequestConfig) {
-  const res = await axiosApiInstance.get<IUser>(
+  const res = await axiosApiInstance.get<IMeUser>(
     `${ASKGRAM_BASE}/api/users/me`,
     {
       ...config,
@@ -37,14 +36,8 @@ export async function getMe(config?: AxiosRequestConfig) {
 }
 
 
-export async function updateMeUserInfo(body: {
-
-  "degree": UserDegreeEnum,
-  "graduation_year": number,
-  "study_field": string,
-  "university": string
-}, config?: AxiosRequestConfig) {
-  const res = await axiosApiInstance.put<IUser>(
+export async function updateMeUserInfo(body: IUserInfo, config?: AxiosRequestConfig) {
+  const res = await axiosApiInstance.put<IUserInfo>(
     `${ASKGRAM_BASE}/api/users/me/user-info`,
     body,
     {

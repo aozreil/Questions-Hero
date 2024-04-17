@@ -1,23 +1,39 @@
 import { useAuth } from "~/context/AuthProvider";
 import AboutUsSection from "~/components/widgets/AboutUsSection";
 import Loader from "~/components/UI/Loader";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ClientActionFunctionArgs, useFetcher } from "@remix-run/react";
 import { updateMeUserInfo } from "~/apis/userAPI";
+import { UserDegreeEnum } from "~/models/questionModel";
 
 export const clientAction = async ({
                                      request
                                    }: ClientActionFunctionArgs) => {
   const formData = await request.formData();
   const values = Object.fromEntries(formData);
-  return await updateMeUserInfo(values as any);
+  return await updateMeUserInfo({
+    degree: values["degree"] as UserDegreeEnum,
+    graduation_year: +values["graduation_year"],
+    study_field: values["study_field"] as string,
+    university: values["university"] as string
+  });
 };
 
 export default function UserProfileAboutPage() {
-  const { user } = useAuth();
-  // const actionData = useActionData<typeof clientAction>()
+  const { user, updateUserInfo } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const fetcher = useFetcher();
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (fetcher.data) {
+      setEditMode(false);
+      updateUserInfo()
+        .then(() => {
+
+        });
+    }
+  }, [fetcher.data]);
 
   if (!user) {
     return <div className="w-full h-full flex justify-center items-center">
@@ -25,26 +41,32 @@ export default function UserProfileAboutPage() {
     </div>;
   }
   return <div>
-    <div className="flex justify-between">
-      <p className="font-bold text-4xl text-black mb-10">
-        About
-      </p>
-      <button className={"text-[#163bf3] hover:bg-gray-100 rounded px-4 h-fit py-2 text-lg"} onClick={() => {
-        if (editMode) {
-          setEditMode(false);
-        } else {
-          setEditMode(true);
-        }
-      }}>
-        {editMode ? "Save" : "Edit Info"}
-      </button>
-    </div>
-
     <fetcher.Form method="post">
-      <AboutUsSection user={user} editMode={editMode} />
-      <button type={"submit"}>submit</button>
-    </fetcher.Form>
+      <div className="flex justify-between">
+        <p className="font-bold text-4xl text-black mb-10">
+          About
+        </p>
+        <button
+          disabled={fetcher.state === "loading" || fetcher.state === "submitting"}
+          className={"text-[#163bf3] hover:bg-gray-100 rounded px-4 h-fit py-2 text-lg"} onClick={(e) => {
+          if (!editMode) {
+            e.preventDefault();
+            setEditMode(true);
+          }
+        }}>
+          {editMode ? fetcher.state === "submitting" ? "Saving..." : "Save" : "Edit Info"}
+        </button>
+      </div>
 
+
+      <AboutUsSection user={{
+        ...user, user_info: {
+          ...user.user_info,
+          ...(fetcher.data ?? {})
+        }
+      }}
+                      editMode={editMode} />
+    </fetcher.Form>
   </div>;
 
 }

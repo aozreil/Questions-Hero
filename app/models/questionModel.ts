@@ -1,5 +1,13 @@
 import { getTextFormatted, isTextIncludingLatex, title } from "~/utils/text-formatting-utils";
 
+export enum UserDegreeEnum {
+  "HIGH_SCHOOL" = "HIGH_SCHOOL",
+  "DIPLOMA" = "DIPLOMA",
+  "BACHELOR" = "BACHELOR",
+  "MASTER" = "MASTER",
+  "DOCTORATE" = "DOCTORATE"
+}
+
 export class QuestionClass {
   static questionExtraction(question: IQuestion): IQuestion {
     return {
@@ -80,11 +88,6 @@ export interface IQuestion {
   answerCount?: number;
 }
 
-export interface IQuestionInfo {
-  id: string;
-  answers_count: number;
-}
-
 export interface ISearchQuestion extends IQuestion {
   // Derived Props
   answerCount: number;
@@ -113,7 +116,18 @@ export interface IUser {
   view_name?: string;
   user_id?: number;
   picture?: string;
-  email?: string;
+  user_info?: IUserInfo;
+}
+
+export interface IMeUser extends IUser {
+  email: string,
+}
+
+export interface IUserInfo {
+  degree?: UserDegreeEnum,
+  graduation_year?: number,
+  study_field?: string,
+  university?: string
 }
 
 export interface IUsers {
