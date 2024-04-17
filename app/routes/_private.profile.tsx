@@ -23,17 +23,27 @@ const LINKS = [
   }
 ];
 
+export function shouldRevalidate() {
+  return false;
+}
+
 export const clientLoader = async () => {
   try {
     return await getMeStats();
   } catch (e) {
     return json({
-      "answers_count": 0,
-      "questions_count": 0
+      answers_count: 0,
+      questions_count: 0
     });
   }
 
 };
+
+export function HydrateFallback() {
+
+  //TODO: Fix loading
+  return <p>Loading Game...</p>;
+}
 
 export default function UserProfilePage() {
   const data = useLoaderData<typeof clientLoader>();

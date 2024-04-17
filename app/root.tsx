@@ -1,5 +1,6 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
+import { MetaFunction } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   Links,
@@ -7,31 +8,31 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration, useRouteError
+  ScrollRestoration,
+  useRouteError
 } from "@remix-run/react";
 import stylesheet from "~/styles/tailwind.css";
-import { MetaFunction } from "@remix-run/node";
-import {getSeoMeta} from "~/utils/seo";
+import { getSeoMeta } from "~/utils/seo";
 import NotFoundPage from "~/components/UI/NotFoundPage";
 import { ReactNode } from "react";
 import Header from "~/components/UI/Header";
 import FavIcon from "~/components/UI/FavIcon";
 import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
-import AuthProvider from "~/context/AuthProvider";
+import AuthProvider, { useAuth } from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
 import OverlayProvider from "~/context/OverlayProvider";
 
 export const meta: MetaFunction = () => ([
-  ...getSeoMeta({}),
+  ...getSeoMeta({})
 ]);
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
-  { rel: "preload", href: stylesheet, as: "style"},
-  { rel: "stylesheet", href: stylesheet },
+  { rel: "preload", href: stylesheet, as: "style" },
+  { rel: "stylesheet", href: stylesheet }
 ];
 
-function Document({children}: {children: ReactNode}) {
+function Document({ children }: { children: ReactNode }) {
   return <html lang="en">
   <head>
     <meta charSet="utf-8" />
@@ -52,11 +53,11 @@ function Document({children}: {children: ReactNode}) {
     </script>
   </head>
   <body>
-    <AuthProvider>
-      <OverlayProvider>
-        {children}
-      </OverlayProvider>
-    </AuthProvider>
+  <AuthProvider>
+    <OverlayProvider>
+      {children}
+    </OverlayProvider>
+  </AuthProvider>
   </body>
   </html>;
 }
@@ -65,12 +66,17 @@ export default function App() {
   const isBot = useIsBot();
   return (
     <Document>
-      <Outlet />
+      <RouterOutletWithContext />
       <ScrollRestoration />
       {isBot ? null : <Scripts />}
       <LiveReload />
     </Document>
   );
+}
+
+export function RouterOutletWithContext() {
+  const { user } = useAuth();
+  return <Outlet context={user} />;
 }
 
 export function ErrorBoundary() {
