@@ -13,7 +13,7 @@ export default function MyAskedQuestions({ question, user }: IProps) {
     <div className={"flex justify-between items-center"}>
       <div className="flex space-x-2">
         <UserProfile user={user} className="h-10 w-10" />
-        <div className='flex items-center'>
+        <div className="flex items-center">
           {question.created_at && <p className="text-[#99a7af] text-sm">
             On {formatDate(question.created_at, "MMM dd, yyyy")}
           </p>}
@@ -26,8 +26,9 @@ export default function MyAskedQuestions({ question, user }: IProps) {
       </div>
     </div>
     <hr className="my-3" />
-    <p>
-      {question.text}
+
+    <p className='line-clamp-3' dangerouslySetInnerHTML={{ __html: question.text }}>
+
     </p>
 
   </div>;

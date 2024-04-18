@@ -1,19 +1,38 @@
-import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from "@remix-run/react";
+import {
+  ClientLoaderFunctionArgs,
+  isRouteErrorResponse,
+  Link,
+  useLoaderData,
+  useRouteError,
+  useSearchParams
+} from "@remix-run/react";
 import { getMyAskedQuestions } from "~/apis/questionsAPI";
 import { useAuth } from "~/context/AuthProvider";
 import Loader from "~/components/UI/Loader";
-import AskQuestionSearchCard from "~/components/question/AskQuestionSearchCard";
 import MyAskedQuestions from "~/components/question/MyAskedQuestions";
+import { Pagination } from "~/components/UI/Pagination";
 
+const PAGE_SIZE = 10;
 
-export const clientLoader = async () => {
-  return await getMyAskedQuestions();
+export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
+  const { searchParams } = new URL(request.url);
+
+  const page = parseInt(searchParams.get("page") ?? "0");
+  return await getMyAskedQuestions({
+    params: {
+      page: page,
+      size: PAGE_SIZE
+    }
+  });
 };
 
 
 export default function UserProfileQuestionsPage() {
   const { data, count } = useLoaderData<typeof clientLoader>();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") ?? "0");
+
   if (!user) {
     return <div className="w-full h-full flex justify-center items-center">
       <Loader className="fill-[#5fc9a2] w-12 h-12" />
@@ -36,8 +55,13 @@ export default function UserProfileQuestionsPage() {
     )}
     <div className={"grid grid-cols-1 gap-4"}>
       {data.map((el) => {
-        return <MyAskedQuestions key={el.text} question={el} user={user}  />;
+        return <MyAskedQuestions key={el.text} question={el} user={user} />;
       })}
+      <Pagination page={currentPage}
+                  size={PAGE_SIZE}
+                  total={count}
+                  previous={`/profile/answers?page=${currentPage - 1}`}
+                  next={`/profile/answers?page=${currentPage + 1}`} />
     </div>
   </div>;
 }

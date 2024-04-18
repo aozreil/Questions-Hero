@@ -51,7 +51,7 @@ export default function UserProfilePage() {
   }
   return <>
     <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-44">
-      <div className="items-center p-4 sticky h-max top-24">
+      <div className="items-center p-4 sticky h-max top-24 -mt-1 bg-[#F7F8FA]">
         <div className="md:space-y-4 md:space-x-0 space-x-4 flex md:block items-center">
           <UserProfile user={user} className="md:w-36 md:h-36 border-0 shadow-md" />
           <p className="capitalize text-black font-bold text-2xl text-center">
@@ -78,8 +78,10 @@ export default function UserProfilePage() {
           })}
         </div>
       </div>
-      <div className="p-10 bg-white rounded-lg shadow-md w-full">
-        <Outlet />
+      <div className='px-2 md:px-0 w-full'>
+        <div className="p-10 bg-white rounded-lg shadow-md w-full">
+          <Outlet />
+        </div>
       </div>
     </div>
   </>;

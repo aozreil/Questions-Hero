@@ -1,17 +1,51 @@
-import { getMyAnswersForQuestions } from "~/apis/questionsAPI";
-import { isRouteErrorResponse, Link, useLoaderData, useRouteError } from "@remix-run/react";
+import { getMyAnswersForQuestions, getQuestionsById } from "~/apis/questionsAPI";
+import {
+  ClientLoaderFunctionArgs,
+  isRouteErrorResponse,
+  Link,
+  useLoaderData,
+  useRouteError,
+  useSearchParams
+} from "@remix-run/react";
 import MyAnswers from "~/components/question/MyAnswers";
 import { useAuth } from "~/context/AuthProvider";
 import Loader from "~/components/UI/Loader";
+import { Pagination } from "~/components/UI/Pagination";
 
+const PAGE_SIZE = 10;
+export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
+  const { searchParams } = new URL(request.url);
+  const page = parseInt(searchParams.get("page") ?? "0");
+  const answers = await getMyAnswersForQuestions({
+    params: {
+      page: page,
+      size: PAGE_SIZE
+    }
+  });
+  const questionIds = answers.data.map(el => el.question_id).filter(el => !!el);
 
-export const clientLoader = async () => {
-  return await getMyAnswersForQuestions();
+  const questions = await getQuestionsById({
+    params: {
+      ids: questionIds
+    }
+  });
+
+  return {
+    ...answers,
+    data: answers.data.map(el => {
+      return {
+        ...el,
+        question: questions.find(q => q.id === el.question_id)
+      };
+    })
+  };
 };
 
 export default function UserProfileAnswersPage() {
   const { data, count } = useLoaderData<typeof clientLoader>();
-  const {user} = useAuth();
+  const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") ?? "0");
   if (!user) {
     return <div className="w-full h-full flex justify-center items-center">
       <Loader className="fill-[#5fc9a2] w-12 h-12" />
@@ -31,10 +65,15 @@ export default function UserProfileAnswersPage() {
         </Link>
       </div>
     )}
-    <div className={'grid grid-cols-1 gap-4'}>
-      {data.map((el)=>{
-        return <MyAnswers key={el.text} answer={el} user={user} />
+    <div className={"grid grid-cols-1 gap-4"}>
+      {data.map((el) => {
+        return <MyAnswers key={el.text} answer={el} user={user} question={el.question} />;
       })}
+      <Pagination page={currentPage}
+                  size={PAGE_SIZE}
+                  total={count}
+                  previous={`/profile/answers?page=${currentPage - 1}`}
+                  next={`/profile/answers?page=${currentPage + 1}`} />
     </div>
 
   </div>;

@@ -98,6 +98,14 @@ export async function getMyAskedQuestions(config?: AxiosRequestConfig) {
   return response?.data;
 }
 
+export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
+  const response = await axios.get<IQuestion[]>(`${ASKGRAM_BASE}/api/content/questions`, {
+    ...config,
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
+}
+
 export async function getMyAnswersForQuestions(config?: AxiosRequestConfig) {
   const response = await axios.get<{
     data: IAnswer[],

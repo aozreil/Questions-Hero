@@ -18,7 +18,7 @@ html {
 }
 
 .btn-gray{
-    @apply flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl
+    @apply flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded whitespace-nowrap
 }
 
 
