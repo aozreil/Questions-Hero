@@ -28,7 +28,7 @@ export default function AboutUsSection({ user, editMode }: IProps) {
     <AboutUsItem Icon={EduHatIcon} title={"Education"}>
       {
         editMode ?
-          <InputField name="study_field" id="study_field" required defaultValue={user.user_info?.study_field} /> :
+          <InputField name="study_field" id="study_field" required defaultValue={user.user_info?.study_field} maxLength={100} /> :
           user.user_info?.study_field ? <p className="overflow-hidden text-ellipsis">{user.user_info.study_field}</p> :
             <EmptyFieldValue />
       }
@@ -37,7 +37,8 @@ export default function AboutUsSection({ user, editMode }: IProps) {
     <AboutUsItem Icon={StudyLevelIcon} title={"Study level"}>
       {
         editMode ? <DegreeDropDown defaultValue={user.user_info?.degree} /> :
-          user.user_info?.degree ? <p className="overflow-hidden text-ellipsis">{degreeEnumMapper(user.user_info.degree)}</p> :
+          user.user_info?.degree ?
+            <p className="overflow-hidden text-ellipsis">{degreeEnumMapper(user.user_info.degree)}</p> :
             <EmptyFieldValue />
       }
     </AboutUsItem>
@@ -45,7 +46,7 @@ export default function AboutUsSection({ user, editMode }: IProps) {
     <AboutUsItem Icon={UniBuildingIcon} title={"University/ School"}>
       {
         editMode ?
-          <InputField name="university" id="university" required defaultValue={user.user_info?.university} /> :
+          <InputField name="university" id="university" required defaultValue={user.user_info?.university} maxLength={100}  /> :
           user.user_info?.university ? <p className="overflow-hidden text-ellipsis">{user.user_info?.university}</p> :
             <EmptyFieldValue />
       }
@@ -54,9 +55,10 @@ export default function AboutUsSection({ user, editMode }: IProps) {
     <AboutUsItem Icon={CalenderIcon} title={"Academic year"}>
       {
         editMode ?
-          <InputField name="graduation_year" id="graduation_year" required
-                      defaultValue={user.user_info?.graduation_year} /> :
-          user.user_info?.graduation_year ? <p className="overflow-hidden text-ellipsis">{user.user_info.graduation_year}</p> :
+          <InputField name="graduation_year" id="graduation_year" required type="number" min={1900} max={2100}
+                      defaultValue={user.user_info?.graduation_year} maxLength={100}  /> :
+          user.user_info?.graduation_year ?
+            <p className="overflow-hidden text-ellipsis">{user.user_info.graduation_year}</p> :
             <EmptyFieldValue />
       }
     </AboutUsItem>

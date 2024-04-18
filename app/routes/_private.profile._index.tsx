@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ClientActionFunctionArgs, useFetcher } from "@remix-run/react";
 import { updateMeUserInfo } from "~/apis/userAPI";
 import { IUserInfo, UserDegreeEnum } from "~/models/questionModel";
+import { AxiosError } from "axios";
 
 export const clientAction = async ({
                                      request
@@ -43,16 +44,29 @@ export const clientAction = async ({
     return { ...userInfo, success: false };
   }
 
-  const res = await updateMeUserInfo({
-    degree: degree as UserDegreeEnum,
-    graduation_year: +graduation_year!,
-    study_field: study_field as string,
-    university: university as string
-  });
-  return {
-    ...res,
-    success: true
-  };
+  try {
+    const res = await updateMeUserInfo({
+      degree: degree as UserDegreeEnum,
+      graduation_year: +graduation_year!,
+      study_field: study_field as string,
+      university: university as string
+    });
+    return {
+      ...res,
+      success: true
+    };
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      errors["general"] = e.response?.data?.message ?? "Invalid User Inputs";
+    } else {
+      console.error(e);
+      errors["general"] = "Something When wrong! Please try again";
+    }
+    return {
+      success: false,
+      errors
+    };
+  }
 };
 
 export default function UserProfileAboutPage() {
@@ -61,8 +75,8 @@ export default function UserProfileAboutPage() {
   const fetcher = useFetcher<typeof clientAction>();
   useEffect(() => {
     if (fetcher.data) {
-      setEditMode(false);
       if (fetcher.data?.success) {
+        setEditMode(false);
         updateUserInfo()
           .then(() => {
 
@@ -99,11 +113,28 @@ export default function UserProfileAboutPage() {
         </button>
       </div>
 
+      {fetcher?.data?.errors?.general && <div className="rounded-md bg-red-50 p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                 className="h-5 w-5 text-red-400" aria-hidden="true">
+              <path fillRule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                    clipRule="evenodd" />
+            </svg>
+
+          </div>
+          <div className="ml-3">
+            <p className="text-sm font-medium text-red-800">{fetcher?.data?.errors?.general}</p>
+          </div>
+        </div>
+      </div>}
+
 
       <AboutUsSection user={{
         ...user, user_info: {
           ...user.user_info,
-          ...(fetcher.state === "submitting" ? fetcher.data ?? {} : {})
+          ...(fetcher.state !== "idle" ? fetcher.data ?? {} : {})
         }
       }} editMode={editMode} />
     </fetcher.Form>

@@ -88,6 +88,6 @@ export default function UserProfilePage() {
 function LoadingContent() {
   return <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-44">
     <Skeleton className="w-full bg-white min-w-[176px] md:w-auto min-h-[90px] items-center p-4 top-24" />
-    <Skeleton className="h-[452px] p-10 bg-white rounded-lg shadow-md w-full" />
+    <Skeleton className="h-[452px] md:h-[573px] p-10 bg-white rounded-lg shadow-md w-full" />
   </div>;
 }
