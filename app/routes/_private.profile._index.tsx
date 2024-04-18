@@ -103,7 +103,7 @@ export default function UserProfileAboutPage() {
       <AboutUsSection user={{
         ...user, user_info: {
           ...user.user_info,
-          ...(fetcher.data ?? {})
+          ...(fetcher.state === "submitting" ? fetcher.data ?? {} : {})
         }
       }} editMode={editMode} />
     </fetcher.Form>

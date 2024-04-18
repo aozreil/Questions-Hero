@@ -18,33 +18,36 @@ interface IProps {
 export default function AboutUsSection({ user, editMode }: IProps) {
   return <div>
     <AboutUsItem Icon={UserIcon} title={"Name"}>
-      {user.view_name}
+      <p className="overflow-hidden text-ellipsis"> {user.view_name}</p>
     </AboutUsItem>
     <hr />
     <AboutUsItem Icon={EmailIcon} title={"Email address"}>
-      {user.email}
+      <p className="overflow-hidden text-ellipsis">{user.email}</p>
     </AboutUsItem>
     <hr />
     <AboutUsItem Icon={EduHatIcon} title={"Education"}>
       {
         editMode ?
           <InputField name="study_field" id="study_field" required defaultValue={user.user_info?.study_field} /> :
-          user.user_info?.study_field ? user.user_info.study_field : <EmptyFieldValue />
+          user.user_info?.study_field ? <p className="overflow-hidden text-ellipsis">{user.user_info.study_field}</p> :
+            <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
     <AboutUsItem Icon={StudyLevelIcon} title={"Study level"}>
       {
         editMode ? <DegreeDropDown defaultValue={user.user_info?.degree} /> :
-          user.user_info?.degree ? degreeEnumMapper(user.user_info.degree) : <EmptyFieldValue />
+          user.user_info?.degree ? <p className="overflow-hidden text-ellipsis">{degreeEnumMapper(user.user_info.degree)}</p> :
+            <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
-    <AboutUsItem Icon={UniBuildingIcon} title={"University/School"}>
+    <AboutUsItem Icon={UniBuildingIcon} title={"University/ School"}>
       {
         editMode ?
           <InputField name="university" id="university" required defaultValue={user.user_info?.university} /> :
-          user.user_info?.university ? user.user_info?.university : <EmptyFieldValue />
+          user.user_info?.university ? <p className="overflow-hidden text-ellipsis">{user.user_info?.university}</p> :
+            <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
@@ -53,7 +56,8 @@ export default function AboutUsSection({ user, editMode }: IProps) {
         editMode ?
           <InputField name="graduation_year" id="graduation_year" required
                       defaultValue={user.user_info?.graduation_year} /> :
-          user.user_info?.graduation_year ? user.user_info.graduation_year : <EmptyFieldValue />
+          user.user_info?.graduation_year ? <p className="overflow-hidden text-ellipsis">{user.user_info.graduation_year}</p> :
+            <EmptyFieldValue />
       }
     </AboutUsItem>
   </div>;
@@ -81,7 +85,7 @@ function EmptyFieldValue() {
 function AboutUsItem({ children, title, Icon }: { title: string, children: ReactNode, Icon: JSX.ElementType }) {
   return <div className={"my-4"}>
     <div className={"grid grid-cols-2 gap-4 text-2xl text-[#070707] mb-4"}>
-      <p>
+      <p className="overflow-hidden text-ellipsis line-clamp-1">
         <Icon className="h-8 w-8 text-[#ccd3d7] inline me-2 sm:me-7" />
         {title}
       </p>
