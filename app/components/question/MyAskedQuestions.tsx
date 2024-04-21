@@ -13,7 +13,9 @@ export default function MyAskedQuestions({ question, user }: IProps) {
     <div className={"flex justify-between items-center"}>
       <div className="flex space-x-2">
         <UserProfile user={user} className="h-10 w-10" />
-        <div className="flex items-center">
+        <div>
+          <p className="text-[#344f60] line-clamp-1">You asked
+          </p>
           {question.created_at && <p className="text-[#99a7af] text-sm">
             On {formatDate(question.created_at, "MMM dd, yyyy")}
           </p>}
