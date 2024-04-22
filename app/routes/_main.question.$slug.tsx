@@ -308,7 +308,7 @@ const getStructuredData = (data: LoaderData) => {
   const answersData = internalAnswers?.length ? internalAnswers : answers;
   if (!questionData?.text) return [];
 
-  const questionBody = questionData?.text;
+  const questionBody = getCleanText(questionData?.text);
   const questionTitle = questionBody;
   const questionAskedBy = getUser(question?.user_id, users);
   const verifiedAnswer = getVerifiedAnswer(answersData);
@@ -322,14 +322,14 @@ const getStructuredData = (data: LoaderData) => {
     "@type": "Quiz",
     "about": {
       "@type": "Thing",
-      "name": getCleanText(questionTitle),
+      "name": questionTitle,
     },
     "hasPart": [
       {
         "@context": "https://schema.org/",
         "@type": "Question",
         "eduQuestionType": "Flashcard",
-        "text": getCleanText(questionBody),
+        "text": questionBody,
         "acceptedAnswer": {
           "@type": "Answer",
           "text": getAnswerText(verifiedAnswer) ?? answerFallback,
