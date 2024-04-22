@@ -10,7 +10,7 @@ export default function SignInWithGoogle({isReady, type}: Props) {
   const googleSignInRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!googleSignInRef.current || !type) {
+    if (!isReady || !googleSignInRef.current || !type) {
       return;
     }
     if(googleSignInRef.current.hasChildNodes()){
