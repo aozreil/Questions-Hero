@@ -121,6 +121,7 @@ export interface IUser {
 
 export interface IMeUser extends IUser {
   email: string,
+  created_at: Date
 }
 
 export interface IUserInfo {

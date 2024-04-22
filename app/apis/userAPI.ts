@@ -52,6 +52,18 @@ export async function updateMeUserInfo(body: IUserInfo, config?: AxiosRequestCon
   return res.data;
 }
 
+export async function getPublicUserProfile(id: number, config?: AxiosRequestConfig) {
+  const res = await axiosApiInstance.get<IUser>(`${ASKGRAM_BASE}/api/users/users/user/${id}/profile`, {
+    ...config,
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    }
+  });
+  return res.data
+}
+
 export async function refreshToken() {
   const res = await axios.post(
     `${ASKGRAM_BASE}/api/users/token/refresh`,

@@ -3,16 +3,18 @@ import {
   isRouteErrorResponse,
   Link,
   useLoaderData,
+  useOutletContext,
+  useParams,
   useRouteError,
   useSearchParams
 } from "@remix-run/react";
-import { getMyAskedQuestions } from "~/apis/questionsAPI";
-import { useAuth } from "~/context/AuthProvider";
-import Loader from "~/components/UI/Loader";
+import { getAskedQuestionsByUserId } from "~/apis/questionsAPI";
 import MyAskedQuestions from "~/components/question/MyAskedQuestions";
 import { Pagination } from "~/components/UI/Pagination";
 import { LinksFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
+import { IUser } from "~/models/questionModel";
+import invariant from "tiny-invariant";
 
 const PAGE_SIZE = 10;
 
@@ -22,11 +24,14 @@ export const links: LinksFunction = () => {
   ];
 };
 
-export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
+export const clientLoader = async ({ request, params }: ClientLoaderFunctionArgs) => {
   const { searchParams } = new URL(request.url);
-
+  const slug = params.slug;
+  invariant(slug, "User Not Found");
+  const userId = parseInt(slug.split("-").pop() || slug);
+  invariant(!isNaN(userId), "Invalid User Id");
   const page = parseInt(searchParams.get("page") ?? "0");
-  return await getMyAskedQuestions({
+  return await getAskedQuestionsByUserId(userId, {
     params: {
       page: page,
       size: PAGE_SIZE
@@ -37,15 +42,12 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
 
 export default function UserProfileQuestionsPage() {
   const { data, count } = useLoaderData<typeof clientLoader>();
-  const { user } = useAuth();
+  const { user } = useOutletContext<{ user: IUser }>();
   const [searchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") ?? "0");
+  const params = useParams();
+  const slug = params.slug;
 
-  if (!user) {
-    return <div className="w-full h-full flex justify-center items-center">
-      <Loader className="fill-[#5fc9a2] w-12 h-12" />
-    </div>;
-  }
   return <div>
     <p className="font-bold text-4xl text-black mb-10">
       Questions ({count})
@@ -65,11 +67,12 @@ export default function UserProfileQuestionsPage() {
       {data.map((el) => {
         return <MyAskedQuestions key={el.text} question={el} user={user} />;
       })}
-      <Pagination page={currentPage}
-                  size={PAGE_SIZE}
-                  total={count}
-                  previous={`/profile/question?page=${currentPage - 1}`}
-                  next={`/profile/question?page=${currentPage + 1}`} />
+      {count > 0 &&
+        <Pagination page={currentPage}
+                    size={PAGE_SIZE}
+                    total={count}
+                    previous={`/user/${slug}/questions?page=${currentPage - 1}`}
+                    next={`/user/${slug}/questions?page=${currentPage + 1}`} />}
     </div>
   </div>;
 }

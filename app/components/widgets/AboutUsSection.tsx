@@ -1,4 +1,4 @@
-import { IMeUser } from "~/models/questionModel";
+import { IMeUser, IUser } from "~/models/questionModel";
 import { HTMLProps, JSX, ReactNode } from "react";
 import UserIcon from "~/components/icons/UserIcon";
 import EmailIcon from "~/components/icons/EmailIcon";
@@ -8,33 +8,41 @@ import CalenderIcon from "~/components/icons/CalenderIcon";
 import StudyLevelIcon from "~/components/icons/StudyLevelIcon";
 import clsx from "clsx";
 import { DegreeDropDown, degreeEnumMapper } from "~/components/widgets/DegreeDropDown";
+import { formatDate } from "date-fns";
 
 
 interface IProps {
-  user: IMeUser;
+  user: IMeUser | IUser;
   editMode?: boolean;
 }
 
 export default function AboutUsSection({ user, editMode }: IProps) {
   return <div>
     <AboutUsItem Icon={UserIcon} title={"Name"}>
-      <p className="overflow-hidden text-ellipsis"> {user.view_name}</p>
+      <div className={'lg:flex justify-between lg:items-center'}>
+        <p className="overflow-hidden text-ellipsis"> {user.view_name}</p>
+        {"created_at" in user && <p className="text-[#99a7af] font-normal text-sm"> Joined on <strong>{formatDate(user.created_at, 'MMMM dd, yyyy')}</strong></p>
+        }
+      </div>
     </AboutUsItem>
     <hr />
-    <AboutUsItem Icon={EmailIcon} title={"Email address"}>
+    {"email" in user && <><AboutUsItem Icon={EmailIcon} title={"Email"}>
       <p className="overflow-hidden text-ellipsis">{user.email}</p>
     </AboutUsItem>
-    <hr />
-    <AboutUsItem Icon={EduHatIcon} title={"Education"}>
+      <hr />
+    </>
+    }
+    <AboutUsItem Icon={UniBuildingIcon} title={"University"}>
       {
         editMode ?
-          <InputField name="study_field" id="study_field" required defaultValue={user.user_info?.study_field} maxLength={100} /> :
-          user.user_info?.study_field ? <p className="overflow-hidden text-ellipsis">{user.user_info.study_field}</p> :
+          <InputField name="university" id="university" required defaultValue={user.user_info?.university}
+                      maxLength={100} /> :
+          user.user_info?.university ? <p className="overflow-hidden text-ellipsis">{user.user_info?.university}</p> :
             <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
-    <AboutUsItem Icon={StudyLevelIcon} title={"Study level"}>
+    <AboutUsItem Icon={StudyLevelIcon} title={"Degree"}>
       {
         editMode ? <DegreeDropDown defaultValue={user.user_info?.degree} /> :
           user.user_info?.degree ?
@@ -43,20 +51,21 @@ export default function AboutUsSection({ user, editMode }: IProps) {
       }
     </AboutUsItem>
     <hr />
-    <AboutUsItem Icon={UniBuildingIcon} title={"University/ School"}>
+    <AboutUsItem Icon={EduHatIcon} title={"Major"}>
       {
         editMode ?
-          <InputField name="university" id="university" required defaultValue={user.user_info?.university} maxLength={100}  /> :
-          user.user_info?.university ? <p className="overflow-hidden text-ellipsis">{user.user_info?.university}</p> :
+          <InputField name="study_field" id="study_field" required defaultValue={user.user_info?.study_field}
+                      maxLength={100} /> :
+          user.user_info?.study_field ? <p className="overflow-hidden text-ellipsis">{user.user_info.study_field}</p> :
             <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
-    <AboutUsItem Icon={CalenderIcon} title={"Academic year"}>
+    <AboutUsItem Icon={CalenderIcon} title={"Graduation year"}>
       {
         editMode ?
           <InputField name="graduation_year" id="graduation_year" required type="number" min={1900} max={2100}
-                      defaultValue={user.user_info?.graduation_year} maxLength={100}  /> :
+                      defaultValue={user.user_info?.graduation_year} maxLength={100} /> :
           user.user_info?.graduation_year ?
             <p className="overflow-hidden text-ellipsis">{user.user_info.graduation_year}</p> :
             <EmptyFieldValue />
@@ -86,7 +95,7 @@ function EmptyFieldValue() {
 
 function AboutUsItem({ children, title, Icon }: { title: string, children: ReactNode, Icon: JSX.ElementType }) {
   return <div className={"my-4"}>
-    <div className={"grid grid-cols-2 gap-4 text-2xl text-[#070707] mb-4"}>
+    <div className={"grid grid-cols-2 gap-4 text-xl md:text-2xl text-[#070707] mb-4"}>
       <p className="overflow-hidden text-ellipsis line-clamp-1">
         <Icon className="h-8 w-8 text-[#ccd3d7] inline me-2 sm:me-7" />
         {title}

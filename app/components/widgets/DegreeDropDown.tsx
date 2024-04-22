@@ -33,10 +33,12 @@ interface IProps {
 
 export function DegreeDropDown({ defaultValue }: IProps) {
   const [selected, setSelected] = useState<string | { title: string, value: string } | undefined>(undefined);
+  const value = (typeof selected === "string" ? selected : selected?.value) ?? (typeof defaultValue === "string" ? defaultValue : defaultValue?.value);
   return <>
     <Dropdown items={DEGREE_OPTIONS} selected={selected ?? defaultValue} setSelected={setSelected} />
     <input className="hidden" name="degree" id="degree" required
-           value={(typeof selected === "string" ? selected : selected?.value) ?? (typeof defaultValue === "string" ? defaultValue : defaultValue?.value)} />
+           key={value}
+           defaultValue={value} />
   </>;
 
 }

@@ -76,10 +76,9 @@ export default function UserProfileAboutPage() {
   useEffect(() => {
     if (fetcher.data) {
       if (fetcher.data?.success) {
-        setEditMode(false);
         updateUserInfo()
           .then(() => {
-
+            setEditMode(false);
           });
       }
     }
@@ -93,7 +92,7 @@ export default function UserProfileAboutPage() {
   return <div>
     <fetcher.Form method="post" onSubmit={(e) => {
       e.preventDefault();
-      const formData = new FormData(e.target);
+      const formData = new FormData(e.target as HTMLFormElement);
       formData.set("user_info", JSON.stringify(user?.user_info ?? {}));
       fetcher.submit(formData, { method: "post" });
     }}>
@@ -134,7 +133,7 @@ export default function UserProfileAboutPage() {
       <AboutUsSection user={{
         ...user, user_info: {
           ...user.user_info,
-          ...(fetcher.state !== "idle" ? fetcher.data ?? {} : {})
+          ...(fetcher.state !== "idle" || editMode ? fetcher.data ?? {} : {})
         }
       }} editMode={editMode} />
     </fetcher.Form>

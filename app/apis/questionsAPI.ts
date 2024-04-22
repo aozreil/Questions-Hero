@@ -98,6 +98,19 @@ export async function getMyAskedQuestions(config?: AxiosRequestConfig) {
   return response?.data;
 }
 
+export async function getAskedQuestionsByUserId(id: number, config?: AxiosRequestConfig) {
+  const response = await axios.get<{
+    data: IQuestion[],
+    count: number,
+    page: number,
+    size: number
+  }>(`${ASKGRAM_BASE}/api/content/users/${id}/questions`, {
+    ...config,
+    withCredentials: true
+  });
+  return response?.data;
+}
+
 export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
   const response = await axios.get<IQuestion[]>(`${ASKGRAM_BASE}/api/content/questions`, {
     ...config,
@@ -119,6 +132,19 @@ export async function getMyAnswersForQuestions(config?: AxiosRequestConfig) {
   return response?.data;
 }
 
+export async function getUserAnswersForQuestionsByUserId(id: number, config?: AxiosRequestConfig) {
+  const response = await axios.get<{
+    data: IAnswer[],
+    count: number,
+    page: number,
+    size: number
+  }>(`${ASKGRAM_BASE}/api/content/users/${id}/answers`, {
+    ...config,
+    withCredentials: true
+  });
+  return response?.data;
+}
+
 export async function getMeStats(config?: AxiosRequestConfig) {
   const response = await axios.get<{
     "answers_count": number,
@@ -129,3 +155,15 @@ export async function getMeStats(config?: AxiosRequestConfig) {
   });
   return response?.data;
 }
+
+export async function getUSerStatsByUserId(id: number, config?: AxiosRequestConfig) {
+  const response = await axios.get<{
+    "answers_count": number,
+    "questions_count": number
+  }>(`${ASKGRAM_BASE}/api/content/users/${id}/stats`, {
+    ...config,
+    withCredentials: true
+  });
+  return response?.data;
+}
+
