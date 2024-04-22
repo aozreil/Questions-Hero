@@ -1,7 +1,7 @@
-import { json, MetaFunction } from "@remix-run/node";
+import { json, LinksFunction, MetaFunction } from "@remix-run/node";
 import { searchQuestionsDetailsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import SearchQuestion from "~/components/question/SearchQuestion";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
@@ -26,10 +26,15 @@ export const meta: MetaFunction<typeof loader> = ({ location }) => {
     ...getSeoMeta({
       title: title,
       canonical: `${BASE_URL}/search`
-    }),
-    ...getKatexLink()
+    })
   ];
 };
+
+export const links: LinksFunction = () => {
+  return [
+    ...getKatexLink()
+  ];
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);

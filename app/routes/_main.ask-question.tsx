@@ -9,7 +9,7 @@ import { Transition } from "@headlessui/react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { BASE_URL, RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
 import Attachments, { AttachmentFile, AttachmentsStatus } from "~/components/askQuestion/Attachments";
-import { MetaFunction } from "@remix-run/node";
+import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
 import { loader } from "~/routes/_main.search";
 import Footer from "~/components/UI/Footer";
@@ -17,15 +17,20 @@ import { getKatexLink } from "~/utils/external-links";
 import SimilarQuestions from "~/components/askQuestion/SimilarQuestions";
 import { useAnalytics } from "~/hooks/useAnalytics";
 
-export const meta: MetaFunction<typeof loader> = ({ location }) => {
+export const meta: MetaFunction<typeof loader> = () => {
   return [
     ...getSeoMeta({
       title: 'Askgram - Ask Question',
       canonical: `${BASE_URL}/ask-question`
-    }),
-    ...getKatexLink(),
+    })
   ];
 };
+
+export const links: LinksFunction = () => {
+  return [
+    ...getKatexLink()
+  ];
+}
 
 const AttachmentsInitialState = { files: [], status: AttachmentsStatus.completed }
 const CHAR_CHANGE_UPDATE = 10;
