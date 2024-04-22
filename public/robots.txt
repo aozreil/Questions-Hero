@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /build/
 Disallow: /api/
 
 Sitemap: https://askgram.com/sitemap/questions/sitemap_2024-03-11_00-57-02.xml
