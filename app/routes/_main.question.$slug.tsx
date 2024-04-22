@@ -322,14 +322,14 @@ const getStructuredData = (data: LoaderData) => {
     "@type": "Quiz",
     "about": {
       "@type": "Thing",
-      "name": questionTitle
+      "name": getCleanText(questionTitle),
     },
     "hasPart": [
       {
         "@context": "https://schema.org/",
         "@type": "Question",
         "eduQuestionType": "Flashcard",
-        "text": questionBody,
+        "text": getCleanText(questionBody),
         "acceptedAnswer": {
           "@type": "Answer",
           "text": getAnswerText(verifiedAnswer) ?? answerFallback,
@@ -413,5 +413,5 @@ const getAnswerText = (answer: IAnswer | IInternalAnswer) => {
     }
   }
 
-  return answerText;
+  return getCleanText(answerText);
 };
