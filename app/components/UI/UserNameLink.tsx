@@ -1,5 +1,6 @@
 import { Link } from "@remix-run/react";
 import { IUser } from "~/models/questionModel";
+import { getUserSlug } from "~/utils";
 
 
 interface IProps {
@@ -9,7 +10,7 @@ interface IProps {
 
 export function UserNameLink({ user, className }: IProps) {
   if (user?.view_name && user?.user_id) {
-    return <Link className={className} to={`/user/${user?.user_id}`}>
+    return <Link className={className} to={`/user/${getUserSlug(user)}`}>
       {user?.view_name}
     </Link>;
   }

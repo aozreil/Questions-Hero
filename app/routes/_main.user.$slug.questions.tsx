@@ -11,12 +11,29 @@ import {
 import { getAskedQuestionsByUserId } from "~/apis/questionsAPI";
 import MyAskedQuestions from "~/components/question/MyAskedQuestions";
 import { Pagination } from "~/components/UI/Pagination";
-import { LinksFunction } from "@remix-run/node";
+import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
 import { IUser, QuestionClass } from "~/models/questionModel";
 import invariant from "tiny-invariant";
+import { getSeoMeta } from "~/utils/seo";
 
 const PAGE_SIZE = 10;
+export const meta: MetaFunction<typeof clientLoader> = ({ location, matches }) => {
+  const match = matches.find(el => el.id === "routes/_main.user.$slug");
+  let title = "Not found";
+  if (match && match?.data && "user" in match.data) {
+    const user = match.data?.user as IUser;
+    if (user) {
+      title = user.view_name + " Questions";
+    }
+  }
+  return [
+    ...getSeoMeta({
+      title: title,
+      canonical: location.pathname
+    })
+  ];
+};
 
 export const links: LinksFunction = () => {
   return [
@@ -65,7 +82,7 @@ export default function UserProfileQuestionsPage() {
     {data.length === 0 && (
       <div className="text-center space-y-4">
         <p>
-          You haven’t asked any questions yet!
+          The user haven’t asked any questions yet!
         </p>
         <Link className="btn-primary" to="/ask-question">
           Ask Question
@@ -75,7 +92,7 @@ export default function UserProfileQuestionsPage() {
     )}
     <div className={"grid grid-cols-1 gap-4"}>
       {data.map((el, index) => {
-        return <MyAskedQuestions key={`${el.id}-${index}`} question={el} user={user} />;
+        return <MyAskedQuestions key={`${el.id}-${index}`} question={el} user={user} text={"Asked"} />;
       })}
       {count > 0 &&
         <Pagination page={currentPage}

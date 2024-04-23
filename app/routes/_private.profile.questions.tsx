@@ -11,11 +11,20 @@ import { useAuth } from "~/context/AuthProvider";
 import Loader from "~/components/UI/Loader";
 import MyAskedQuestions from "~/components/question/MyAskedQuestions";
 import { Pagination } from "~/components/UI/Pagination";
-import { LinksFunction } from "@remix-run/node";
+import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
 import { QuestionClass } from "~/models/questionModel";
+import { getSeoMeta } from "~/utils/seo";
 
 const PAGE_SIZE = 10;
+
+export const meta: MetaFunction = () => {
+  return [
+    ...getSeoMeta({
+      title: "My Asked Questions"
+    })
+  ];
+};
 
 export const links: LinksFunction = () => {
   return [
@@ -37,7 +46,7 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
     ...answers, data: answers.data.map((el) => {
       return {
         ...el,
-        ...QuestionClass.questionExtraction(el),
+        ...QuestionClass.questionExtraction(el)
       };
     })
   };
@@ -72,7 +81,7 @@ export default function UserProfileQuestionsPage() {
     )}
     <div className={"grid grid-cols-1 gap-4"}>
       {data.map((el, index) => {
-        return <MyAskedQuestions key={`${el.id}-${index}`} question={el} user={user} />;
+        return <MyAskedQuestions key={`${el.id}-${index}`} question={el} user={user} text={"You asked"} />;
       })}
       <Pagination page={currentPage}
                   size={PAGE_SIZE}

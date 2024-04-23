@@ -6,6 +6,17 @@ import { ClientActionFunctionArgs, useFetcher } from "@remix-run/react";
 import { updateMeUserInfo } from "~/apis/userAPI";
 import { IUserInfo, UserDegreeEnum } from "~/models/questionModel";
 import { AxiosError } from "axios";
+import { MetaFunction } from "@remix-run/node";
+import { getSeoMeta } from "~/utils/seo";
+
+
+export const meta: MetaFunction = () => {
+  return [
+    ...getSeoMeta({
+      title: "My Askgram Profile"
+    })
+  ];
+};
 
 export const clientAction = async ({
                                      request

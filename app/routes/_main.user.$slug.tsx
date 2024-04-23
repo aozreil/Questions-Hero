@@ -1,10 +1,11 @@
-import { ClientLoaderFunctionArgs, Outlet, useLoaderData, useParams } from "@remix-run/react";
+import { ClientLoaderFunctionArgs, Outlet, redirect, useLoaderData, useParams } from "@remix-run/react";
 import { Skeleton } from "~/components/UI/Skeleton";
 import invariant from "tiny-invariant";
 import { getPublicUserProfile } from "~/apis/userAPI";
 import { getUSerStatsByUserId } from "~/apis/questionsAPI";
 import NotFoundPage from "~/components/UI/NotFoundPage";
 import { UserProfileInfo } from "~/components/widgets/UserProfileInfo";
+import { getUserSlug } from "~/utils";
 
 
 export function shouldRevalidate() {
@@ -16,10 +17,17 @@ export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
   invariant(slug, "User Not Found");
   const userId = parseInt(slug.split("-").pop() || slug);
   invariant(!isNaN(userId), "Invalid User Id");
-  return await Promise.all([
+  const [user, stats] =  await Promise.all([
     getPublicUserProfile(userId),
     getUSerStatsByUserId(userId)
   ]);
+
+  const canonical = `${getUserSlug({ ...user, user_id: userId })}`
+  if(slug !== canonical){
+    return redirect(`/user/${canonical}`, 302)
+  }
+  
+  return { user, stats };
 };
 
 export function HydrateFallback() {
@@ -27,7 +35,7 @@ export function HydrateFallback() {
 }
 
 export default function PublicUserProfilePage() {
-  const [user, data] = useLoaderData<typeof clientLoader>();
+  const {user, stats} = useLoaderData<typeof clientLoader>();
   const params = useParams();
   const slug = params.slug;
   return <>
@@ -39,11 +47,11 @@ export default function PublicUserProfilePage() {
         }, {
           title: "Answers",
           slug: `/user/${slug}/answers`,
-          value: data.answers_count
+          value: stats.answers_count
         }, {
           title: "Questions",
           slug: `/user/${slug}/questions`,
-          value: data.questions_count
+          value: stats.questions_count
         }
         ]
       } />

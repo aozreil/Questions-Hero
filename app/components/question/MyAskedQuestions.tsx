@@ -6,15 +6,16 @@ import { formatDate } from "date-fns";
 interface IProps {
   question: IQuestion;
   user: IUser;
+  text: string
 }
 
-export default function MyAskedQuestions({ question, user }: IProps) {
+export default function MyAskedQuestions({ question, user, text }: IProps) {
   return <div className="rounded-md p-4 border border-[#BEC7CC]">
     <div className={"flex justify-between items-center"}>
       <div className="flex space-x-2">
         <UserProfile user={user} className="h-10 w-10" />
         <div>
-          <p className="text-[#344f60] line-clamp-1">You asked
+          <p className="text-[#344f60] line-clamp-1"> {text}
           </p>
           {question.created_at && <p className="text-[#99a7af] text-sm">
             On {formatDate(question.created_at, "MMM dd, yyyy")}

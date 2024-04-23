@@ -11,11 +11,20 @@ import MyAnswers from "~/components/question/MyAnswers";
 import { useAuth } from "~/context/AuthProvider";
 import Loader from "~/components/UI/Loader";
 import { Pagination } from "~/components/UI/Pagination";
-import { LinksFunction } from "@remix-run/node";
+import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
 import { QuestionClass } from "~/models/questionModel";
+import { getSeoMeta } from "~/utils/seo";
 
 const PAGE_SIZE = 10;
+
+export const meta: MetaFunction = () => {
+  return [
+    ...getSeoMeta({
+      title: "My Question Answers"
+    })
+  ];
+};
 
 export const links: LinksFunction = () => {
   return [
@@ -82,7 +91,7 @@ export default function UserProfileAnswersPage() {
     )}
     <div className={"grid grid-cols-1 gap-4"}>
       {data.map((el, index) => {
-        return <MyAnswers key={`${el.question_id}-${index}`} answer={el} user={user} question={el.question} />;
+        return <MyAnswers key={`${el.question_id}-${index}`} answer={el} user={user} question={el.question} text={'You answered'} />;
       })}
       <Pagination page={currentPage}
                   size={PAGE_SIZE}

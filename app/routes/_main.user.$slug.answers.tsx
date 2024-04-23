@@ -11,12 +11,31 @@ import {
 } from "@remix-run/react";
 import MyAnswers from "~/components/question/MyAnswers";
 import { Pagination } from "~/components/UI/Pagination";
-import { LinksFunction } from "@remix-run/node";
+import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
 import invariant from "tiny-invariant";
 import { IUser, QuestionClass } from "~/models/questionModel";
+import { getSeoMeta } from "~/utils/seo";
 
 const PAGE_SIZE = 10;
+
+export const meta: MetaFunction<typeof clientLoader> = ({ location, matches }) => {
+  const match = matches.find(el => el.id === "routes/_main.user.$slug");
+  let title = "Not found";
+  if (match && match?.data && "user" in match.data) {
+    const user = match.data?.user as IUser;
+    if (user) {
+      title = user.view_name + " Answers";
+    }
+  }
+  return [
+    ...getSeoMeta({
+      title: title,
+      canonical: location.pathname
+    })
+  ];
+};
+
 
 export const links: LinksFunction = () => {
   return [
@@ -77,7 +96,7 @@ export default function PublicUserProfileAnswersPage() {
     {data.length === 0 && (
       <div className="text-center space-y-4">
         <p>
-          You haven’t answered any questions yet!
+          The user haven’t answered any questions yet!
         </p>
         <Link className="btn-primary" to="/search">
           Search for Questions to answer
@@ -86,7 +105,7 @@ export default function PublicUserProfileAnswersPage() {
     )}
     <div className={"grid grid-cols-1 gap-4"}>
       {data.map((el, index) => {
-        return <MyAnswers key={`${el.question_id}-${index}`} answer={el} user={user} question={el.question} />;
+        return <MyAnswers key={`${el.question_id}-${index}`} answer={el} user={user} question={el.question} text={'Answered'} />;
       })}
       {count > 0 &&
         <Pagination page={currentPage}
