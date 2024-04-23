@@ -1,4 +1,4 @@
-import { IMeUser, IUser } from "~/models/questionModel";
+import { IMeUser, IUser, IUserInfo } from "~/models/questionModel";
 import { HTMLProps, JSX, ReactNode } from "react";
 import UserIcon from "~/components/icons/UserIcon";
 import EmailIcon from "~/components/icons/EmailIcon";
@@ -14,14 +14,16 @@ import { formatDate } from "date-fns";
 interface IProps {
   user: IMeUser | IUser;
   editMode?: boolean;
+  errors?: { [key in keyof IUserInfo]?: string };
 }
 
-export default function AboutUsSection({ user, editMode }: IProps) {
+export default function AboutUsSection({ user, editMode, errors }: IProps) {
   return <div>
     <AboutUsItem Icon={UserIcon} title={"Name"}>
-      <div className={'lg:flex justify-between lg:items-center'}>
+      <div className={"lg:flex justify-between lg:items-center"}>
         <p className="overflow-hidden text-ellipsis"> {user.view_name}</p>
-        {"created_at" in user && <p className="text-[#99a7af] font-normal text-sm"> Joined on <strong>{formatDate(user.created_at, 'MMMM dd, yyyy')}</strong></p>
+        {"created_at" in user && <p className="text-[#99a7af] font-normal text-sm"> Joined
+          on <strong>{formatDate(user.created_at, "MMMM dd, yyyy")}</strong></p>
         }
       </div>
     </AboutUsItem>
@@ -36,7 +38,7 @@ export default function AboutUsSection({ user, editMode }: IProps) {
       {
         editMode ?
           <InputField name="university" id="university" required defaultValue={user.user_info?.university}
-                      maxLength={100} /> :
+                      maxLength={100} error={errors?.university} /> :
           user.user_info?.university ? <p className="overflow-hidden text-ellipsis">{user.user_info?.university}</p> :
             <EmptyFieldValue />
       }
@@ -55,7 +57,7 @@ export default function AboutUsSection({ user, editMode }: IProps) {
       {
         editMode ?
           <InputField name="study_field" id="study_field" required defaultValue={user.user_info?.study_field}
-                      maxLength={100} /> :
+                      maxLength={100} error={errors?.study_field} /> :
           user.user_info?.study_field ? <p className="overflow-hidden text-ellipsis">{user.user_info.study_field}</p> :
             <EmptyFieldValue />
       }
@@ -65,7 +67,8 @@ export default function AboutUsSection({ user, editMode }: IProps) {
       {
         editMode ?
           <InputField name="graduation_year" id="graduation_year" required type="number" min={1900} max={2100}
-                      defaultValue={user.user_info?.graduation_year} maxLength={100} /> :
+                      defaultValue={user.user_info?.graduation_year} maxLength={100}
+                      error={errors?.graduation_year} /> :
           user.user_info?.graduation_year ?
             <p className="overflow-hidden text-ellipsis">{user.user_info.graduation_year}</p> :
             <EmptyFieldValue />
@@ -75,15 +78,31 @@ export default function AboutUsSection({ user, editMode }: IProps) {
 }
 
 
-function InputField(props: HTMLProps<HTMLInputElement>) {
+interface IPropsInputField extends HTMLProps<HTMLInputElement> {
+  error?: string;
+}
+
+function InputField({ error, ...props }: IPropsInputField) {
   return <div className="flex items-center w-full h-full">
     <label htmlFor={props.id} className="sr-only">
       {props?.name ?? props?.label}
     </label>
-    <input
-      {...props}
-      className={clsx("px-4 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6", props.className)}
-    />
+    <div className="relative w-full">
+      <input
+        {...props}
+        className={clsx(
+          "px-4 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+          props.className,
+          {
+            "ring-red-300": error
+          }
+        )}
+      />
+      {error && <p className="ms-2 text-sm text-red-600" id="email-error">
+        {error}
+      </p>}
+    </div>
+
   </div>;
 }
 

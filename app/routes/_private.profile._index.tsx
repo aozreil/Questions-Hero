@@ -19,13 +19,13 @@ export const clientAction = async ({
   const userInfo: IUserInfo | null = JSON.parse(formData.get("user_info") as string ?? "{}");
 
   //Validation 
-  if (!degree) {
+  if (!degree || typeof degree !== "string" || !degree?.trim()) {
     errors["degree"] = "Required";
   }
-  if (!study_field) {
+  if (!study_field || typeof study_field !== "string" || !study_field?.trim()) {
     errors["study_field"] = "Required";
   }
-  if (!university) {
+  if (!university || typeof university !== "string" || !university?.trim()) {
     errors["university"] = "Required";
   }
   if (!graduation_year) {
@@ -41,7 +41,7 @@ export const clientAction = async ({
   }
 
   if (degree === userInfo?.degree && +graduation_year! === userInfo?.graduation_year && study_field === userInfo?.study_field && university === userInfo?.university) {
-    return { ...userInfo, success: false };
+    return { ...userInfo, success: true };
   }
 
   try {
@@ -135,7 +135,7 @@ export default function UserProfileAboutPage() {
           ...user.user_info,
           ...(fetcher.state !== "idle" || editMode ? fetcher.data ?? {} : {})
         }
-      }} editMode={editMode} />
+      }} editMode={editMode} errors={fetcher?.data?.errors} />
     </fetcher.Form>
   </div>;
 
