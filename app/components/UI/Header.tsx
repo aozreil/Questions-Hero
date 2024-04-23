@@ -13,7 +13,7 @@ export default function Header() {
     const { isLoadingUserData } = useAuth();
     const { focusedOverlayStyles } = useOverlay();
     const slides = location?.pathname === '/' ? useSlides() : undefined;
-    const isLandingPage = false;
+    const isLandingPage = location?.pathname === '/';
     const shouldHideSearch = isLandingPage && slides?.currentSlide === 0;
     return (
       <header className={clsx(
