@@ -13,6 +13,7 @@ import Loader from "~/components/UI/Loader";
 import { Pagination } from "~/components/UI/Pagination";
 import { LinksFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
+import { QuestionClass } from "~/models/questionModel";
 
 const PAGE_SIZE = 10;
 
@@ -20,7 +21,7 @@ export const links: LinksFunction = () => {
   return [
     ...getKatexLink()
   ];
-}
+};
 
 export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { searchParams } = new URL(request.url);
@@ -42,9 +43,13 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   return {
     ...answers,
     data: answers.data.map(el => {
+      let q = questions.find(q => q.id === el.question_id);
+      if (q) {
+        q = QuestionClass.questionExtraction(q);
+      }
       return {
         ...el,
-        question: questions.find(q => q.id === el.question_id)
+        question: q
       };
     })
   };

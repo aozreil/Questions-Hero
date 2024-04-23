@@ -13,7 +13,7 @@ import MyAskedQuestions from "~/components/question/MyAskedQuestions";
 import { Pagination } from "~/components/UI/Pagination";
 import { LinksFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
-import { IUser } from "~/models/questionModel";
+import { IUser, QuestionClass } from "~/models/questionModel";
 import invariant from "tiny-invariant";
 
 const PAGE_SIZE = 10;
@@ -31,12 +31,21 @@ export const clientLoader = async ({ request, params }: ClientLoaderFunctionArgs
   const userId = parseInt(slug.split("-").pop() || slug);
   invariant(!isNaN(userId), "Invalid User Id");
   const page = parseInt(searchParams.get("page") ?? "0");
-  return await getAskedQuestionsByUserId(userId, {
+  const answers = await getAskedQuestionsByUserId(userId, {
     params: {
       page: page,
       size: PAGE_SIZE
     }
   });
+
+  return {
+    ...answers, data: answers.data.map((el) => {
+      return {
+        ...el,
+        ...QuestionClass.questionExtraction(el)
+      };
+    })
+  };
 };
 
 

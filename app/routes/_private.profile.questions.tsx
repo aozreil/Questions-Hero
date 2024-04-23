@@ -13,6 +13,7 @@ import MyAskedQuestions from "~/components/question/MyAskedQuestions";
 import { Pagination } from "~/components/UI/Pagination";
 import { LinksFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
+import { QuestionClass } from "~/models/questionModel";
 
 const PAGE_SIZE = 10;
 
@@ -26,12 +27,20 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { searchParams } = new URL(request.url);
 
   const page = parseInt(searchParams.get("page") ?? "0");
-  return await getMyAskedQuestions({
+  const answers = await getMyAskedQuestions({
     params: {
       page: page,
       size: PAGE_SIZE
     }
   });
+  return {
+    ...answers, data: answers.data.map((el) => {
+      return {
+        ...el,
+        ...QuestionClass.questionExtraction(el),
+      };
+    })
+  };
 };
 
 

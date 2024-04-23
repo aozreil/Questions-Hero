@@ -4,7 +4,8 @@ import {
   isRouteErrorResponse,
   Link,
   useLoaderData,
-  useOutletContext, useParams,
+  useOutletContext,
+  useParams,
   useRouteError,
   useSearchParams
 } from "@remix-run/react";
@@ -13,7 +14,7 @@ import { Pagination } from "~/components/UI/Pagination";
 import { LinksFunction } from "@remix-run/node";
 import { getKatexLink } from "~/utils/external-links";
 import invariant from "tiny-invariant";
-import { IUser } from "~/models/questionModel";
+import { IUser, QuestionClass } from "~/models/questionModel";
 
 const PAGE_SIZE = 10;
 
@@ -48,9 +49,13 @@ export const clientLoader = async ({ request, params }: ClientLoaderFunctionArgs
   return {
     ...answers,
     data: answers.data.map(el => {
+      let q = questions.find(q => q.id === el.question_id);
+      if (q) {
+        q = QuestionClass.questionExtraction(q);
+      }
       return {
         ...el,
-        question: questions.find(q => q.id === el.question_id)
+        question: q
       };
     })
   };

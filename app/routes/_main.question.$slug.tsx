@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, HeadersFunction, json, MetaFunction } from "@remix-run/node";
+import { ActionFunctionArgs, HeadersFunction, json, LinksFunction, MetaFunction } from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
@@ -44,6 +44,13 @@ import MainContainer from "~/components/UI/MainContainer";
 import RelatedQuestions from "~/components/question/RelatedQuestions";
 import { useAnalytics } from "~/hooks/useAnalytics";
 
+
+export const links: LinksFunction = () => {
+  return [
+    ...getKatexLink()
+  ];
+};
+
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [];
@@ -56,7 +63,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
       canonical
     }),
     ...getStructuredData(data as LoaderData),
-    ...[question?.includesLatex ? getKatexLink() : {}],
     ...data?.attachments?.map(file => ({
       tagName: "link",
       rel: "preload",
@@ -188,11 +194,11 @@ export default function QuestionPage() {
   } = useLoaderData<typeof loader>();
   const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED));
   const { user } = useAuth();
-    const { trackEvent } = useAnalytics();
+  const { trackEvent } = useAnalytics();
 
-    useEffect(() => {
-      trackEvent('question-page-view');
-    }, []);
+  useEffect(() => {
+    trackEvent("question-page-view");
+  }, []);
 
   const handlePostAnswerSuccess = useCallback(() => {
     setPostAnswerOpened(false);
