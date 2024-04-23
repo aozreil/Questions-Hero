@@ -1,5 +1,13 @@
 {
   "landing": {
     "search-title": "Unlocking Knowledge, Guiding Futures:"
+  },
+  "question": {
+    "learning-objectives": "Learning Objectives",
+    "related-questions": "Related questions",
+    "definitions": "Definitions",
+    "add-your-answer": "Add your answer",
+    "verified": "Verified",
+    "verified-answer": "Verified Answer"
   }
 }

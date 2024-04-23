@@ -3,6 +3,7 @@ import {useState} from "react";
 import UserProfile from "~/components/UI/UserProfile";
 import { getCreatedAt } from "~/utils";
 import clsx from "clsx";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     answer?: IAnswer;
@@ -12,6 +13,7 @@ interface Props {
 export default function AnswerCard({ answer, user }: Props) {
     const [createdAt] = useState(() => getCreatedAt(answer?.created_at));
     const isVerified = answer?.answer_status === AnswerStatus.VERIFIED;
+    const { t } = useTranslation();
     return (
         <div
           id={isVerified ? 'acceptedAnswer' : 'userAnswer'}
@@ -23,7 +25,7 @@ export default function AnswerCard({ answer, user }: Props) {
           {isVerified && (
             <div className='flex items-center justify-center py-2 bg-[#25b680] font-bold text-white gap-1.5'>
               <img src='/assets/images/verified-white.svg' alt='verifed' />
-              <p>Verified Answer</p>
+              <p>{t("question.verified-answer")}</p>
             </div>
           )}
           <div className='flex gap-3 w-full p-5 mt-3'>

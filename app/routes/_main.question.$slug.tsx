@@ -43,6 +43,7 @@ import AttachmentsViewer from "~/components/question/AttachmentsViewer";
 import MainContainer from "~/components/UI/MainContainer";
 import RelatedQuestions from "~/components/question/RelatedQuestions";
 import { useAnalytics } from "~/hooks/useAnalytics";
+import { useTranslation } from "react-i18next";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
@@ -189,6 +190,7 @@ export default function QuestionPage() {
   const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED));
   const { user } = useAuth();
     const { trackEvent } = useAnalytics();
+  const { t } = useTranslation();
 
     useEffect(() => {
       trackEvent('question-page-view');
@@ -223,7 +225,7 @@ export default function QuestionPage() {
                 <AttachmentsViewer attachments={attachments} />
                 {!!concepts?.length && (
                   <QuestionSection
-                    title="Definitions"
+                    title={t("question.definitions")}
                     content={(
                       <>
                         {concepts?.map((concept) => (
@@ -240,7 +242,7 @@ export default function QuestionPage() {
                 )}
                 {!!objectives?.length && (
                   <QuestionSection
-                    title="Learning Objectives"
+                    title={t("question.learning-objectives")}
                     className="lg:hidden"
                     content={(
                       <div className="text-sm mt-4">
@@ -261,7 +263,7 @@ export default function QuestionPage() {
                       className="bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center">
                       <div className="flex space-x-2.5 items-center">
                         <UserProfile user={user} className="w-7 h-7 border-none" />
-                        <p className="text-[#4d6473]">Add your answer</p>
+                        <p className="text-[#4d6473]">{t("question.add-your-answer")}</p>
                       </div>
                       <img src="/assets/images/right-arrow.svg" alt="arrow" className="w-4 h-4 mr-2" />
                     </div>
