@@ -71,8 +71,8 @@ export default function UserProfileQuestionsPage() {
       </div>
     )}
     <div className={"grid grid-cols-1 gap-4"}>
-      {data.map((el) => {
-        return <MyAskedQuestions key={el.text} question={el} user={user} />;
+      {data.map((el, index) => {
+        return <MyAskedQuestions key={`${el.id}-${index}`} question={el} user={user} />;
       })}
       <Pagination page={currentPage}
                   size={PAGE_SIZE}

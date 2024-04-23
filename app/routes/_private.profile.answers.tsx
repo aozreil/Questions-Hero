@@ -49,7 +49,8 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
       }
       return {
         ...el,
-        question: q
+        question: q,
+        ...QuestionClass.answerExtraction(el)
       };
     })
   };
@@ -80,8 +81,8 @@ export default function UserProfileAnswersPage() {
       </div>
     )}
     <div className={"grid grid-cols-1 gap-4"}>
-      {data.map((el) => {
-        return <MyAnswers key={el.text} answer={el} user={user} question={el.question} />;
+      {data.map((el, index) => {
+        return <MyAnswers key={`${el.question_id}-${index}`} answer={el} user={user} question={el.question} />;
       })}
       <Pagination page={currentPage}
                   size={PAGE_SIZE}

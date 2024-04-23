@@ -11,12 +11,12 @@ interface IProps {
 
 export default function MyAnswers({ answer, user, question }: IProps) {
   return <div className="rounded-md p-4 border border-[#BEC7CC]">
-    <div className={"flex justify-between items-center"}>
-      <div className="flex space-x-2">
+    <div className={"flex justify-between items-center w-100"}>
+      <div className="flex space-x-2 overflow-hidden">
         <UserProfile user={user} className="h-10 w-10" />
         <div>
           <p className="text-[#344f60] line-clamp-1">You answered {" "}
-            <span className="font-bold text-black " dangerouslySetInnerHTML={{ __html: question?.text ?? "" }}></span>
+            <span className="font-bold text-black overflow-hidden" dangerouslySetInnerHTML={{ __html: question?.text ?? "" }}></span>
           </p>
           {answer.created_at && <p className="text-[#99a7af] text-sm">
             On {formatDate(answer.created_at, "MMM dd, yyyy")}
