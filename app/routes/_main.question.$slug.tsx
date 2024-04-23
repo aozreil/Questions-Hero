@@ -308,7 +308,7 @@ const getStructuredData = (data: LoaderData) => {
   const answersData = internalAnswers?.length ? internalAnswers : answers;
   if (!questionData?.text) return [];
 
-  const questionBody = questionData?.text;
+  const questionBody = getCleanText(questionData?.text);
   const questionTitle = questionBody;
   const questionAskedBy = getUser(question?.user_id, users);
   const verifiedAnswer = getVerifiedAnswer(answersData);
@@ -322,7 +322,7 @@ const getStructuredData = (data: LoaderData) => {
     "@type": "Quiz",
     "about": {
       "@type": "Thing",
-      "name": questionTitle
+      "name": questionTitle,
     },
     "hasPart": [
       {
@@ -413,5 +413,5 @@ const getAnswerText = (answer: IAnswer | IInternalAnswer) => {
     }
   }
 
-  return answerText;
+  return getCleanText(answerText);
 };
