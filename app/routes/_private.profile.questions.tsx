@@ -66,7 +66,7 @@ export default function UserProfileQuestionsPage() {
   }
   return <div>
     <p className="font-bold text-4xl text-black mb-10">
-      Questions ({count})
+      Questions <span className={"hidden md:inline"}>({count})</span>
     </p>
     {data.length === 0 && (
       <div className="text-center space-y-4">

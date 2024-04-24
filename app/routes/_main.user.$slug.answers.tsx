@@ -91,7 +91,7 @@ export default function PublicUserProfileAnswersPage() {
 
   return <div>
     <p className="font-bold text-4xl text-black mb-10">
-      Answers ({count})
+      Answers <span className={"hidden md:inline"}>({count})</span>
     </p>
     {data.length === 0 && (
       <div className="text-center space-y-4">
