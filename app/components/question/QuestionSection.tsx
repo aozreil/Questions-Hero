@@ -16,7 +16,7 @@ export default function QuestionSection({title, content, defaultExpanded, classN
               <div className={clsx(
                 'w-full flex flex-col px-4 border-t-[3px] border-[#ebf2f6] py-4',
                 'transition-[max-height] ease-out duration-300 flex-shrink-0 overflow-y-hidden',
-                open ? 'max-h-96 ease-in' : 'max-h-16',
+                open ? 'max-h-[1000px] ease-in' : 'max-h-16',
                 className,
               )}>
                   <Disclosure.Button className='cursor-pointer w-full flex justify-between items-center'>
