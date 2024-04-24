@@ -3,27 +3,25 @@ import { Form } from "@remix-run/react";
 import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import CloseIcon from "~/components/icons/CloseIcon";
+import { useSlides } from "~/context/SlidesProvider";
 
-interface Props {
-    setIsSearchFocused: (isFocused: boolean) => void;
-}
-
-export default function ExpandableSearch({ setIsSearchFocused }: Props) {
+export default function ExpandableSearch() {
     const [hasValue, setHasValue] = useState(false);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const submitButton = useRef<HTMLButtonElement>(null);
     const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
+    const { setPauseSlideNavigation } = useSlides();
 
     const onFocus = useCallback(() => {
-        setIsSearchFocused(true);
+        setPauseSlideNavigation(true);
         setOverlayVisible(true);
         if (textAreaRef.current) calculateTextareaRows(textAreaRef.current.value)
 
     }, []);
 
     const onBlur = useCallback(() => {
-        setIsSearchFocused(false);
+        setPauseSlideNavigation(false);
         setOverlayVisible(false);
         if (textAreaRef.current) textAreaRef.current.rows = 1;
     }, []);

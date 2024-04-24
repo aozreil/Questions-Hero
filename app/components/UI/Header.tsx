@@ -5,13 +5,16 @@ import { useState } from "react";
 import clsx from "clsx";
 import { useOverlay } from "~/context/OverlayProvider";
 import HeaderJoin from "~/components/UI/HeaderJoin";
+import { useSlides } from "~/context/SlidesProvider";
 
 export default function Header() {
     const location = useLocation();
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
     const { isLoadingUserData } = useAuth();
     const { focusedOverlayStyles } = useOverlay();
-    const shouldHideSearch = location?.pathname === '/';
+    const slides = location?.pathname === '/' ? useSlides() : undefined;
+    const isLandingPage = location?.pathname === '/';
+    const shouldHideSearch = isLandingPage && slides?.currentSlide === 0;
     return (
       <header className={clsx(
         `sticky top-0 z-40 h-24 w-full bg-[#f7f8fa] border-t-[3px] border-t-[#070707] max-sm:px-4 pt-7 pb-6`,
