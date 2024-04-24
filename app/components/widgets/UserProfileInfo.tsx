@@ -10,7 +10,7 @@ interface IProps {
 }
 
 export function UserProfileInfo({ user, links }: IProps) {
-  return <div className="items-center p-4 sticky h-max top-24 -mt-1 bg-[#F7F8FA] z-10">
+  return <div className="items-center p-4 sticky h-max top-24 -mt-1 bg-[#F7F8FA] z-10" data-cy={'UserProfileInfo'}>
     <div className="md:space-y-4 md:space-x-0 space-x-4 flex md:block items-center">
       <UserProfile user={user} className="md:w-36 md:h-36 border-0 shadow-md" />
       <p className="capitalize text-black font-bold text-2xl text-center">

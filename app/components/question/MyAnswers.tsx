@@ -11,7 +11,7 @@ interface IProps {
 }
 
 export default function MyAnswers({ answer, user, question, text }: IProps) {
-  return <div className="rounded-md p-4 border border-[#BEC7CC]">
+  return <div data-cy={'MyAnswers'} className="rounded-md p-4 border border-[#BEC7CC]">
     <div className={"flex justify-between items-center w-100"}>
       <div className="flex space-x-2 overflow-hidden">
         <UserProfile user={user} className="h-10 w-10" />

@@ -35,15 +35,6 @@ export default function AuthProvider({ children }: Props) {
         setUser({
           ...data, user_info: {
             ...data.user_info,
-
-            //TODO: Remove in the future
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-expect-error
-            graduation_year: data?.user_info?.graduationYear,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-expect-error
-            study_field: data?.user_info?.studyField
-            
           }
         });
         setIsLoadingUserData(false);

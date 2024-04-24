@@ -59,7 +59,7 @@ export default function UserProfilePage() {
 }
 
 function LoadingContent() {
-  return <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-44">
+  return <div data-cy={'LoadingContent'} className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-44">
     <Skeleton className="w-full bg-white min-w-[176px] md:w-auto min-h-[90px] items-center top-24">
       <div className="w-full h-full bg-slate-200"></div>
     </Skeleton>

@@ -10,7 +10,7 @@ interface IProps {
 }
 
 export default function MyAskedQuestions({ question, user, text }: IProps) {
-  return <div className="rounded-md p-4 border border-[#BEC7CC]">
+  return <div className="rounded-md p-4 border border-[#BEC7CC]" data-cy={'MyAskedQuestions'}>
     <div className={"flex justify-between items-center"}>
       <div className="flex space-x-2">
         <UserProfile user={user} className="h-10 w-10" />

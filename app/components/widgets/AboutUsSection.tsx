@@ -18,7 +18,7 @@ interface IProps {
 }
 
 export default function AboutUsSection({ user, editMode, errors }: IProps) {
-  return <div>
+  return <div data-cy={'AboutUsSection'}>
     <AboutUsItem Icon={UserIcon} title={"Name"}>
       <div className={"lg:flex justify-between lg:items-center"}>
         <p className="overflow-hidden text-ellipsis"> {user.view_name}</p>
@@ -83,7 +83,7 @@ interface IPropsInputField extends HTMLProps<HTMLInputElement> {
 }
 
 function InputField({ error, ...props }: IPropsInputField) {
-  return <div className="flex items-center w-full h-full">
+  return <div className="flex items-center w-full h-full" data-cy={'InputField'}>
     <label htmlFor={props.id} className="sr-only">
       {props?.name ?? props?.label}
     </label>
@@ -113,7 +113,7 @@ function EmptyFieldValue() {
 }
 
 function AboutUsItem({ children, title, Icon }: { title: string, children: ReactNode, Icon: JSX.ElementType }) {
-  return <div className={"my-4"}>
+  return <div className={"my-4"} data-cy={'AboutUsItem'}>
     <div className={"grid grid-cols-2 gap-4 text-xl md:text-2xl text-[#070707] mb-4"}>
       <p className="overflow-hidden text-ellipsis line-clamp-1">
         <Icon className="h-8 w-8 text-[#ccd3d7] inline me-2 sm:me-7" />

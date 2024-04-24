@@ -4,7 +4,7 @@ import { axiosApiInstance } from "~/interceptors/client-interceptors";
 import { IMeUser, IUser, IUserInfo } from "~/models/questionModel";
 
 export async function loginWithGoogle(jwt_token: string) {
-  const res = await axios.post<IUser>(
+  const res = await axios.post<IMeUser>(
     `${ASKGRAM_BASE}/api/users/login/google`,
     {
       id_token: jwt_token

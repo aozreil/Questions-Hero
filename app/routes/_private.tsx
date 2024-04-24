@@ -2,6 +2,7 @@ import Header from "~/components/UI/Header";
 import { Outlet, useNavigate } from "@remix-run/react";
 import { useEffect } from "react";
 import { useAuth } from "~/context/AuthProvider";
+import Footer from "~/components/UI/Footer";
 
 export default function PrivatePage() {
   const { user, isLoadingUserData } = useAuth();
@@ -16,6 +17,7 @@ export default function PrivatePage() {
     <>
       <Header />
       <Outlet />
+      <Footer />
     </>
   );
 }
