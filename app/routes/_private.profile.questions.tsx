@@ -86,8 +86,8 @@ export default function UserProfileQuestionsPage() {
       <Pagination page={currentPage}
                   size={PAGE_SIZE}
                   total={count}
-                  previous={`/profile/question?page=${currentPage - 1}`}
-                  next={`/profile/question?page=${currentPage + 1}`} />
+                  previous={`/profile/questions?page=${currentPage - 1}`}
+                  next={`/profile/questions?page=${currentPage + 1}`} />
     </div>
   </div>;
 }

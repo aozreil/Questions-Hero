@@ -19,7 +19,7 @@ export function Pagination({ total, page, previous, next, size }: IProps) {
       <p className="text-sm text-gray-700">
         Showing <span className="font-medium">{Math.max(page * size, 1)}</span> to <span
         className="font-medium">{Math.min(((page + 1) * size), total)}</span> of{" "}
-        <span className="font-medium">{total}</span> results
+        <span className="font-medium">{total}</span> {total < 2?  'result': 'results'}
       </p>
     </div>
     <div className="flex flex-1 justify-between sm:justify-end">
