@@ -43,6 +43,7 @@ import AttachmentsViewer from "~/components/question/AttachmentsViewer";
 import MainContainer from "~/components/UI/MainContainer";
 import RelatedQuestions from "~/components/question/RelatedQuestions";
 import { useAnalytics } from "~/hooks/useAnalytics";
+import Footer from "~/components/UI/Footer";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
@@ -199,6 +200,7 @@ export default function QuestionPage() {
   }, []);
 
   return (
+    <>
     <MainContainer>
       <PostAnswerModal
         open={postAnswerOpened}
@@ -290,7 +292,10 @@ export default function QuestionPage() {
           </div>
         </div>
       </main>
+
     </MainContainer>
+  <Footer/>
+  </>
   );
 }
 
