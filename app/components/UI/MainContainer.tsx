@@ -12,7 +12,7 @@ export default function MainContainer({ children, className }: Props) {
 
   return (
     <div className={clsx(
-      'pb-5 search-page-scroll max-h-[calc(100vh-6rem)] w-full',
+      'pb-5 search-page-scroll h-full w-full mb-48',
       `${overlayVisible ? 'overflow-hidden pr-[12px]' : 'overflow-y-auto'}`,
       className,
     )}>
