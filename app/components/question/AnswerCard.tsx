@@ -25,7 +25,7 @@ export default function AnswerCard({ answer, user }: Props) {
           {isVerified && (
             <div className='flex items-center justify-center py-2 bg-[#25b680] font-bold text-white gap-1.5'>
               <img src='/assets/images/verified-white.svg' alt='verifed' />
-              <p>{t("question.verified-answer")}</p>
+              <p>{t("Verified Answer")}</p>
             </div>
           )}
           <div className='flex gap-3 w-full p-5 mt-3'>

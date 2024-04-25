@@ -225,7 +225,7 @@ export default function QuestionPage() {
                 <AttachmentsViewer attachments={attachments} />
                 {!!concepts?.length && (
                   <QuestionSection
-                    title={t("question.definitions")}
+                    title={t("Definitions")}
                     content={(
                       <>
                         {concepts?.map((concept) => (
@@ -242,7 +242,7 @@ export default function QuestionPage() {
                 )}
                 {!!objectives?.length && (
                   <QuestionSection
-                    title={t("question.learning-objectives")}
+                    title={t("Learning Objectives")}
                     className="lg:hidden"
                     content={(
                       <div className="text-sm mt-4">
@@ -263,7 +263,7 @@ export default function QuestionPage() {
                       className="bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center">
                       <div className="flex space-x-2.5 items-center">
                         <UserProfile user={user} className="w-7 h-7 border-none" />
-                        <p className="text-[#4d6473]">{t("question.add-your-answer")}</p>
+                        <p className="text-[#4d6473]">{t("Add your answer")}</p>
                       </div>
                       <img src="/assets/images/right-arrow.svg" alt="arrow" className="w-4 h-4 mr-2" />
                     </div>

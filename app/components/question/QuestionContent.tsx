@@ -26,7 +26,7 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
                 {isVerified && (
                   <div className='flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0'>
                       <img src='/assets/images/verified.svg' alt='verifed' />
-                      <p>{t('question.verified')}</p>
+                      <p>{t('Verified')}</p>
                   </div>
                 )}
             </div>

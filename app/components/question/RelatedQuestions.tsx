@@ -17,7 +17,7 @@ export default function RelatedQuestions({ list }: IProps) {
   }
   return (
     <div className="w-full mt-4 p-3 border rounded-lg flex flex-col bg-white border-[#e0e0e0]">
-      <h2 className=" font-semibold text-xl mb-3">{t("question.related-questions")}</h2>
+      <h2 className=" font-semibold text-xl mb-3">{t("Related questions")}</h2>
       <div className="flex flex-col">
         {list.map(({ text, slug }, index) => (
           <Link key={slug} to={`/question/${slug}`} prefetch="intent"
