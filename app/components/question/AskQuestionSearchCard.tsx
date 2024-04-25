@@ -32,6 +32,7 @@ export default function AskQuestionSearchCard({ questionId, slug, text, question
       prefetch={'intent'}
       target='_blank'
       onClick={onQuestionClick}
+      data-cy="search-card"
     >
       <div className="flex justify-between pb-4">
         <QuestionType

@@ -58,7 +58,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
 
   return <>
     <div>
-      <div id={`q-${id}`} className={clsx("relative w-full lg:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
+      <div data-cy="search-question-card" id={`q-${id}`} className={clsx("relative w-full lg:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
         <Link
           className={clsx(
             "flex flex-col border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full lg:w-[28rem] 2xl:w-[34rem] flex-shrink-0 h-fit",

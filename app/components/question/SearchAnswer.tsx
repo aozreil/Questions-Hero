@@ -22,7 +22,7 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
     handleAnswerOpen && handleAnswerOpen();
   }, []);
   return (
-    <div className="relative flex h-fit max-sm:w-full items-end justify-center lg:p-4 pr-0 lg:pt-0 text-center">
+    <div data-cy="search-answer-card" className="relative flex h-fit max-sm:w-full items-end justify-center lg:p-4 pr-0 lg:pt-0 text-center">
       <div className={clsx(
         "thin-scrollbar h-fit lg:max-h-[83vh] lg:overflow-y-auto bg-white w-full lg:w-[28rem] 2xl:w-[34rem] z-20",
         mobileVersion ? 'px-0' :  'border-2 border-[#5fc9a2] rounded-xl pb-4'
