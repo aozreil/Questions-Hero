@@ -53,7 +53,7 @@ export async function updateMeUserInfo(body: IUserInfo, config?: AxiosRequestCon
 }
 
 export async function getPublicUserProfile(id: number, config?: AxiosRequestConfig) {
-  const res = await axiosApiInstance.get<IUser>(`${ASKGRAM_BASE}/api/users/users/user/${id}/profile`, {
+  const res = await axiosApiInstance.get<IUser>(`${ASKGRAM_BASE}/api/users/user/${id}/profile`, {
     ...config,
     withCredentials: true,
     headers: {
