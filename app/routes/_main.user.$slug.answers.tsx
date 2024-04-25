@@ -96,7 +96,7 @@ export default function PublicUserProfileAnswersPage() {
     {data.length === 0 && (
       <div className="text-center space-y-4">
         <p>
-          The user haven’t answered any questions yet!
+          The user hasn&apos;t answered any questions yet!
         </p>
         <Link className="btn-primary" to="/search">
           Search for Questions to answer

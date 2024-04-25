@@ -82,7 +82,7 @@ export default function UserProfileQuestionsPage() {
     {data.length === 0 && (
       <div className="text-center space-y-4">
         <p>
-          The user haven’t asked any questions yet!
+          The user hasn&apos;t asked any questions yet!
         </p>
         <Link className="btn-primary" to="/ask-question">
           Ask Question
