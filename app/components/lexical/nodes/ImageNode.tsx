@@ -9,7 +9,6 @@ import {
   RangeSelection,
   DOMExportOutput,
 } from "lexical";
-import { ATTACHMENTS_BASE } from "~/config/enviromenet";
 
 export type SerializedImageNode = Spread<
   { file: File; dataURL: string, awsSrc?: string, preSignedKey?: string },
@@ -58,7 +57,7 @@ export class ImageNode extends ElementNode {
   setAWSPreSigned(preSigned: string): void {
     const self = this.getWritable();
     self.__preSignedKey = preSigned;
-    self.__awsSrc = `${ATTACHMENTS_BASE}/${preSigned}`;
+    self.__awsSrc = `$ATTACHMENTS_BASE/${preSigned}`;
   }
 
   setWidthAndHeight(width: number, height: number): void {

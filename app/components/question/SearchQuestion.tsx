@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { Link } from "@remix-run/react";
 import { getTextFormatted } from "~/utils/text-formatting-utils";
 import QuestionType from "~/components/question/QuestionType";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface IProps {
   handleAnswerOpen?: (questionId: string) => void;
@@ -86,7 +87,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
             )}
           </div>
           <hr className="mb-4" />
-          <p className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`} dangerouslySetInnerHTML={{ __html: formattedText }} />
+          <SanitizedText className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`} html={formattedText} />
         </Link>
         {isOpen && (
           <div className="max-lg:hidden lg:absolute lg:left-[27.5rem] 2xl:left-[33.5rem] lg:top-0 max-sm:w-full overflow-y-auto">

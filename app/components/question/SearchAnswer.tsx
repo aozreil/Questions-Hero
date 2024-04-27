@@ -6,6 +6,7 @@ import React, { Fragment, useEffect } from "react";
 import { AnswerStatus, IAnswer, IUser, IUsers } from "~/models/questionModel";
 import clsx from "clsx";
 import UserProfile from "~/components/UI/UserProfile";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface Props {
   answers?: IAnswer[];
@@ -107,7 +108,7 @@ const Answer = ({ askedBy, answer }: {
           {answer?.text && (
             <p className='max-sm:text-lg'>
               <span className='font-medium'>Final Answer : </span>
-              <span dangerouslySetInnerHTML={{ __html: answer?.text }} />
+              <SanitizedText html={answer?.text} />
             </p>
           )}
           {!!answer?.answer_steps?.length && (
@@ -118,7 +119,7 @@ const Answer = ({ askedBy, answer }: {
                   key={index}
                 >
                   <span className='font-medium'>Explanation : </span>
-                  <span dangerouslySetInnerHTML={{ __html: step?.text }} />
+                  <SanitizedText html={step?.text} />
                 </p>
               ) :null
             ))

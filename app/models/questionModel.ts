@@ -3,6 +3,7 @@ import {
     isTextIncludingLatex,
     title
 } from "~/utils/text-formatting-utils";
+import { ATTACHMENTS_BASE } from "~/config/enviromenet";
 
 export class QuestionClass {
     static questionExtraction (question: IQuestion): IQuestion {
@@ -17,7 +18,7 @@ export class QuestionClass {
     static answerExtraction (answer?: IAnswer): IAnswer {
         return {
             ...answer,
-            text: getTextFormatted(answer?.text),
+            text: getTextFormatted(answer?.text).replaceAll('$ATTACHMENTS_BASE', ATTACHMENTS_BASE),
             answer_steps: answer?.answer_steps?.map(step => ({
                 ...step,
                 text: getTextFormatted(step?.text)

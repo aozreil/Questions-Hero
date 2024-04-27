@@ -1,7 +1,8 @@
 import { IQuestion, IUser } from "~/models/questionModel";
 import {format} from "date-fns";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface Props {
     question?: IQuestion;
@@ -31,10 +32,7 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
                 )}
             </div>
             {question?.text && (
-                <h1
-                    className='lg:text-xl font-medium mb-3'
-                    dangerouslySetInnerHTML={{ __html: question.text }}
-                />
+              <SanitizedText className='lg:text-xl font-medium mb-3' html={question.text} />
             )}
         </div>
     )

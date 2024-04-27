@@ -9,6 +9,7 @@ import { useSubmit } from "@remix-run/react";
 import { countRealCharacters } from "~/utils";
 import { useAnalytics } from "~/hooks/useAnalytics";
 import { LexicalExportRef } from "~/components/lexical/plugins/ExportHtmlPlugin";
+import SanitizedText from "~/components/question/SanitizedText";
 const LexicalEditor = lazy(() => import("~/components/lexical/LexicalEditor"));
 
 interface Props {
@@ -86,7 +87,7 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
         <div className='max-sm:hidden w-[40%] overflow-hidden flex flex-col space-y-4'>
           <p className='text-xl font-bold'>Question</p>
           <div className='flex-1 thin-scrollbar pr-4 overflow-y-auto'>
-            <p className='text-lg' dangerouslySetInnerHTML={{ __html: questionText }} />
+            <SanitizedText className='text-lg' html={questionText} />
           </div>
         </div>
         <div className='flex-1 flex flex-col space-y-4'>

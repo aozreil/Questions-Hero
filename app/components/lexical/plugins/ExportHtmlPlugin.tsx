@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle } from "react";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$generateHtmlFromNodes} from '@lexical/html';
+import sanitizeHtml from "sanitize-html";
 
 export interface LexicalExportRef {
   getEditorState: () => { htmlOutput: string, textOutput: string }
@@ -15,6 +16,14 @@ export const ExportHtmlPlugin = forwardRef((props, ref) => {
 
       editor.update(() => {
         htmlOutput = $generateHtmlFromNodes(editor);
+        htmlOutput = sanitizeHtml(htmlOutput, {
+          allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
+          allowedAttributes: {
+            ...sanitizeHtml.defaults.allowedAttributes,
+            img: ['src', 'alt', 'width', 'height'],
+            '*': ['class', 'style'],
+          },
+        });
         const jsonState = editor.getEditorState().toJSON();
 
         textOutput = '';

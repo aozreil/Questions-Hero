@@ -4,6 +4,7 @@ import UserProfile from "~/components/UI/UserProfile";
 import { getCreatedAt } from "~/utils";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface Props {
     answer?: IAnswer;
@@ -36,7 +37,7 @@ export default function AnswerCard({ answer, user }: Props) {
               {answer?.text && (
                 <p>
                   <span className='font-medium'>Final Answer : </span>
-                  <span className='relative' dangerouslySetInnerHTML={{ __html: answer?.text }} />
+                  <SanitizedText html={answer?.text} />
                 </p>
               )}
               {!!answer?.answer_steps?.length && (
@@ -47,7 +48,7 @@ export default function AnswerCard({ answer, user }: Props) {
                         key={index}
                     >
                       <span className='font-medium'>Explanation : </span>
-                      <span dangerouslySetInnerHTML={{ __html: step?.text }} />
+                      <SanitizedText html={step?.text} />
                     </p>
                   ) :null
                 ))
