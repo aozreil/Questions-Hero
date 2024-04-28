@@ -5,11 +5,7 @@ import { useTranslation } from "react-i18next";
 const SLIDER_DATA = ['Business', 'Medicine', 'Biology', 'Computing'];
 const SLIDER_CONTENT = [...SLIDER_DATA, ...SLIDER_DATA, ...SLIDER_DATA, ...SLIDER_DATA];
 
-interface Props {
-  setIsSearchFocused: (isFocused: boolean) => void;
-}
-
-export default function LandingSearchSlide({ setIsSearchFocused }: Props) {
+export default function LandingSearchSlide() {
   let { t } = useTranslation();
   return (
     <section className='w-full flex flex-col items-center max-sm:mt-16 text-[#070707] text-center'>
@@ -18,7 +14,7 @@ export default function LandingSearchSlide({ setIsSearchFocused }: Props) {
         Your Ultimate University<br className='md:hidden' /> Resource Hub!
       </h3>
       <BackgroundEffect>
-        <ExpandableSearch setIsSearchFocused={setIsSearchFocused} />
+        <ExpandableSearch />
       </BackgroundEffect>
       <div className='slider w-[90%] sm:w-[36rem] h-[26px] relative overflow-hidden'>
         <div className='slide-track'>
