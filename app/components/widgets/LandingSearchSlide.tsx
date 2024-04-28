@@ -1,13 +1,15 @@
 import BackgroundEffect from "~/components/UI/BackgroundEffect";
 import ExpandableSearch from "~/components/UI/ExpandableSearch";
+import { useTranslation } from "react-i18next";
 
 const SLIDER_DATA = ['Business', 'Medicine', 'Biology', 'Computing'];
 const SLIDER_CONTENT = [...SLIDER_DATA, ...SLIDER_DATA, ...SLIDER_DATA, ...SLIDER_DATA];
 
 export default function LandingSearchSlide() {
+  let { t } = useTranslation();
   return (
     <section className='w-full flex flex-col items-center max-sm:mt-16 text-[#070707] text-center'>
-      <h4 className='max-sm:font-bold text-2xl sm:text-3xl lg:text-4xl font-medium'>Unlocking Knowledge, Guiding Futures:</h4>
+      <h4 className='max-sm:font-bold text-2xl sm:text-3xl lg:text-4xl font-medium'>{t('Unlocking Knowledge Guiding Futures')}</h4>
       <h3 className='text-[2.6rem] mt-5 lg:text-5xl font-bold z-20'>
         Your Ultimate University<br className='md:hidden' /> Resource Hub!
       </h3>
