@@ -943,5 +943,5 @@ export function removeKatexFromString(text: string): string {
 
 export function getCleanText(text?: string): string {
     if (!text) return '';
-    return removeImage(text);
+    return replaceHTMLCodesByEmptyString(removeImage(text));
 }

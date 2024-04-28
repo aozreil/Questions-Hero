@@ -43,6 +43,7 @@ import AttachmentsViewer from "~/components/question/AttachmentsViewer";
 import MainContainer from "~/components/UI/MainContainer";
 import RelatedQuestions from "~/components/question/RelatedQuestions";
 import { useAnalytics } from "~/hooks/useAnalytics";
+import Footer from "~/components/UI/Footer";
 import { useTranslation } from "react-i18next";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -201,6 +202,7 @@ export default function QuestionPage() {
   }, []);
 
   return (
+    <>
     <MainContainer>
       <PostAnswerModal
         open={postAnswerOpened}
@@ -292,7 +294,10 @@ export default function QuestionPage() {
           </div>
         </div>
       </main>
+
     </MainContainer>
+  <Footer/>
+  </>
   );
 }
 
@@ -310,7 +315,7 @@ const getStructuredData = (data: LoaderData) => {
   const answersData = internalAnswers?.length ? internalAnswers : answers;
   if (!questionData?.text) return [];
 
-  const questionBody = questionData?.text;
+  const questionBody = getCleanText(questionData?.text);
   const questionTitle = questionBody;
   const questionAskedBy = getUser(question?.user_id, users);
   const verifiedAnswer = getVerifiedAnswer(answersData);
@@ -324,7 +329,7 @@ const getStructuredData = (data: LoaderData) => {
     "@type": "Quiz",
     "about": {
       "@type": "Thing",
-      "name": questionTitle
+      "name": questionTitle,
     },
     "hasPart": [
       {
@@ -415,5 +420,5 @@ const getAnswerText = (answer: IAnswer | IInternalAnswer) => {
     }
   }
 
-  return answerText;
+  return getCleanText(answerText);
 };
