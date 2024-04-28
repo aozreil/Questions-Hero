@@ -9,7 +9,7 @@ export class QuestionClass {
     static questionExtraction (question: IQuestion): IQuestion {
         return {
             ...question,
-            text: getTextFormatted(question.text, question?.type),
+            text: getTextFormatted(question.text, question?.type).replaceAll('$ATTACHMENTS_BASE', ATTACHMENTS_BASE),
             title: title(question?.text),
             includesLatex: isTextIncludingLatex(question?.text),
         }

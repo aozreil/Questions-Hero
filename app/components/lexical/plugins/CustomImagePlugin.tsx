@@ -7,7 +7,8 @@ import {ImageNode} from "../nodes/ImageNode";
 import React, { useCallback } from "react";
 import { getPreSignedUrls, uploadFile } from "~/apis/questionsAPI";
 
-export const $createImageNode = (file: File, dataURL: string): ImageNode => new ImageNode(file, dataURL);
+export const $createImageNode = (file: File, dataURL: string): ImageNode =>
+  new ImageNode({ file, dataURL });
 
 export const INSERT_IMAGE_COMMAND = createCommand("create_image");
 
@@ -26,15 +27,23 @@ export const CustomImagePlugin: React.FC = () => {
         editor.update(() => {
           const node = $getNodeByKey(imageKey) as ImageNode;
           node.setAWSPreSigned(preSigned.key);
-        })
+        });
         await uploadFile(
           preSigned.pre_signed_url,
           file,
           () => {},
         )
+        editor.update(() => {
+          const node = $getNodeByKey(imageKey) as ImageNode;
+          node.setUploadStatus('FINISHED');
+        });
       }
     } catch (e) {
       console.log(e);
+      editor.update(() => {
+        const node = $getNodeByKey(imageKey) as ImageNode;
+        node.setUploadStatus('FAILED');
+      });
     }
   }, []);
 

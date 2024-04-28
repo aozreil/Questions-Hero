@@ -13,12 +13,22 @@ import { ExportHtmlPlugin } from "~/components/lexical/plugins/ExportHtmlPlugin"
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CustomListActions } from "~/components/lexical/actions/CustomListActions";
 import { CustomFontSizeActions } from "~/components/lexical/actions/CustomFontSizeActions";
+import { OnUpdatePlugin } from "~/components/lexical/plugins/OnUpdatePlugin";
+import clsx from "clsx";
 
 interface Props {
   onFocus?: () => void;
+  onCharDifference?: (textOutput: string) => void;
+  placeholder?: string;
+  layoutStyles?: string;
 }
 
-const LexicalEditor = forwardRef(({ onFocus }: Props, ref) => {
+const LexicalEditor = forwardRef(({
+  onFocus,
+  onCharDifference,
+  placeholder,
+  layoutStyles,
+}: Props, ref) => {
   const CustomContent = useMemo(() => {
     return (
       <ContentEditable
@@ -31,7 +41,7 @@ const LexicalEditor = forwardRef(({ onFocus }: Props, ref) => {
   const CustomPlaceholder = useMemo(() => {
     return (
       <div className='absolute top-5 left-5 pointer-events-none'>
-        Enter some text...
+        {placeholder ?? 'Enter some text...'}
       </div>
     )
   }, []);
@@ -57,7 +67,7 @@ const LexicalEditor = forwardRef(({ onFocus }: Props, ref) => {
   }
 
   return (
-    <div className='p-5 pb-14 relative flex-1 bg-[#f7fbff] border border-[#99a7af] rounded-lg overflow-hidden'>
+    <div className={clsx('p-5 pb-14 relative flex-1 bg-[#f7fbff] border border-[#99a7af] rounded-lg overflow-hidden', layoutStyles)}>
       <div className='overflow-y-auto w-full h-full answer-scrollable max-h-full'>
         <LexicalComposer initialConfig={lexicalConfig}>
           <RichTextPlugin
@@ -69,12 +79,15 @@ const LexicalEditor = forwardRef(({ onFocus }: Props, ref) => {
           <CustomImagePlugin />
           <ListPlugin />
           <ExportHtmlPlugin ref={ref} />
+          <OnUpdatePlugin onCharDifference={onCharDifference} />
           <div className='absolute bottom-0 left-0 w-full h-10 bg-white rounded-t-xl
-           border-t border-[#99a7af] flex items-center justify-between px-5'>
-            <CustomTextActions />
-            <CustomFontSizeActions />
-            <CustomListActions />
-            <CustomImageActions />
+           border-t border-[#99a7af] flex items-center justify-center px-5'>
+            <div className='max-w-[470px] flex items-center justify-between space-x-10'>
+              <CustomTextActions />
+              <CustomFontSizeActions />
+              <CustomListActions />
+              <CustomImageActions />
+            </div>
           </div>
         </LexicalComposer>
       </div>

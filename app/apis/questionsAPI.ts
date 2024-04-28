@@ -24,12 +24,10 @@ export async function clientGetQuestionsInfo(config: AxiosRequestConfig): Promis
 export async function postQuestion (
   questionBody: string,
   recaptchaToken: string | null,
-  attachments: { key: string; filename: string }[],
 ) {
   const response = await axiosApiInstance.post<IPostQuestion>(`${ASKGRAM_BASE}/api/content/questions`, {
     question_body: questionBody,
     recaptcha_token: recaptchaToken,
-    attachments,
   }, {
     withCredentials: true,
     headers: {

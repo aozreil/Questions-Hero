@@ -2,9 +2,10 @@ import { forwardRef, useImperativeHandle } from "react";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$generateHtmlFromNodes} from '@lexical/html';
 import sanitizeHtml from "sanitize-html";
+import { filterEmptyNodes, getEditorTextOutput, isUploadingImages } from "~/components/lexical/helpers";
 
 export interface LexicalExportRef {
-  getEditorState: () => { htmlOutput: string, textOutput: string }
+  getEditorState: () => { htmlOutput: string, textOutput: string, isUploadingImages: boolean }
 }
 
 export const ExportHtmlPlugin = forwardRef((props, ref) => {
@@ -12,9 +13,21 @@ export const ExportHtmlPlugin = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     getEditorState: () => {
-      let htmlOutput = '', textOutput = '';
+      let htmlOutput = '', textOutput = '', uploadingImages = false;
 
       editor.update(() => {
+        const editorState = editor.getEditorState();
+        const nodes = Array.from(editorState._nodeMap);
+
+        const jsonState = editor.getEditorState().toJSON();
+        uploadingImages = isUploadingImages(jsonState);
+        if (uploadingImages) {
+          return;
+        }
+
+        filterEmptyNodes(nodes);
+        filterEmptyNodes(nodes.reverse());
+
         htmlOutput = $generateHtmlFromNodes(editor);
         htmlOutput = sanitizeHtml(htmlOutput, {
           allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
@@ -24,32 +37,11 @@ export const ExportHtmlPlugin = forwardRef((props, ref) => {
             '*': ['class', 'style'],
           },
         });
-        const jsonState = editor.getEditorState().toJSON();
 
-        textOutput = '';
-        for (const child of jsonState?.root?.children) {
-          if (child.type === 'paragraph' && child.children?.length) {
-            for (const subChild of child.children) {
-              if (subChild.type === 'text' && subChild.text) {
-                textOutput = textOutput + subChild.text;
-              }
-            }
-          } else if (child.type === 'paragraph') {
-            textOutput += '\n'
-          } else if (child.type === 'user_image') {
-            textOutput += `[user-image=${child.awsSrc}]`;
-          } else if (child.type === 'list' && child.children?.length) {
-            for (const subChild of child.children) {
-              const listItem = subChild?.children?.[0];
-              if (subChild.type === 'listitem' && listItem?.type === 'text') {
-                textOutput = textOutput + ' ' + listItem.text;
-              }
-            }
-          }
-        }
+        textOutput = getEditorTextOutput();
       });
 
-      return { htmlOutput, textOutput };
+      return { htmlOutput, textOutput, isUploadingImages: uploadingImages };
     }
   }));
 

@@ -11,9 +11,11 @@ import {
 } from "lexical";
 
 export type SerializedImageNode = Spread<
-  { file: File; dataURL: string, awsSrc?: string, preSignedKey?: string },
+  { file: File; dataURL: string, awsSrc?: string, preSignedKey?: string, uploadStatus?: UploadStatus },
   SerializedElementNode
 >;
+
+type UploadStatus = 'UPLOADING' | 'FINISHED' | 'FAILED';
 
 export class ImageNode extends ElementNode {
   __dataURL: string;
@@ -22,6 +24,7 @@ export class ImageNode extends ElementNode {
   __preSignedKey?: string;
   __width?: number;
   __height?: number;
+  __uploadStatus?: UploadStatus;
 
   createDOM(_config: EditorConfig, _editor: LexicalEditor): HTMLElement {
     const element = document.createElement('img');
@@ -66,7 +69,24 @@ export class ImageNode extends ElementNode {
     self.__height = height;
   }
 
-  constructor(file: File, dataURL: string, awsSrc?: string, preSignedKey?: string, width?: number, height?: number) {
+  getUploadStatus() {
+    return this.__uploadStatus;
+  }
+
+  setUploadStatus(status: UploadStatus) {
+    const self = this.getWritable();
+    self.__uploadStatus = status;
+  }
+
+  constructor({file, dataURL, awsSrc, height, width, preSignedKey, uploadStatus} :{
+    file: File,
+    dataURL: string,
+    awsSrc?: string,
+    preSignedKey?: string,
+    width?: number,
+    height?: number,
+    uploadStatus?: UploadStatus,
+  }) {
     super();
     this.__file = file;
     this.__dataURL = dataURL;
@@ -74,17 +94,19 @@ export class ImageNode extends ElementNode {
     this.__preSignedKey = preSignedKey;
     this.__width = width;
     this.__height = height;
+    this.__uploadStatus = uploadStatus ?? 'UPLOADING';
   }
 
   static clone(node: ImageNode): ImageNode {
-    return new ImageNode(
-      node.__file,
-      node.__dataURL,
-      node.__awsSrc,
-      node.__preSignedKey,
-      node.__width,
-      node.__height,
-    );
+    return new ImageNode({
+      file: node.__file,
+      dataURL: node.__dataURL,
+      awsSrc: node.__awsSrc,
+      preSignedKey: node.__preSignedKey,
+      width: node.__width,
+      height: node.__height,
+      uploadStatus: node.__uploadStatus,
+    });
   }
 
   static getType(): string {
@@ -118,12 +140,13 @@ export class ImageNode extends ElementNode {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    return new ImageNode(
-      serializedNode.file,
-      serializedNode.dataURL,
-      serializedNode.awsSrc,
-      serializedNode.preSignedKey,
-    );
+    return new ImageNode({
+      file: serializedNode.file,
+      dataURL: serializedNode.dataURL,
+      awsSrc: serializedNode.awsSrc,
+      preSignedKey: serializedNode.preSignedKey,
+      uploadStatus: serializedNode.uploadStatus,
+    });
   }
 
   exportJSON(): SerializedImageNode {
@@ -135,6 +158,7 @@ export class ImageNode extends ElementNode {
       dataURL: this.__dataURL,
       awsSrc: this.__awsSrc,
       preSignedKey: this.__preSignedKey,
+      uploadStatus: this.__uploadStatus,
       format: "",
       indent: 1,
       direction: null,

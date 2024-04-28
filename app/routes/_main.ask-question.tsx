@@ -1,21 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Loader from "~/components/UI/Loader";
 import { postQuestion } from "~/apis/questionsAPI";
 import { useNavigate } from "react-router";
 import { useAuth } from "~/context/AuthProvider";
-import { countRealCharacters, debounceLeading } from "~/utils";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { BASE_URL, RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
-import Attachments, { AttachmentFile, AttachmentsStatus } from "~/components/askQuestion/Attachments";
 import { MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
 import { loader } from "~/routes/_main.search";
 import Footer from "~/components/UI/Footer";
 import { getKatexLink } from "~/utils/external-links";
-import SimilarQuestions from "~/components/askQuestion/SimilarQuestions";
+import SimilarQuestions, { isThereExactMatch } from "~/components/askQuestion/SimilarQuestions";
 import { useAnalytics } from "~/hooks/useAnalytics";
+import { LexicalExportRef } from "~/components/lexical/plugins/ExportHtmlPlugin";
+const LexicalEditor = lazy(() => import("~/components/lexical/LexicalEditor"));
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   return [
@@ -27,28 +27,20 @@ export const meta: MetaFunction<typeof loader> = ({ location }) => {
   ];
 };
 
-const AttachmentsInitialState = { files: [], status: AttachmentsStatus.completed }
-const CHAR_CHANGE_UPDATE = 10;
-
 export default function AskQuestion() {
   const [searchTerm, setSearchTerm] = useState('');
   const [hasExactMatch, setHasExactMatch] = useState(false);
-  const [hasValue, setHasValue] = useState(false);
   const [isSearchingForSimilar, setIsSearchingForSimilar] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
   const [postPendingOnUser, setPostPendingOnUser] = useState(false);
   const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(true);
-  const [attachmentsState, setAttachmentsState] = useState<{
-    files: AttachmentFile[], status: AttachmentsStatus }>(AttachmentsInitialState);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const searchRequestedWithLength = useRef(0);
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { user, openSignUpModal } = useAuth();
-  const textareaHistory = useRef('');
-  const isUploadingFiles = attachmentsState?.status === AttachmentsStatus.uploading;
-  const isPostingDisabled = !hasValue || isPosting || isUploadingFiles || hasExactMatch || isSearchingForSimilar;
+  const lexicalRef = useRef<LexicalExportRef>(null);
+  const hasValue = !!searchTerm;
+  const isPostingDisabled = !hasValue || isPosting || hasExactMatch || isSearchingForSimilar;
   const { trackEvent } = useAnalytics();
 
   useEffect(() => {
@@ -68,35 +60,31 @@ export default function AskQuestion() {
     }
   }, [user, postPendingOnUser]);
 
-  useEffect(() => {
-    const pasteEventListener = () => {
-      const textLength = textAreaRef.current ? textAreaRef.current.value.length : 0;
-      shouldRequestSearch(textLength, true);
-    }
-
-    textAreaRef.current && textAreaRef.current.addEventListener('paste', pasteEventListener)
-
-    return () => {
-      textAreaRef.current && textAreaRef.current.removeEventListener('paste', pasteEventListener)
-    }
-  }, [textAreaRef]);
-
   const handleQuestionPost = useCallback(async () => {
     if (!user) {
       setPostPendingOnUser(true);
       openSignUpModal();
       return;
     }
-    if (hasValue && textAreaRef?.current?.value && recaptchaRef.current) {
+    if (!lexicalRef.current) return;
+    const { textOutput, htmlOutput, isUploadingImages } = lexicalRef.current.getEditorState();
+    if (isUploadingImages) {
       setIsPosting(true);
+      setTimeout(() => {
+        handleQuestionPost();
+      }, 1000);
+      return;
+    }
+    if (textOutput && hasValue && recaptchaRef.current) {
+      setIsPosting(true);
+      const haveExactMatch = await isThereExactMatch(textOutput);
+      if (haveExactMatch) {
+        setIsPosting(false);
+        return;
+      }
       try {
         const token = await recaptchaRef.current.executeAsync();
-        const attachments = attachmentsState?.files?.map(file => ({
-          filename: file.filename,
-          key: file.key
-        }));
-        const questionBody = textAreaRef.current.value?.trim();
-        const res = await postQuestion(questionBody, token, attachments);
+        const res = await postQuestion(htmlOutput, token);
         if (res?.slug || res?.id) {
           trackEvent("ask-question-post-success");
           toast.success('Your question added successfully!');
@@ -109,62 +97,7 @@ export default function AskQuestion() {
         setIsPosting(false);
       }
     }
-  }, [hasValue, user, attachmentsState]);
-
-  const handleChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e?.target?.value;
-    const textLength = text?.length ? countRealCharacters(text) : 0;
-    if (hasValue && textLength < 10) {
-      setHasValue(false);
-      clearSearchData();
-    }
-    if (!hasValue && textLength >= 10) setHasValue(true);
-
-    shouldRequestSearch(textLength);
-  }
-
-  const shouldRequestSearch = debounceLeading(async (textLength: number, forceUpdate?: boolean) => {
-    const prevLength = searchRequestedWithLength.current;
-    if (forceUpdate || (
-      textLength && Math.abs(textLength - prevLength) > CHAR_CHANGE_UPDATE
-    )) {
-      searchRequestedWithLength.current = textLength;
-      const userText = textAreaRef.current ? textAreaRef.current.value : undefined;
-      userText && setSearchTerm(userText)
-    }
-  }, 600);
-
-  const clearTextArea = useCallback(() => {
-    if (textAreaRef?.current) {
-      trackEvent("ask-question-clear-input");
-      textareaHistory.current = textAreaRef.current.value;
-      textAreaRef.current.value = '';
-      setHasValue(false);
-      clearSearchData();
-    }
-  }, []);
-
-  const clearSearchData = useCallback(() => {
-    setTimeout(() => {
-      setSearchTerm('');
-      searchRequestedWithLength.current = 0;
-    }, 500);
-  }, []);
-
-  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
-      if (textareaHistory.current && textAreaRef.current) {
-        event.preventDefault();
-        textAreaRef.current.value = textareaHistory.current;
-        const textLength = textareaHistory.current.length;
-
-        if (!hasValue && textLength >= 10) setHasValue(true);
-        shouldRequestSearch(textLength);
-
-        textareaHistory.current = '';
-      }
-    }
-  }, []);
+  }, [hasValue, user]);
 
   return (
     <div className='flex-1 relative max-h-[calc(100vh-6rem)] flex flex-col overflow-y-auto bg-[#070707] pt-4 sm:pt-14'>
@@ -187,30 +120,21 @@ export default function AskQuestion() {
             and get the help<br className='max-xl:hidden' /> you need to complete your assignment!</p>
         </Transition>
         <section className='w-full flex max-lg:flex-col max-lg:space-y-5 lg:space-x-5 pb-40 sm:pb-10'>
-          <div className='w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[8rem] sm:min-h-[13rem] p-4 pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
-            <section className='flex items-start justify-between space-x-2 pb-2 h-[8rem] sm:h-[13rem] border-b border-[#d8d8d8]'>
-              <img src='/assets/images/chat-icon.svg' alt='ask' className='w-6 h-6' />
-              <textarea
-                ref={textAreaRef}
-                placeholder='Type your question here'
-                className='h-full flex-1 text-md text-[#4d6473] bg-[#f8f8f8] p-1 focus:outline-none resize-none'
-                onKeyDown={handleKeyDown}
-                onChange={handleChange}
-              />
-              {hasValue && <img
-                src='/assets/images/close-rounded.svg'
-                alt='close'
-                className='cursor-pointer w-5 h-5'
-                onClick={clearTextArea}
-              />}
+          <div className='w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[8rem] sm:min-h-[13rem] pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
+            <section className='text-black h-[8rem] sm:h-[13rem]'>
+              <Suspense>
+                <LexicalEditor
+                  ref={lexicalRef}
+                  placeholder='Type your question here'
+                  layoutStyles='h-full'
+                  onCharDifference={(textOutput) => setSearchTerm(textOutput)}
+                />
+              </Suspense>
             </section>
-            <section className='w-full flex-1 py-2 flex items-start justify-between text-sm'>
-              <Attachments
-                onChange={(status, files) => setAttachmentsState({status, files})}
-              />
+            <section className='w-full p-4 flex-1 py-2 flex items-start justify-between text-sm'>
               <button
                 disabled={isPostingDisabled}
-                className={`${!isPostingDisabled ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
+                className={`${!isPostingDisabled ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} ml-auto flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
                 onClick={handleQuestionPost}
                 title={hasExactMatch ? 'An exact match to your question is found.' : ''}
               >

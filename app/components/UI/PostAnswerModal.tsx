@@ -31,7 +31,14 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
 
   const handlePostAnswer = useCallback(async () => {
     if (lexicalRef.current) {
-      const { textOutput, htmlOutput } = lexicalRef.current.getEditorState();
+      const { textOutput, htmlOutput, isUploadingImages } = lexicalRef.current.getEditorState();
+      if (isUploadingImages) {
+        setIsPosting(true);
+        setTimeout(() => {
+          handlePostAnswer();
+        }, 1000);
+        return;
+      }
       if (!textOutput || !htmlOutput) {
         setError('Something went wrong, please try again');
         return;
