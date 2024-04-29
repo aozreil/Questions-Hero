@@ -1,5 +1,5 @@
 import {
-    getTextFormatted,
+   getCleanText, getTextFormatted,
     isTextIncludingLatex,
     title
 } from "~/utils/text-formatting-utils";
@@ -10,7 +10,7 @@ export class QuestionClass {
         return {
             ...question,
             text: getTextFormatted(question.text, question?.type).replaceAll('$ATTACHMENTS_BASE', ATTACHMENTS_BASE),
-            title: title(question?.text),
+            title: getCleanText(title(question?.text)),
             includesLatex: isTextIncludingLatex(question?.text),
         }
     }
