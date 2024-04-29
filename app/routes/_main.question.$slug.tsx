@@ -153,7 +153,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
         }
         return {
           slug: el.slug,
-          text: text
+          text: getCleanText(text),
         };
       }).slice(0, 5)
     });
