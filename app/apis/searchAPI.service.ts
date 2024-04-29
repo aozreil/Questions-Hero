@@ -2,7 +2,7 @@ import axios from "axios";
 import { SEARCH_CLUSTER } from "~/config/enviroment.server";
 import { getQuestionsById, getQuestionsInfo } from "~/apis/questionsAPI.server";
 import { SearchResponseInterface } from "~/models/searchModel";
-import { AnswerStatus } from "~/models/questionModel";
+import { AnswerStatus, QuestionClass } from "~/models/questionModel";
 
 export async function searchQuestionsDetailsAPI(term: string) {
   try {
@@ -36,6 +36,7 @@ export async function searchQuestionsDetailsAPI(term: string) {
   return {
     data: searchResponse.data.map(question => ({
       ...question,
+      text: QuestionClass.questionTextExtraction(question?.text),
       slug: questionMapper.hasOwnProperty(question.id) ? questionMapper[question.id] : question.id,
       answerCount: questionInfoMapper.hasOwnProperty(question.id) ? questionInfoMapper[question.id]?.answers_count : 0,
       answerStatuses: questionInfoMapper.hasOwnProperty(question.id) ? questionInfoMapper[question.id]?.answers_statuses : [],

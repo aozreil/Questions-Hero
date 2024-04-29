@@ -15,7 +15,13 @@ export class QuestionClass {
         }
     }
 
-    static answerExtraction (answer?: IAnswer): IAnswer {
+  static questionTextExtraction(text: string): string {
+    return text
+      ? getTextFormatted(text, undefined).replaceAll('$ATTACHMENTS_BASE', ATTACHMENTS_BASE)
+      : text;
+  }
+
+  static answerExtraction (answer?: IAnswer): IAnswer {
         return {
             ...answer,
             text: getTextFormatted(answer?.text).replaceAll('$ATTACHMENTS_BASE', ATTACHMENTS_BASE),
