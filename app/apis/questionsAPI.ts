@@ -23,10 +23,12 @@ export async function clientGetQuestionsInfo(config: AxiosRequestConfig): Promis
 
 export async function postQuestion (
   questionBody: string,
+  innerText: string,
   recaptchaToken: string | null,
 ) {
   const response = await axiosApiInstance.post<IPostQuestion>(`${ASKGRAM_BASE}/api/content/questions`, {
     question_body: questionBody,
+    inner_text: innerText,
     recaptcha_token: recaptchaToken,
   }, {
     withCredentials: true,
@@ -38,10 +40,10 @@ export async function postQuestion (
   return response?.data;
 }
 
-export async function postAnswer (answerBody: string, answerText: string, questionId: string, recaptchaToken: string | null) {
+export async function postAnswer (answerBody: string, innerText: string, questionId: string, recaptchaToken: string | null) {
   const response = await axiosApiInstance.post<IUser[]>(`${ASKGRAM_BASE}/api/content/answers`, {
     answer_body: answerBody,
-    answer_text: answerText,
+    inner_text: innerText,
     question_id: questionId,
     recaptcha_token: recaptchaToken,
   }, {

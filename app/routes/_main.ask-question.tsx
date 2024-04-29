@@ -84,7 +84,7 @@ export default function AskQuestion() {
       }
       try {
         const token = await recaptchaRef.current.executeAsync();
-        const res = await postQuestion(htmlOutput, token);
+        const res = await postQuestion(htmlOutput, textOutput, token);
         if (res?.slug || res?.id) {
           trackEvent("ask-question-post-success");
           toast.success('Your question added successfully!');

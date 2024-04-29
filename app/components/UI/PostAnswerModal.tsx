@@ -53,7 +53,7 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
           setIsPosting(true);
           setError('');
           const token = await recaptchaRef.current.executeAsync();
-          await postAnswer(htmlOutput, textOutput?.trim(), questionId, token);
+          await postAnswer(htmlOutput, textOutput, questionId, token);
 
           const formData = new FormData();
           formData.append("postedAnswer", textOutput);
