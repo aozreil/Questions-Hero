@@ -17,9 +17,9 @@ export default function SanitizedText({ html, className }: Props) {
     },
   });
   return (
-    <span
-      className={clsx('relative', className )}
+    <div
+      className={clsx("relative inline", className)}
       dangerouslySetInnerHTML={{ __html: sanitizedText }}
     />
-  )
+  );
 }

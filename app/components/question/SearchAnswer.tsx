@@ -106,21 +106,21 @@ const Answer = ({ askedBy, answer }: {
             </div>
           )}
           {answer?.text && (
-            <p className='max-sm:text-lg'>
+            <div className='max-sm:text-lg'>
               <span className='font-medium'>Final Answer : </span>
               <SanitizedText html={answer?.text} />
-            </p>
+            </div>
           )}
           {!!answer?.answer_steps?.length && (
             answer.answer_steps.map((step, index) => (
               step?.text ? (
-                <p
+                <div
                   className='mt-2 max-sm:text-lg'
                   key={index}
                 >
                   <span className='font-medium'>Explanation : </span>
                   <SanitizedText html={step?.text} />
-                </p>
+                </div>
               ) :null
             ))
           )}

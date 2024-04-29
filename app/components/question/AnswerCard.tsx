@@ -35,21 +35,21 @@ export default function AnswerCard({ answer, user }: Props) {
               <p className='text-sm font-bold capitalize'>{user?.view_name ?? 'Answered By Askgram User'}</p>
               {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
               {answer?.text && (
-                <p>
+                <div>
                   <span className='font-medium'>Final Answer : </span>
                   <SanitizedText html={answer?.text} />
-                </p>
+                </div>
               )}
               {!!answer?.answer_steps?.length && (
                 answer.answer_steps.map((step, index) => (
                   step?.text ? (
-                    <p
+                    <div
                         className='mt-2'
                         key={index}
                     >
                       <span className='font-medium'>Explanation : </span>
                       <SanitizedText html={step?.text} />
-                    </p>
+                    </div>
                   ) :null
                 ))
               )}
