@@ -15,6 +15,7 @@ import { CustomListActions } from "~/components/lexical/actions/CustomListAction
 import { CustomFontSizeActions } from "~/components/lexical/actions/CustomFontSizeActions";
 import { OnUpdatePlugin } from "~/components/lexical/plugins/OnUpdatePlugin";
 import clsx from "clsx";
+import DragDropPaste from "~/components/lexical/plugins/DragDropPaste";
 
 interface Props {
   onFocus?: () => void;
@@ -80,6 +81,7 @@ const LexicalEditor = forwardRef(({
           <ListPlugin />
           <ExportHtmlPlugin ref={ref} />
           <OnUpdatePlugin onCharDifference={onCharDifference} />
+          <DragDropPaste />
           <div className='absolute bottom-0 left-0 w-full h-10 bg-white rounded-t-xl
            border-t border-[#99a7af] flex items-center justify-center px-5'>
             <div className='max-w-[470px] flex items-center justify-between space-x-10'>

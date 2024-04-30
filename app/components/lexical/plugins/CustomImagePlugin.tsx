@@ -1,8 +1,13 @@
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
-import {$getSelection, $isRangeSelection, COMMAND_PRIORITY_NORMAL, createCommand, $getNodeByKey} from "lexical";
 import {
-  $setBlocksType
-} from "@lexical/selection";
+  $getSelection,
+  $isRangeSelection,
+  COMMAND_PRIORITY_NORMAL,
+  createCommand,
+  $getNodeByKey,
+  $insertNodes,
+  $createParagraphNode,
+} from "lexical";
 import {ImageNode} from "../nodes/ImageNode";
 import React, { useCallback } from "react";
 import { getPreSignedUrls, uploadFile } from "~/apis/questionsAPI";
@@ -53,7 +58,7 @@ export const CustomImagePlugin: React.FC = () => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
         const imageNode = $createImageNode(file, dataURL);
-        $setBlocksType(selection, () => imageNode);
+        $insertNodes([imageNode, $createParagraphNode()]);
         uploadToAws(file, imageNode.getKey());
       }
       return true;
