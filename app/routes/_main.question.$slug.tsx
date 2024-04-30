@@ -203,7 +203,7 @@ export default function QuestionPage() {
 
   return (
     <>
-    <MainContainer>
+    <MainContainer className='flex-1'>
       <PostAnswerModal
         open={postAnswerOpened}
         onClose={() => setPostAnswerOpened(false)}
