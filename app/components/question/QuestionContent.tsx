@@ -13,7 +13,7 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
     const createdAt = useMemo(() => getCreatedAtDate(question), [question]);
     const { t } = useTranslation();
     return (
-        <div className='flex flex-col w-full p-4'>
+        <div data-cy="question-content" className='flex flex-col w-full p-4'>
             <div className='w-full flex flex-col-reverse sm:flex-row flex-wrap sm:justify-between sm:items-center mb-3'>
                 {(question?.created_at || user) && (
                     <p className='text-[#667a87] text-sm'>

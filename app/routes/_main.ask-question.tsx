@@ -188,7 +188,7 @@ export default function AskQuestion() {
         </Transition>
         <section className='w-full flex max-lg:flex-col max-lg:space-y-5 lg:space-x-5 pb-40 sm:pb-10'>
           <div className='w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[8rem] sm:min-h-[13rem] p-4 pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
-            <section className='flex items-start justify-between space-x-2 pb-2 h-[8rem] sm:h-[13rem] border-b border-[#d8d8d8]'>
+            <section data-cy='question-editor' className='flex items-start justify-between space-x-2 pb-2 h-[8rem] sm:h-[13rem] border-b border-[#d8d8d8]'>
               <img src='/assets/images/chat-icon.svg' alt='ask' className='w-6 h-6' />
               <textarea
                 ref={textAreaRef}
@@ -213,6 +213,7 @@ export default function AskQuestion() {
                 className={`${!isPostingDisabled ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
                 onClick={handleQuestionPost}
                 title={hasExactMatch ? 'An exact match to your question is found.' : ''}
+                data-cy='post-question-button'
               >
                 {isPosting && <Loader className="w-5 h-5" />}
                 <p>{isPosting ? 'Posting...' : isSearchingForSimilar ? 'Searching for similar questions' : 'Ask your question'}</p>

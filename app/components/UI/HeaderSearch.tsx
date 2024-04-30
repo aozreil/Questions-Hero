@@ -83,6 +83,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
       action="/search"
       className={clsx(`relative rounded-md max-sm:flex-1 sm:w-[22rem] lg:w-[34rem]`, className)}
       onSubmit={onSubmit}
+      data-cy="header-search"
     >
       <div className={clsx("absolute inset-y-0 sm:left-3 flex items-center", isSearchExpanded ? 'right-14' : 'max-sm:right-3')}>
         {isSearching && searchOutsideSearchPage

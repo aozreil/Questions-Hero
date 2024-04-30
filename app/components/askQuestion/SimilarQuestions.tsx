@@ -79,7 +79,7 @@ export default function SimilarQuestions({
               <p className='text-lg'>We've already got answers to this question.<br /> See them below</p>
             </div>
           </div>
-          <div className='w-full flex-col space-y-2 p-2.5 bg-[#1e1e1e] border border-[#99a7af] rounded-xl mt-3 text-black'>
+          <div data-cy='similar-questions' className='w-full flex-col space-y-2 p-2.5 bg-[#1e1e1e] border border-[#99a7af] rounded-xl mt-3 text-black'>
             {searchData.map(el => (
               <AskQuestionSearchCard
                 key={el.id}
