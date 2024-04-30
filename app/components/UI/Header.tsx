@@ -26,7 +26,7 @@ export default function Header() {
             {!shouldHideSearch && <HeaderSearch setIsSearchExpanded={setIsSearchExpanded} isSearchExpanded={isSearchExpanded} />}
           </div>
           <div className={clsx('text-[#1a384b] max-sm:text-sm font-medium flex items-center gap-3 sm:gap-5', isSearchExpanded && 'hidden')}>
-            <Link to='/ask-question' className='max-lg:hidden'>Ask Question</Link>
+            <Link to='/ask-question' className='max-lg:hidden' data-cy='header-ask-question'>Ask Question</Link>
             {isLoadingUserData ? null : <HeaderJoin />}
           </div>
         </div>

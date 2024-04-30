@@ -55,10 +55,12 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
                 ))}
                 {!!slug && (
                   <>
-                    <Link to={`/question/${slug}`} onClick={close} className="max-lg:hidden p-4 pt-0 text-sm mt-4 hover:text-[#070707] text-gray-500 text-center">
+                    <Link to={`/question/${slug}`} onClick={close} data-cy='go-to-question'
+                          className="max-lg:hidden p-4 pt-0 text-sm mt-4 hover:text-[#070707] text-gray-500 text-center">
                       Go to question page for more information
                     </Link>
-                    <Link to={`/question/${slug}`} onClick={close} className="lg:hidden outline-none block text-white py-3 bg-[#070707] w-[90%] my-4 max-sm:-mt-3 mx-auto rounded-2xl text-center">
+                    <Link to={`/question/${slug}`} onClick={close} data-cy='go-to-question'
+                          className="lg:hidden outline-none block text-white py-3 bg-[#070707] w-[90%] my-4 max-sm:-mt-3 mx-auto rounded-2xl text-center">
                       Go to Question Page
                     </Link>
                   </>

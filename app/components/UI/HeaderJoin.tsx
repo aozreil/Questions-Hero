@@ -41,6 +41,7 @@ export default function HeaderJoin() {
                 <p className='truncate capitalize px-4'>{user?.view_name}</p>
                 <p
                   className='cursor-pointer font-semibold rounded-md mt-2 bg-white py-2 text-sm hover:bg-gray-50 w-full text-left px-4'
+                  data-cy='user-menu-logout'
                   onClick={logout}
                 >
                   Logout

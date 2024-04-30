@@ -78,6 +78,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
             {answerCount > 0 && (
               <button
                 className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
+                data-cy='show-hide-answer'
                 onClick={handleShowAnswer}
               >
                 {isOpen ? 'Hide' : 'Show Answer'}
