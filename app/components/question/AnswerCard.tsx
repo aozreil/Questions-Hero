@@ -1,4 +1,4 @@
-import { AnswerStatus, IAnswer, IUser } from "~/models/questionModel";
+import { AnswerStatus, getAnswerBody, IAnswer, IUser } from "~/models/questionModel";
 import {useState} from "react";
 import UserProfile from "~/components/UI/UserProfile";
 import { getCreatedAt } from "~/utils";
@@ -37,7 +37,7 @@ export default function AnswerCard({ answer, user }: Props) {
               {answer?.text && (
                 <div>
                   <span className='font-medium'>Final Answer : </span>
-                  <SanitizedText html={answer?.text} />
+                  <SanitizedText html={getAnswerBody(answer)} />
                 </div>
               )}
               {!!answer?.answer_steps?.length && (

@@ -1,4 +1,4 @@
-import { IQuestion, IUser } from "~/models/questionModel";
+import { getQuestionBody, IQuestion, IUser } from "~/models/questionModel";
 import {format} from "date-fns";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,7 +32,7 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
                 )}
             </div>
             {question?.text && (
-              <SanitizedText className='lg:text-xl font-medium mb-3' html={question.text} />
+              <SanitizedText className='lg:text-xl font-medium mb-3' html={getQuestionBody(question)} />
             )}
         </div>
     )

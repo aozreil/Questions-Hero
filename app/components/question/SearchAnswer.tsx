@@ -3,7 +3,7 @@ import ContentLoader from "~/components/UI/ContentLoader";
 import { Link } from "@remix-run/react";
 import Loader from "~/components/UI/Loader";
 import React, { Fragment, useEffect } from "react";
-import { AnswerStatus, IAnswer, IUser, IUsers } from "~/models/questionModel";
+import { AnswerStatus, getAnswerBody, IAnswer, IUser, IUsers } from "~/models/questionModel";
 import clsx from "clsx";
 import UserProfile from "~/components/UI/UserProfile";
 import SanitizedText from "~/components/question/SanitizedText";
@@ -108,7 +108,7 @@ const Answer = ({ askedBy, answer }: {
           {answer?.text && (
             <div className='max-sm:text-lg'>
               <span className='font-medium'>Final Answer : </span>
-              <SanitizedText html={answer?.text} />
+              <SanitizedText html={getAnswerBody(answer)} />
             </div>
           )}
           {!!answer?.answer_steps?.length && (

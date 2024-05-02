@@ -16,10 +16,9 @@ interface IProps {
 
 export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
   const [answers, setAnswers] = useState<IAnswer[] | undefined>(undefined);
-  const { text, id, slug, answerCount } = question;
+  const { text, id, slug, answerCount, rendered_text } = question;
   const [isOpen, setIsOpen] = useState(false);
   const [userProfiles, setUserProfiles] = useState<IUsers | undefined>(undefined);
-  const [formattedText] = useState(() => getTextFormatted(text))
   const { focusedOverlayStyles, overlayVisible, setOverlayVisible } = useOverlay();
   const hasVerifiedAnswer = question?.answerStatuses?.includes(AnswerStatus.VERIFIED);
 
@@ -87,7 +86,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
             )}
           </div>
           <hr className="mb-4" />
-          <SanitizedText className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`} html={formattedText} />
+          <SanitizedText className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`} html={rendered_text ?? text} />
         </Link>
         {isOpen && (
           <div className="max-lg:hidden lg:absolute lg:left-[27.5rem] 2xl:left-[33.5rem] lg:top-0 max-sm:w-full overflow-y-auto">
