@@ -14,6 +14,7 @@ import { LoaderFunctionArgs } from "@remix-run/router";
 import { useAnalytics } from "~/hooks/useAnalytics";
 import { useOverlay } from "~/context/OverlayProvider";
 import { AnswerStatus, ISearchQuestion } from "~/models/questionModel";
+import { OCRSearchResponseInterface } from "~/models/searchModel";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -35,7 +36,8 @@ export const meta: MetaFunction<typeof loader> = ({ location }) => {
 export async function loader({ request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("term");
-  if (!query) {
+  const ocr = searchParams.get("ocr");
+  if (!query || ocr) {
     return json({ data: { data: [], count: 0 } });
   }
 
@@ -73,16 +75,12 @@ export default function SearchPage() {
   }
 
   const getDataWithAiAnswer = (data: ISearchQuestion[]): ISearchQuestion[] => {
-    const firstQuestionScore = data?.[0]?.relevant_score;
-    const aiAnswer = location?.state?.ai_answer;
-    if (!aiAnswer || !searchTerm) return data;
+    const ocrResponse = location?.state?.ocr_res as OCRSearchResponseInterface;
+    const ocrSearchResults = ocrResponse?.data as ISearchQuestion[];
+    if (!searchTerm || !ocrSearchResults) return data;
 
-    // if first question score is higher than AI_ANSWER_ACCEPTED_SCORE, then AI answer will be merged to it
-    if (firstQuestionScore && firstQuestionScore > AI_ANSWER_ACCEPTED_SCORE) {
-        data[0].aiAnswer = aiAnswer;
-        data[0].answerCount = data[0].answerCount + 1;
-        return data;
-    } else {
+    const aiAnswer = ocrResponse?.aiImageAnalysis?.answer;
+    if (aiAnswer) {
       return [
         {
           id: 'ai-answer',
@@ -92,8 +90,10 @@ export default function SearchPage() {
           aiAnswer: aiAnswer,
           answerStatuses: [AnswerStatus.AI_ANSWER],
         },
-        ...data,
-      ]
+        ...ocrSearchResults,
+      ];
+    } else {
+      return ocrSearchResults;
     }
   }
 

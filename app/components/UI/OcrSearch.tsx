@@ -96,14 +96,14 @@ export default function OcrSearch({ onClose }: Props) {
                   setUiState(UIState.PROCESSING);
                   const searchRes = await searchByImage(
                     `${ATTACHMENTS_BASE}/${preSignedKey}`,
-                    token
+                    token,
                   );
 
-                  if (searchRes?.data) {
+                  if (searchRes?.term) {
                     navigate({
                       pathname: '/search',
-                      search: `?term=${searchRes.data?.ocr_result}`
-                    }, { state: { ai_answer: searchRes.data?.answer } });
+                      search: `?term=${searchRes.term}&ocr=true`
+                    }, { state: { ocr_res: searchRes } });
                     onClose();
                   }
                 } catch (e) {
