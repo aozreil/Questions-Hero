@@ -84,6 +84,7 @@ export default function ExpandableSearch() {
            md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
           onBlur={handleBlur}
           onSubmit={onBlur}
+          data-cy="landing-search"
         >
             <button ref={submitButton} className='flex-shrink-0' type='submit'>
                 <img

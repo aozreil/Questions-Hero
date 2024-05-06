@@ -22,6 +22,7 @@ export default function AnswerCard({ answer, user }: Props) {
             clsx(`w-full rounded-xl border overflow-hidden`,
             isVerified ? 'bg-[#f4fbf8] border-[#aedbc8]' : 'bg-white border-[#e0e0e0]'
           )}
+          data-cy="answer-card"
         >
           {isVerified && (
             <div className='flex items-center justify-center py-2 bg-[#25b680] font-bold text-white gap-1.5'>
@@ -35,7 +36,7 @@ export default function AnswerCard({ answer, user }: Props) {
               <p className='text-sm font-bold capitalize'>{user?.view_name ?? 'Answered By Askgram User'}</p>
               {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
               {answer?.text && (
-                <div>
+                <div data-cy="final-answer">
                   <span className='font-medium'>Final Answer : </span>
                   <SanitizedText html={getAnswerBody(answer)} />
                 </div>
@@ -46,6 +47,7 @@ export default function AnswerCard({ answer, user }: Props) {
                     <div
                         className='mt-2'
                         key={index}
+                        data-cy="explanation"
                     >
                       <span className='font-medium'>Explanation : </span>
                       <SanitizedText html={step?.text} />
