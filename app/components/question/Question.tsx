@@ -18,7 +18,8 @@ export default function Question({ user, questionBody, createdAt, slug }: Props)
         <Link to={`/question/${slug}`} className='btn-black'>Answer</Link>
       </div>
       <hr className='my-2.5' />
-      <div dangerouslySetInnerHTML={{ __html: questionBody }} />
+
+      <Link to={`/question/${slug}`} dangerouslySetInnerHTML={{ __html: questionBody }} />
       {/*<hr className='my-2.5' />*/}
       {/*<div className='flex items-center justify-between'>*/}
       {/*  <p className='text-sm'>Answered by <span className='font-bold'>Emad Wahbeh</span></p>*/}
