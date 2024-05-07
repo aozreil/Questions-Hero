@@ -1,5 +1,5 @@
 import Question from "~/components/question/Question";
-import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Link, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { json } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { getSubjectIdBySlug, getSubjectSlugById } from "~/models/subjectsMapper";
 import clsx from "clsx";
 import { IQuestion, ISubjectFilter, IUser, IUsers, QuestionClass } from "~/models/questionModel";
+import Loader from "~/components/UI/Loader";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const { subject } = params;
@@ -76,6 +77,7 @@ export default function _mainSubjectsSubject() {
   const [filteredSubjects, setFilteredSubjects] = useState<IFilter[] | undefined>(
     () => getFilteredSubjects(subjects, mainSubjectId));
   const isFirstLoad = useRef(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (isFirstLoad.current) {
@@ -86,6 +88,7 @@ export default function _mainSubjectsSubject() {
     const list = getFilteredSubjects(subjects, mainSubjectId);
     setFilteredSubjects(list);
   }, [subjects]);
+
 
   return (
     <div className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
@@ -116,8 +119,9 @@ export default function _mainSubjectsSubject() {
               <hr className='my-5' />
               <FiltersSection title='Type' filters={TYPE_FILTERS} paramsId='question_types' />
             </div>
-            <div className='flex flex-col space-y-4'>
-              {questions?.map(question => (
+            <div className='flex flex-col space-y-4 w-full'>
+              {navigation.state === 'idle' ?
+              questions?.map(question => (
                 <Question
                   key={question?.id}
                   questionBody={question?.text}
@@ -125,7 +129,9 @@ export default function _mainSubjectsSubject() {
                   user={question?.user_id ? users[question.user_id] : undefined}
                   slug={question?.slug}
                 />
-              ))}
+              )): <div className={'flex items-center justify-center w-full'}>
+                  <Loader/>
+              </div>}
             </div>
           </div>
         </div>
