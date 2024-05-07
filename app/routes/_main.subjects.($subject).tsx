@@ -105,7 +105,7 @@ export default function _mainSubjectsSubject() {
             </div>
           </div>
           <div className='w-full flex space-x-4'>
-            <div className='w-[14rem] rounded-xl shadow-md p-2 text-black h-fit'>
+            <div className='w-[14rem] rounded-xl shadow-md p-2 text-black h-fit sticky top-4'>
               <p className='text-lg px-2 font-bold mb-4'>Questions filter</p>
               <SubjectsSection subjects={filteredSubjects} />
               {/*{subjectsFilter && <FiltersSection*/}
@@ -201,7 +201,7 @@ const SubjectsSection = ({ subjects }: { subjects?: IFilter[] }) => {
     <section className='flex flex-col space-y-2 '>
       <p className='px-2'>Subjects</p>
       {subjects
-        ?.slice(0, showMoreVisible ? 7 : subjects?.length )
+        ?.slice(0, showMoreVisible ? 4 : subjects?.length )
         ?.map(subject => (
           <Link
             key={subject?.value}
