@@ -5,6 +5,8 @@ import {
     IInternalQuestion, IObjective,
     IQuestion, IQuestionAttachment,
     IQuestionInfo,
+    IQuestionsResponse,
+    ISubjectFilter,
     IUser,
     QuestionClass
 } from "~/models/questionModel";
@@ -13,7 +15,8 @@ import AxiosServerInstance, {
     RequestConfigCustomize
 } from "~/interceptors/http-interceptors.server";
 import { ATTACHMENTS_BASE, CONTENT_CLUSTER, USERS_CLUSTER } from "~/config/enviroment.server";
-import { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
+import { ASKGRAM_BASE } from "~/config/enviromenet";
 
 export async function getQuestionById(id: string): Promise<IQuestion> {
    const response = await AxiosServerInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
@@ -25,11 +28,12 @@ export async function getRelatedQuestionById(id: string, config?: AxiosRequestCo
   return response?.data;
 }
 
-export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
-    const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions`, {
+export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
+    const response = await AxiosServerInstance.get<IQuestionsResponse>(`${CONTENT_CLUSTER}/questions`, {
         ...config,
         paramsSerializer: paramsSerializerComma,
     });
+
     return response?.data;
 }
 
@@ -120,4 +124,9 @@ export async function getInternalAnswers (
 export async function getLatestAddedQuestions(config?: AxiosRequestConfig){
     const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions/latest`, config);
     return response?.data;
+}
+
+export async function getSubjectsFilter(): Promise<ISubjectFilter[]> {
+    const response = await axios.get<ISubjectFilter[]>(`${CONTENT_CLUSTER}/topics`);
+    return response.data;
 }
