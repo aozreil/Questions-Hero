@@ -102,8 +102,8 @@ export default function _mainSubjectsSubject() {
             </div>
           </div>
           <div className='w-full flex space-x-4'>
-            <div className='w-[14rem] rounded-xl shadow-md p-5 text-black h-fit'>
-              <p className='text-lg font-bold mb-4'>Questions filter</p>
+            <div className='w-[14rem] rounded-xl shadow-md p-2 text-black h-fit'>
+              <p className='text-lg px-2 font-bold mb-4'>Questions filter</p>
               <SubjectsSection subjects={filteredSubjects} />
               {/*{subjectsFilter && <FiltersSection*/}
               {/*  title='Subjects'*/}
@@ -159,7 +159,7 @@ const FiltersSection = ({ title, filters, showMoreOn, paramsId }: {
   }
 
   return (
-    <section className='flex flex-col space-y-2'>
+    <section className='flex flex-col space-y-2 px-2'>
       <p>{title}</p>
       {filters
         ?.slice(0, showMoreVisible ? showMoreOn : filters?.length )
@@ -178,7 +178,7 @@ const FiltersSection = ({ title, filters, showMoreOn, paramsId }: {
       }
       {showMoreVisible && (
         <button
-          className='text-[#0059ff] text-sm font-medium w-fit ml-7'
+          className='text-[#0059ff] text-sm font-medium w-fit ml-7 hover:bg-[#e1f2ff] rounded px-2 py-1'
           onClick={() => setShowMore(true)}
         >
           Show more
@@ -192,15 +192,15 @@ const SubjectsSection = ({ subjects }: { subjects?: IFilter[] }) => {
   const [showMoreVisible, setShowMoreVisible] = useState(true);
   if (!subjects) return null;
   return (
-    <section className='flex flex-col space-y-2'>
-      <p>Subjects</p>
+    <section className='flex flex-col space-y-2 '>
+      <p className='px-2'>Subjects</p>
       {subjects
         ?.slice(0, showMoreVisible ? 7 : subjects?.length )
         ?.map(subject => (
           <Link
             key={subject?.value}
             to={`/subjects/${getSubjectSlugById(subject?.value)}`}
-            className="ms-1 flex space-x-2 justify-between items-center me-4 overflow-x-hidden"
+            className="ms-1 flex space-x-2 px-2 py-1 justify-between items-center me-4 overflow-x-hidden hover:bg-gray-200 rounded"
           >
             <p
               className={clsx(
@@ -216,7 +216,7 @@ const SubjectsSection = ({ subjects }: { subjects?: IFilter[] }) => {
       }
       {showMoreVisible && (
         <button
-          className='ms-1 text-[#0059ff] text-sm font-medium w-fit'
+          className='ms-1 text-[#0059ff] text-sm px-2 py-1 rounded font-medium w-fit hover:bg-[#e1f2ff]'
           onClick={() => setShowMoreVisible(false)}
         >
           Show more
