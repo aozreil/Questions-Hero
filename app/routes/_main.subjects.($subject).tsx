@@ -3,8 +3,9 @@ import {
   ClientLoaderFunctionArgs,
   Link,
   useLoaderData,
+  useLocation,
   useNavigate,
-  useNavigation,
+  useNavigation
 } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { json } from "@remix-run/node";
@@ -16,12 +17,16 @@ import clsx from "clsx";
 import { IQuestion, ISubjectFilter, IUser, IUsers, QuestionClass } from "~/models/questionModel";
 import Loader from "~/components/UI/Loader";
 import { clientGetQuestionsById, clientGetUsers } from "~/apis/questionsAPI";
+import { Pagination } from "~/components/UI/Pagination";
 
 interface LoaderData {
   questions?: IQuestion[];
   subjects?: ISubjectFilter[];
   mainSubjectId?: string;
   users?: IUsers[];
+  page?: number,
+  size?: number,
+  count?: number,
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -57,6 +62,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       subjects,
       mainSubjectId,
       users,
+      page: questions?.page,
+      size: questions?.size,
+      count: questions?.count,
     });
   } catch (e) {
     console.log(e);
@@ -107,6 +115,9 @@ export const clientLoader = async ({
     questions: questions?.data?.map(question => QuestionClass.questionExtraction(question)),
     users: QuestionClass.usersExtraction(users),
     mainSubjectId,
+    page: questions?.page,
+    size: questions?.size,
+    count: questions?.count,
   }
 };
 
@@ -130,14 +141,27 @@ export default function _mainSubjectsSubject() {
     mainSubjectId,
     questions,
     users,
+    page,
+    size,
+    count,
   } = useLoaderData() as LoaderData;
   const [savedSubjects] = useState(subjects);
   const [filteredSubjects, setFilteredSubjects] = useState<IFilter[] | undefined>(
     () => getFilteredSubjects(subjects, mainSubjectId));
   const [questionsFilterExpanded, setQuestionsFilterExpanded] = useState(true);
   const isFirstLoad = useRef(true);
+  const containerDiv = useRef<HTMLDivElement>(null);
+  const location = useLocation();
   const navigation = useNavigation();
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname?.includes('subjects')
+
+  useEffect(() => {
+    if (containerDiv.current) {
+      containerDiv.current.scrollTo({
+        top: 0,
+      });
+    }
+  }, [location]);
 
   useEffect(() => {
     return () => {
@@ -158,7 +182,7 @@ export default function _mainSubjectsSubject() {
 
 
   return (
-    <div className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
+    <div ref={containerDiv} className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
       <div className='flex flex-col items-center'>
         <div className='w-[95vw] sm:w-[70vw] max-w-[70rem] flex flex-col items-center mt-3'>
           <div className='relative w-full h-[10.6rem] rounded-xl mb-3 py-5 px-8'>
@@ -215,6 +239,19 @@ export default function _mainSubjectsSubject() {
               )): <div className={'flex items-center justify-center w-full'}>
                   <Loader/>
               </div>}
+              {!isLoadingData
+                && size !== undefined
+                && count !== undefined
+                && page !== undefined
+                && (
+                  <Pagination
+                    page={page}
+                    size={size}
+                    total={count}
+                    previous={`${location.pathname}?page=${page - 1}`}
+                    next={`${location.pathname}?page=${page + 1}`}
+                  />
+              )}
             </div>
           </div>
         </div>
