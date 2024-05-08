@@ -138,6 +138,13 @@ export default function _mainSubjectsSubject() {
   const navigation = useNavigation();
 
   useEffect(() => {
+    return () => {
+      sessionStorage.removeItem('question_types')
+      sessionStorage.removeItem('question_status')
+    }
+  }, []);
+
+  useEffect(() => {
     if (isFirstLoad.current) {
       isFirstLoad.current = false;
       return;
@@ -163,7 +170,7 @@ export default function _mainSubjectsSubject() {
             </div>
           </div>
           <div className='w-full flex space-x-4'>
-            <div className='w-[14rem] rounded-xl shadow-md p-2 text-black h-fit sticky top-4'>
+            <div className='w-[14rem] rounded-xl shadow-md p-2 text-black h-fit bg-white'>
               <p className='text-lg px-2 font-bold mb-4'>Questions filter</p>
               <SubjectsSection subjects={filteredSubjects} />
               <hr className='my-5' />
@@ -172,6 +179,16 @@ export default function _mainSubjectsSubject() {
               <FiltersSection title='Type' filters={TYPE_FILTERS} paramsId='question_types' />
             </div>
             <div className='flex flex-col space-y-4 w-full'>
+              {questions?.length === 0 && (
+                <div className='w-full flex items-center justify-center'>
+                  <div
+                    className="shadow bg-white mt-4 p-16 text-center w-[95%] sm:w-[34rem] h-fit flex items-center flex-col rounded-md">
+                    <h2 className="text-xl font-bold mb-3">
+                      No matching results
+                    </h2>
+                  </div>
+                </div>
+              )}
               {navigation.state === 'idle' ?
               questions?.map(question => (
                 <Question
@@ -201,15 +218,8 @@ const FiltersSection = ({ title, filters, showMoreOn, paramsId }: {
   paramsId?: string;
 }) => {
   const [showMore, setShowMore] = useState(false);
-  const [allParams, setAllParams] = useState<string[]>([]);
   const showMoreVisible = showMoreOn && !showMore;
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (paramsId) {
-      setAllParams(getStorageArr(paramsId));
-    }
-  }, []);
 
   const handleChange = (value: string, isChecked: boolean) => {
     if (paramsId) {
@@ -243,7 +253,7 @@ const FiltersSection = ({ title, filters, showMoreOn, paramsId }: {
               label={filter?.label}
               value={filter?.value}
               count={filter?.count}
-              defaultChecked={filter?.defaultChecked || allParams?.includes(filter?.value)}
+              defaultChecked={filter?.defaultChecked}
               onChecked={handleChange}
             />
         )
@@ -286,14 +296,12 @@ const SubjectsSection = ({ subjects }: { subjects?: IFilter[] }) => {
           </Link>
         ))
       }
-      {showMoreVisible && (
-        <button
-          className='ms-1 text-[#0059ff] text-sm px-2 py-1 rounded font-medium w-fit hover:bg-[#e1f2ff]'
-          onClick={() => setShowMoreVisible(false)}
-        >
-          Show more
-        </button>
-      )}
+      <button
+        className='ms-1 text-[#0059ff] text-sm px-2 py-1 rounded font-medium w-fit hover:bg-[#e1f2ff]'
+        onClick={() => setShowMoreVisible(!showMoreVisible)}
+      >
+        {showMoreVisible ? 'Show more' : 'Show less'}
+      </button>
     </section>
   )
 }
