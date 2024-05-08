@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
   id: string;
@@ -11,6 +11,10 @@ interface Props {
 
 export default function CheckboxWithLabel({ id, label, value, count, defaultChecked, onChecked }: Props) {
   const [isChecked, setIsChecked] = useState<boolean>(defaultChecked ?? false);
+
+  useEffect(() => {
+    defaultChecked !== undefined && setIsChecked(defaultChecked);
+  }, [defaultChecked]);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(event.target.checked);

@@ -1,5 +1,11 @@
 import Question from "~/components/question/Question";
-import { Link, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
+import {
+  ClientLoaderFunctionArgs,
+  Link,
+  useLoaderData,
+  useNavigate,
+  useNavigation,
+} from "@remix-run/react";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { json } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
@@ -9,16 +15,21 @@ import { getSubjectIdBySlug, getSubjectSlugById } from "~/models/subjectsMapper"
 import clsx from "clsx";
 import { IQuestion, ISubjectFilter, IUser, IUsers, QuestionClass } from "~/models/questionModel";
 import Loader from "~/components/UI/Loader";
+import { clientGetQuestionsById, clientGetUsers } from "~/apis/questionsAPI";
+
+interface LoaderData {
+  questions?: IQuestion[];
+  subjects?: ISubjectFilter[];
+  mainSubjectId?: string;
+  users?: IUsers[];
+}
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const { subject } = params;
   const url = new URL(request.url);
   const queryParams = url.searchParams;
 
-  const questionTypes = queryParams.getAll('question_types');
-  const questionStatus = queryParams.getAll('question_status');
-  const answeredParam = questionStatus?.length === 1
-    ? questionStatus?.includes('answered') : undefined
+  const page = queryParams.get('page');
   const mainSubjectId = getSubjectIdBySlug(subject);
 
   let subjects: ISubjectFilter[] = [],
@@ -29,9 +40,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     const [questions, subjects] = await Promise.all([
       getQuestionsById({ params: {
         topic_ids: [mainSubjectId],
-        question_types: questionTypes?.length ? questionTypes : undefined,
-        is_answered: answeredParam,
-      }}),
+        page: page ? page : 0 }
+      }),
       getSubjectsFilter(),
     ])
 
@@ -55,6 +65,53 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   return json({ questions, subjects, mainSubjectId, users });
 }
 
+let initialLoaderResponse: LoaderData | undefined = undefined;
+export const clientLoader = async ({
+ request,
+ params,
+ serverLoader,
+}: ClientLoaderFunctionArgs) => {
+  if (!initialLoaderResponse) {
+    const serverData = await serverLoader() as LoaderData;
+    initialLoaderResponse = serverData;
+    return serverData;
+  }
+
+  const { subject } = params;
+  const mainSubjectId = getSubjectIdBySlug(subject);
+
+  const url = new URL(request.url);
+  const queryParams = url.searchParams;
+  const page = queryParams.get('page');
+
+  const questionTypes = getStorageArr("question_types");
+  const questionStatus = getStorageArr("question_status");
+  const answeredParam = questionStatus?.length === 1
+    ? questionStatus?.includes('answered') : undefined
+
+  const questions = await clientGetQuestionsById({ params: {
+      topic_ids: [mainSubjectId],
+      question_types: questionTypes?.length ? questionTypes : undefined,
+      is_answered: answeredParam,
+      page: page ? page : 0 }
+  });
+
+  const userIds = [];
+  for (const question of questions?.data) {
+    if (question?.user_id) userIds.push(question.user_id);
+  }
+
+  const users = userIds?.length ? await clientGetUsers(userIds).catch(() => []) : [];
+
+  return {
+    questions: questions?.data?.map(question => QuestionClass.questionExtraction(question)),
+    users: QuestionClass.usersExtraction(users),
+    mainSubjectId,
+  }
+};
+
+clientLoader.hydrate = true;
+
 const getFilteredSubjects = (subjects?: ISubjectFilter[], mainSubjectId?: string) => {
   return subjects
     ?.filter(subject => subject?.questions_count > 0)
@@ -73,7 +130,8 @@ export default function _mainSubjectsSubject() {
     mainSubjectId,
     questions,
     users,
-  } = useLoaderData<typeof loader>()
+  } = useLoaderData() as LoaderData;
+  const [savedSubjects] = useState(subjects);
   const [filteredSubjects, setFilteredSubjects] = useState<IFilter[] | undefined>(
     () => getFilteredSubjects(subjects, mainSubjectId));
   const isFirstLoad = useRef(true);
@@ -85,9 +143,9 @@ export default function _mainSubjectsSubject() {
       return;
     }
 
-    const list = getFilteredSubjects(subjects, mainSubjectId);
+    const list = getFilteredSubjects(savedSubjects, mainSubjectId);
     setFilteredSubjects(list);
-  }, [subjects]);
+  }, [navigation?.location]);
 
 
   return (
@@ -108,12 +166,6 @@ export default function _mainSubjectsSubject() {
             <div className='w-[14rem] rounded-xl shadow-md p-2 text-black h-fit sticky top-4'>
               <p className='text-lg px-2 font-bold mb-4'>Questions filter</p>
               <SubjectsSection subjects={filteredSubjects} />
-              {/*{subjectsFilter && <FiltersSection*/}
-              {/*  title='Subjects'*/}
-              {/*  filters={subjectsFilter}*/}
-              {/*  showMoreOn={7}*/}
-              {/*  paramsId='topic_ids'*/}
-              {/*/>}*/}
               <hr className='my-5' />
               <FiltersSection title='Status' filters={STATUS_FILTERS} paramsId='question_status' />
               <hr className='my-5' />
@@ -149,17 +201,31 @@ const FiltersSection = ({ title, filters, showMoreOn, paramsId }: {
   paramsId?: string;
 }) => {
   const [showMore, setShowMore] = useState(false);
+  const [allParams, setAllParams] = useState<string[]>([]);
   const showMoreVisible = showMoreOn && !showMore;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const allParams = paramsId ? searchParams?.getAll(paramsId) : undefined;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (paramsId) {
+      setAllParams(getStorageArr(paramsId));
+    }
+  }, []);
 
   const handleChange = (value: string, isChecked: boolean) => {
     if (paramsId) {
-      isChecked
-        ? searchParams.append(paramsId, value)
-        : searchParams.delete(paramsId, value)
-      setSearchParams(searchParams, {
-        preventScrollReset: true,
+      let currentState = getStorageArr(paramsId);
+
+      let updatedState;
+      if (isChecked) {
+        updatedState = [...currentState, value];
+      } else {
+        updatedState = currentState?.filter(state => state !== value);
+      }
+
+      sessionStorage.setItem(paramsId, JSON.stringify(updatedState));
+      navigate(".", {
+        replace: true,
+        relative: "path",
       });
     }
   }
@@ -230,6 +296,15 @@ const SubjectsSection = ({ subjects }: { subjects?: IFilter[] }) => {
       )}
     </section>
   )
+}
+
+const getStorageArr = (key: string): string[] => {
+  let data = sessionStorage.getItem(key);
+  if (data) {
+    return JSON.parse(data);
+  }
+
+  return [];
 }
 
 const STATUS_FILTERS: IFilter[] = [
