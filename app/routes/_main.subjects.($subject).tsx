@@ -19,6 +19,7 @@ import Loader from "~/components/UI/Loader";
 import { clientGetQuestionsById, clientGetUsers } from "~/apis/questionsAPI";
 import { Pagination } from "~/components/UI/Pagination";
 import { useAuth } from "~/context/AuthProvider";
+import ContentLoader from "~/components/UI/ContentLoader";
 
 interface LoaderData {
   questions?: IQuestion[];
@@ -199,7 +200,7 @@ export default function _mainSubjectsSubject() {
             </div>
           </div>
           <div className='w-full flex max-md:flex-col md:space-x-4'>
-            <div className='w-full md:w-[14rem] mb-2 rounded-xl shadow-md p-2 text-black h-fit bg-white'>
+            <div className='w-full md:w-[14rem] mb-5 rounded-xl shadow-md p-2 text-black h-fit bg-white'>
               <button
                 className='flex items-center justify-between w-full sm:pointer-events-none'
                 onClick={() => setQuestionsFilterExpanded(!questionsFilterExpanded)}
@@ -220,7 +221,7 @@ export default function _mainSubjectsSubject() {
               </div>
             </div>
             <div className='flex flex-col space-y-4 w-full flex-1 overflow-x-hidden'>
-              {questions?.length === 0 && (
+              {questions?.length === 0 && !isLoadingData && (
                 <div className='w-full flex items-center justify-center'>
                   <div
                     className="shadow bg-white mt-4 p-16 text-center w-[95%] sm:w-[34rem] h-fit flex items-center flex-col rounded-md">
@@ -240,9 +241,7 @@ export default function _mainSubjectsSubject() {
                   slug={question?.slug}
                   isLoggedIn={!!user}
                 />
-              )): <div className={'flex items-center justify-center w-full'}>
-                  <Loader/>
-              </div>}
+              )): <ContentLoaderContainer />}
               {!isLoadingData
                 && !!questions?.length
                 && size !== undefined
@@ -361,6 +360,28 @@ const SubjectsSection = ({ subjects }: { subjects?: IFilter[] }) => {
     </section>
   )
 }
+
+const ContentLoaderContainer = () => (
+ <>
+  <QuestionsContentLoader />
+  <QuestionsContentLoader />
+  <QuestionsContentLoader />
+ </>
+)
+
+const QuestionsContentLoader = () => (
+  <div className='flex flex-col w-full h-fit rounded-lg p-3.5 shadow-md bg-white'>
+    <div className='flex space-x-3'>
+      <ContentLoader tailwindStyles='h-11 w-11 rounded-full' />
+      <div className='flex flex-col items-start text-sm text-black'>
+        <ContentLoader tailwindStyles='w-20 h-5 mb-1 rounded-md' />
+        <ContentLoader tailwindStyles='w-5 h-5 rounded-md' />
+      </div>
+    </div>
+    <hr className='my-2.5' />
+    <ContentLoader tailwindStyles='w-full h-16 rounded-md' />
+  </div>
+)
 
 const getStorageArr = (key: string): string[] => {
   let data = sessionStorage.getItem(key);
