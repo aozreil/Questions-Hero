@@ -16,10 +16,10 @@ export default function LandingSearchSlide() {
       <BackgroundEffect>
         <ExpandableSearch />
       </BackgroundEffect>
-      <div className={"container grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 gap-4"}>
+      <div className={"container grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-9 gap-4 w-[90%] md:w-[50rem] max-w-[50rem] z-30"}>
         <SubjectLink slug={""} label={"All Subjects"} icon={'/assets/images/topics/all-topics.svg'} />
-        {Object.entries(SUBJECTS_MAPPER).map(([id, { label, slug }]) => {
-          return <SubjectLink key={slug} slug={slug} label={label} icon={`/assets/images/topics/${id}.svg`} />;
+        {Object.entries(SUBJECTS_MAPPER).map(([id, { label, slug, shortTitle }]) => {
+          return <SubjectLink key={slug} slug={slug} label={shortTitle ?? label} icon={`/assets/images/topics/${id}.svg`} />;
         })}
       </div>
     </section>
@@ -29,8 +29,8 @@ export default function LandingSearchSlide() {
 function SubjectLink({ slug, label, icon }: { slug: string, label: string, icon?: string }) {
   return <Link to={`/subjects/${slug}`}
                className={"flex justify-center flex-col group items-center space-y-2 text-gray-500 font-semibold hover:bg-gray-200 rounded p-2"}>
-    <img src={icon} alt={label} width={56} height={56} className={"w-14 h-14 group-hover:scale-105 "} />
-    <div className={"line-clamp-2 text-sm h-10 group-hover:text-black"}>
+    <img src={icon} alt={label} width={16} height={16} className={"w-7 lg:w-4 h-7 lg:h-4 group-hover:scale-105 "} />
+    <div className={"line-clamp-2 text-sm lg:text-xs h-10 group-hover:text-black"}>
       <p> {label}</p>
     </div>
   </Link>;

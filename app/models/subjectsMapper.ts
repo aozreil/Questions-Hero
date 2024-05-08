@@ -1,4 +1,4 @@
-export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string }} = {
+export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string, shortTitle?: string }} = {
   125: {
     "label": "Business",
     "slug": "business"
@@ -41,6 +41,7 @@ export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string }} =
   },
   101: {
     "label": "Social Work / Family Therapy / Human Services",
+    "shortTitle": "Social Work",
     "slug": "social"
   },
   111: {
@@ -69,6 +70,7 @@ export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string }} =
   },
   106: {
     "label": "Geology / Geography / Oceanography / Atmospheric Sciences",
+    "shortTitle": "Geology & Geography",
     "slug": "geology"
   },
   121: {
