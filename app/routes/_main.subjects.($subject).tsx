@@ -134,8 +134,10 @@ export default function _mainSubjectsSubject() {
   const [savedSubjects] = useState(subjects);
   const [filteredSubjects, setFilteredSubjects] = useState<IFilter[] | undefined>(
     () => getFilteredSubjects(subjects, mainSubjectId));
+  const [questionsFilterExpanded, setQuestionsFilterExpanded] = useState(true);
   const isFirstLoad = useRef(true);
   const navigation = useNavigation();
+  const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname?.includes('subjects')
 
   useEffect(() => {
     return () => {
@@ -158,25 +160,37 @@ export default function _mainSubjectsSubject() {
   return (
     <div className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
       <div className='flex flex-col items-center'>
-        <div className='w-[70vw] max-w-[70rem] flex flex-col items-center mt-3'>
+        <div className='w-[95vw] sm:w-[70vw] max-w-[70rem] flex flex-col items-center mt-3'>
           <div className='relative w-full h-[10.6rem] rounded-xl mb-3 py-5 px-8'>
             <img src='/assets/images/subjects-header.png' alt='subjects-header' className='absolute z-10 w-full h-full top-0 left-0' />
-            <img src='/assets/images/subjects-header-icon.png' alt='subjects-header' className='absolute z-10 h-[80%] top-0 bottom-0 my-auto right-12' />
-            <div className='relative flex flex-col justify-center space-y-6 h-full z-20'>
-              <p className='text-3xl text-white font-bold'>Curious minds want to know!</p>
-              <Link to='/ask-question' className='btn-primary w-fit'>
-                <p className='text-lg mx-16 my-2'>Ask away - we've got answers</p>
+            <img src='/assets/images/subjects-header-icon.png' alt='subjects-header' className='max-lg:hidden absolute z-10 h-[80%] top-0 bottom-0 my-auto right-12' />
+            <div className='relative flex flex-col max-sm:items-center max-sm:justify-center space-y-6 h-full z-20'>
+              <p className='text-2xl sm:text-3xl text-white font-bold'>Curious minds want to know!</p>
+              <Link to='/ask-question' target='_blank' className='btn-primary w-fit'>
+                <p className='text-lg mx-10 sm:mx-16 my-2'>Ask away - we've got answers</p>
               </Link>
             </div>
           </div>
-          <div className='w-full flex space-x-4'>
-            <div className='w-[14rem] rounded-xl shadow-md p-2 text-black h-fit bg-white'>
-              <p className='text-lg px-2 font-bold mb-4'>Questions filter</p>
-              <SubjectsSection subjects={filteredSubjects} />
-              <hr className='my-5' />
-              <FiltersSection title='Status' filters={STATUS_FILTERS} paramsId='question_status' />
-              <hr className='my-5' />
-              <FiltersSection title='Type' filters={TYPE_FILTERS} paramsId='question_types' />
+          <div className='w-full flex max-md:flex-col md:space-x-4'>
+            <div className='w-full md:w-[14rem] mb-2 rounded-xl shadow-md p-2 text-black h-fit bg-white'>
+              <button
+                className='flex items-center justify-between w-full sm:pointer-events-none'
+                onClick={() => setQuestionsFilterExpanded(!questionsFilterExpanded)}
+              >
+                <p className='text-lg px-2 font-bold'>Questions filter</p>
+                <img
+                  src='/assets/images/drop-down.svg'
+                  alt='arrow-down'
+                  className={`md:hidden w-4 mr-2 transition-all duration-200 ${questionsFilterExpanded ? '-rotate-90' : 'rotate-90'}`}
+                />
+              </button>
+              <div className={clsx('flex flex-col w-full h-fit', !questionsFilterExpanded && 'hidden')}>
+                <SubjectsSection subjects={filteredSubjects} />
+                <hr className='my-5' />
+                <FiltersSection title='Status' filters={STATUS_FILTERS} paramsId='question_status' />
+                <hr className='my-5' />
+                <FiltersSection title='Type' filters={TYPE_FILTERS} paramsId='question_types' />
+              </div>
             </div>
             <div className='flex flex-col space-y-4 w-full'>
               {questions?.length === 0 && (
@@ -189,7 +203,7 @@ export default function _mainSubjectsSubject() {
                   </div>
                 </div>
               )}
-              {navigation.state === 'idle' ?
+              {!isLoadingData ?
               questions?.map(question => (
                 <Question
                   key={question?.id}
@@ -274,7 +288,7 @@ const SubjectsSection = ({ subjects }: { subjects?: IFilter[] }) => {
   const [showMoreVisible, setShowMoreVisible] = useState(true);
   if (!subjects) return null;
   return (
-    <section className='flex flex-col space-y-2 '>
+    <section className='flex flex-col space-y-2 mt-2'>
       <p className='px-2'>Subjects</p>
       {subjects
         ?.slice(0, showMoreVisible ? 4 : subjects?.length )
