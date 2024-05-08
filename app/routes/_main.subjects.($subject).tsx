@@ -18,6 +18,7 @@ import { IQuestion, ISubjectFilter, IUser, IUsers, QuestionClass } from "~/model
 import Loader from "~/components/UI/Loader";
 import { clientGetQuestionsById, clientGetUsers } from "~/apis/questionsAPI";
 import { Pagination } from "~/components/UI/Pagination";
+import { useAuth } from "~/context/AuthProvider";
 
 interface LoaderData {
   questions?: IQuestion[];
@@ -124,14 +125,15 @@ export const clientLoader = async ({
 
 clientLoader.hydrate = true;
 
-const getFilteredSubjects = (subjects?: ISubjectFilter[], mainSubjectId?: string) => {
+const getFilteredSubjects = (subjects?: ISubjectFilter[], mainSubjectId?: string, selectedCount?: number) => {
+  const isSelected = (id: number) => !!mainSubjectId && !!id && id === Number(mainSubjectId);
   return subjects
     ?.filter(subject => subject?.questions_count > 0)
     ?.map(subject => ({
       label: subject?.title,
       value: subject?.id?.toString(),
-      count: subject?.questions_count?.toString(),
-      defaultChecked: !!mainSubjectId && !!subject?.id && subject?.id === Number(mainSubjectId),
+      count: isSelected(subject?.id) && selectedCount !== undefined ? selectedCount : subject?.questions_count?.toString(),
+      defaultChecked: isSelected(subject?.id),
     }))
     ?.sort((a, b) => b?.defaultChecked ? 1 : -1)
 }
@@ -148,13 +150,14 @@ export default function _mainSubjectsSubject() {
   } = useLoaderData() as LoaderData;
   const [savedSubjects] = useState(subjects);
   const [filteredSubjects, setFilteredSubjects] = useState<IFilter[] | undefined>(
-    () => getFilteredSubjects(subjects, mainSubjectId));
+    () => getFilteredSubjects(subjects, mainSubjectId, count));
   const [questionsFilterExpanded, setQuestionsFilterExpanded] = useState(true);
   const isFirstLoad = useRef(true);
   const containerDiv = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigation = useNavigation();
-  const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname?.includes('subjects')
+  const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname?.includes('subjects');
+  const { user } = useAuth();
 
   useEffect(() => {
     if (containerDiv.current) {
@@ -177,10 +180,9 @@ export default function _mainSubjectsSubject() {
       return;
     }
 
-    const list = getFilteredSubjects(savedSubjects, mainSubjectId);
+    const list = getFilteredSubjects(savedSubjects, mainSubjectId, count);
     setFilteredSubjects(list);
-  }, [navigation?.location]);
-
+  }, [questions]);
 
   return (
     <div ref={containerDiv} className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
@@ -236,6 +238,7 @@ export default function _mainSubjectsSubject() {
                   createdAt={question?.created_at}
                   user={question?.user_id ? users[question.user_id] : undefined}
                   slug={question?.slug}
+                  isLoggedIn={!!user}
                 />
               )): <div className={'flex items-center justify-center w-full'}>
                   <Loader/>
@@ -262,7 +265,7 @@ export default function _mainSubjectsSubject() {
   )
 }
 
-interface IFilter { label: string; value: string; count?: string; defaultChecked?: boolean }
+interface IFilter { label: string; value: string; count?: string | number; defaultChecked?: boolean }
 
 const FiltersSection = ({ title, filters, showMoreOn, paramsId }: {
   title: string;
