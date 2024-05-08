@@ -44,7 +44,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   try {
     const [questions, subjects] = await Promise.all([
       getQuestionsById({ params: {
-        topic_ids: [mainSubjectId],
+        topic_ids: mainSubjectId ? [mainSubjectId] : undefined,
         page: page ? page : 0 }
       }),
       getSubjectsFilter(),
@@ -98,7 +98,7 @@ export const clientLoader = async ({
     ? questionStatus?.includes('answered') : undefined
 
   const questions = await clientGetQuestionsById({ params: {
-      topic_ids: [mainSubjectId],
+      topic_ids: mainSubjectId ? [mainSubjectId] : undefined,
       question_types: questionTypes?.length ? questionTypes : undefined,
       is_answered: answeredParam,
       page: page ? page : 0 }
@@ -115,6 +115,7 @@ export const clientLoader = async ({
     questions: questions?.data?.map(question => QuestionClass.questionExtraction(question)),
     users: QuestionClass.usersExtraction(users),
     mainSubjectId,
+    subjects: initialLoaderResponse?.subjects,
     page: questions?.page,
     size: questions?.size,
     count: questions?.count,
@@ -216,7 +217,7 @@ export default function _mainSubjectsSubject() {
                 <FiltersSection title='Type' filters={TYPE_FILTERS} paramsId='question_types' />
               </div>
             </div>
-            <div className='flex flex-col space-y-4 w-full'>
+            <div className='flex flex-col space-y-4 w-full flex-1 overflow-x-hidden'>
               {questions?.length === 0 && (
                 <div className='w-full flex items-center justify-center'>
                   <div
@@ -240,6 +241,7 @@ export default function _mainSubjectsSubject() {
                   <Loader/>
               </div>}
               {!isLoadingData
+                && !!questions?.length
                 && size !== undefined
                 && count !== undefined
                 && page !== undefined
