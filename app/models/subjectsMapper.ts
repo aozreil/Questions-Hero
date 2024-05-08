@@ -68,7 +68,7 @@ export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string }} =
     "slug": "criminal"
   },
   106: {
-    "label": "Geology/Geography/Oceanography/Atmospheric Sciences",
+    "label": "Geology / Geography / Oceanography / Atmospheric Sciences",
     "slug": "geology"
   },
   121: {

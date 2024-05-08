@@ -3,7 +3,7 @@ import { getSeoMeta } from "~/utils/seo";
 import Footer from "~/components/UI/Footer";
 import LandingAboutSlide from "~/components/widgets/LandingAboutSlide";
 import LandingSearchSlide from "~/components/widgets/LandingSearchSlide";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { BASE_URL } from "~/config/enviromenet";
 import SlidesNavigator from "~/components/UI/SlidesNavigator";
 import { useSlides } from "~/context/SlidesProvider";
