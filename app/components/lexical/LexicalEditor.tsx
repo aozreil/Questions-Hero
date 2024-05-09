@@ -4,6 +4,7 @@ import {RichTextPlugin} from "@lexical/react/LexicalRichTextPlugin";
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
+import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import { ImageNode } from "./nodes/ImageNode";
 import {ListItemNode, ListNode} from '@lexical/list';
 import { CustomImagePlugin } from "./plugins/CustomImagePlugin";
@@ -79,6 +80,7 @@ const LexicalEditor = forwardRef(({
           <ExportHtmlPlugin ref={ref} />
           <OnUpdatePlugin onCharDifference={onCharDifference} />
           <DragDropPaste />
+          <AutoFocusPlugin />
           <div className='absolute bottom-0 left-0 w-full h-10 bg-white rounded-t-xl
            border-t border-[#99a7af] flex items-center justify-center px-5'>
             <ToolbarActions />

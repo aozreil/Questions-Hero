@@ -29,6 +29,12 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
   const lexicalRef = useRef<LexicalExportRef>(null);
   const { trackEvent } = useAnalytics();
 
+  useEffect(() => {
+    return () => {
+      setError('')
+    }
+  }, [open]);
+
   const handlePostAnswer = useCallback(async () => {
     if (lexicalRef.current) {
       const { textOutput, htmlOutput, isUploadingImages } = lexicalRef.current.getEditorState();

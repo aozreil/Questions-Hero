@@ -17,6 +17,7 @@ import {
 import { redirect, useLoaderData } from "@remix-run/react";
 import {
   answersSorterFun,
+  getQuestionBody,
   AnswerStatus,
   IAnswer,
   IConcept,
@@ -207,7 +208,7 @@ export default function QuestionPage() {
       <PostAnswerModal
         open={postAnswerOpened}
         onClose={() => setPostAnswerOpened(false)}
-        questionText={question?.text}
+        questionText={getQuestionBody(question)}
         questionId={question?.id}
         onSuccess={handlePostAnswerSuccess}
       />
