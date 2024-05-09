@@ -10,12 +10,18 @@ import {
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { json, MetaFunction } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
-import { getQuestionsById, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
+import { getQuestionsById, getQuestionsInfo, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
 import { useEffect, useRef, useState } from "react";
 import { getSubjectIdBySlug, getSubjectSlugById, SUBJECTS_MAPPER } from "~/models/subjectsMapper";
 import clsx from "clsx";
-import { IQuestion, ISubjectFilter, IUser, IUsers, QuestionClass } from "~/models/questionModel";
-import { clientGetQuestionsById, clientGetUsers } from "~/apis/questionsAPI";
+import {
+  AnswerStatus,
+  IQuestion,
+  ISubjectFilter,
+  IUsers,
+  QuestionClass
+} from "~/models/questionModel";
+import { clientGetQuestionsById, clientGetQuestionsInfo, clientGetUsers } from "~/apis/questionsAPI";
 import { Pagination } from "~/components/UI/Pagination";
 import { useAuth } from "~/context/AuthProvider";
 import ContentLoader from "~/components/UI/ContentLoader";
@@ -60,10 +66,13 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
   ];
 }
 
+interface QuestionsInfoMapper { [key: string]: { answers_count: number, answers_statuses: AnswerStatus[] } };
+
 interface LoaderData {
   questions?: IQuestion[];
   subjects?: ISubjectFilter[];
   mainSubjectId?: string;
+  questionsInfoMapper?: QuestionsInfoMapper;
   users?: IUsers[];
   page?: number,
   size?: number,
@@ -92,17 +101,29 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     ])
 
     const userIds = [];
+    const questionIds = [];
     for (const question of questions?.data) {
       if (question?.user_id) userIds.push(question.user_id);
+      if (question?.id) questionIds.push(question.id);
     }
 
-    const users = userIds?.length ? await getUsersInfo(userIds).catch(() => []) : [];
+    const [users, questionsInfo] = await Promise.all([
+      userIds?.length && getUsersInfo(userIds).catch(() => []),
+      questionIds?.length && getQuestionsInfo({ params: { ids: questionIds }}).catch(() => []),
+    ]);
+
+    let questionsInfoMapper: QuestionsInfoMapper = {};
+    questionsInfo && questionsInfo?.forEach((question) => questionsInfoMapper[question.id] = {
+      answers_count: question?.answers_count,
+      answers_statuses: question?.answers_statuses,
+    });
 
     return json({
       questions: questions?.data?.map(question => QuestionClass.questionExtraction(question)),
       subjects,
       mainSubjectId,
-      users,
+      questionsInfoMapper,
+      users: users ?? [],
       page: questions?.page,
       size: questions?.size,
       count: questions?.count,
@@ -146,15 +167,27 @@ export const clientLoader = async ({
   });
 
   const userIds = [];
+  const questionIds = [];
   for (const question of questions?.data) {
     if (question?.user_id) userIds.push(question.user_id);
+    if (question?.id) questionIds.push(question.id);
   }
 
-  const users = userIds?.length ? await clientGetUsers(userIds).catch(() => []) : [];
+  const [users, questionsInfo] = await Promise.all([
+    userIds?.length && clientGetUsers(userIds).catch(() => []),
+    questionIds?.length && clientGetQuestionsInfo({ params: { ids: questionIds }}).catch(() => []),
+  ]);
+
+  let questionsInfoMapper: QuestionsInfoMapper = {};
+  questionsInfo && questionsInfo?.forEach((question) => questionsInfoMapper[question.id] = {
+    answers_count: question?.answers_count,
+    answers_statuses: question?.answers_statuses,
+  });
 
   return {
     questions: questions?.data?.map(question => QuestionClass.questionExtraction(question)),
-    users: QuestionClass.usersExtraction(users),
+    users: users ? QuestionClass.usersExtraction(users) : [],
+    questionsInfoMapper,
     mainSubjectId,
     subjects: initialLoaderResponse?.subjects,
     page: questions?.page,
@@ -187,6 +220,7 @@ export default function _mainSubjectsSubject() {
     page,
     size,
     count,
+    questionsInfoMapper,
   } = useLoaderData() as LoaderData;
   const [savedSubjects] = useState(subjects);
   const [filteredSubjects, setFilteredSubjects] = useState<IFilter[] | undefined>(
@@ -279,6 +313,8 @@ export default function _mainSubjectsSubject() {
                   user={question?.user_id ? users[question.user_id] : undefined}
                   slug={question?.slug}
                   isLoggedIn={!!user}
+                  answerCount={questionsInfoMapper?.hasOwnProperty(question?.id) ? questionsInfoMapper[question.id].answers_count : undefined}
+                  answerStatuses={questionsInfoMapper?.hasOwnProperty(question?.id) ? questionsInfoMapper[question.id].answers_statuses : undefined}
                 />
               )): <ContentLoaderContainer />}
               {!isLoadingData

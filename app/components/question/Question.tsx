@@ -9,9 +9,13 @@ interface Props {
   createdAt?: string;
   slug?: string;
   isLoggedIn?: boolean;
+  answerStatuses?: AnswerStatus[];
+  answerCount?: number;
 }
 
-export default function Question({ user, questionBody, createdAt, slug, isLoggedIn }: Props) {
+export default function Question({
+  user, questionBody, createdAt, slug, isLoggedIn, answerStatuses, answerCount
+}: Props) {
   return (
     <div className='w-full h-fit border border-[#99a7af] rounded-lg p-3.5 bg-white'>
       <div className='flex items-center justify-between'>
@@ -21,11 +25,17 @@ export default function Question({ user, questionBody, createdAt, slug, isLogged
       <hr className='my-2.5' />
 
       <Link to={`/question/${slug}`} target='_blank' dangerouslySetInnerHTML={{ __html: questionBody }} />
-      {/*<hr className='my-2.5' />*/}
-      {/*<div className='flex items-center justify-between'>*/}
-      {/*  <p className='text-sm'>Answered by <span className='font-bold'>Emad Wahbeh</span></p>*/}
-      {/*  <QuestionType answerCount={2} answerStatus={AnswerStatus.VERIFIED} />*/}
-      {/*</div>*/}
+      {(answerStatuses?.length && answerCount) && (
+        <>
+          <hr className='my-2.5' />
+          <div className='flex items-center justify-end'>
+            <QuestionType
+              answerCount={answerCount}
+              answerStatuses={answerStatuses}
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }
