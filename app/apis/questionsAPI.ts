@@ -1,5 +1,13 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { IAnswer, IPostQuestion, IPreSignedURL, IQuestionInfo, IUser } from "~/models/questionModel";
+import {
+  IAnswer,
+  IPostQuestion,
+  IPreSignedURL,
+  IQuestion,
+  IQuestionInfo,
+  IQuestionsResponse,
+  IUser
+} from "~/models/questionModel";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { axiosApiInstance, paramsSerializerComma } from "~/interceptors/client-interceptors";
 
@@ -83,4 +91,20 @@ export async function uploadFile (
     ...config,
   });
   return response.data;
+}
+
+export async function clientGetQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
+  const response = await axios.get<IQuestion[]>(`${ASKGRAM_BASE}/api/content/questions`, {
+    ...config,
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
+}
+
+export async function clientGetQuestionsByIdV1(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
+  const response = await axios.get<IQuestionsResponse>(`${ASKGRAM_BASE}/api/content/v1/questions`, {
+    ...config,
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
 }
