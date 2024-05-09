@@ -25,7 +25,7 @@ export default function Question({
       <hr className='my-2.5' />
 
       <Link to={`/question/${slug}`} target='_blank' dangerouslySetInnerHTML={{ __html: questionBody }} />
-      {(answerStatuses?.length && answerCount) && (
+      {(!!answerStatuses?.length && !!answerCount) && (
         <>
           <hr className='my-2.5' />
           <div className='flex items-center justify-end'>
