@@ -20,7 +20,7 @@ export default function Question({
     <div className='w-full h-fit border border-[#99a7af] rounded-lg p-3.5 bg-white'>
       <div className='flex items-center justify-between'>
         {user && <PostedByUser user={user} createdAt={createdAt} />}
-        {isLoggedIn && <Link to={`/question/${slug}`} target='_blank' className='btn-black'>Answer</Link>}
+        {isLoggedIn && <Link to={`/question/${slug}`} state={{ fromSubjectsPage: true }} className='btn-black'>Answer</Link>}
       </div>
       <hr className='my-2.5' />
 

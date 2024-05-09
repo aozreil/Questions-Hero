@@ -14,7 +14,7 @@ import {
   getRelatedQuestionById,
   getUsersInfo
 } from "~/apis/questionsAPI.server";
-import { redirect, useLoaderData } from "@remix-run/react";
+import { redirect, useLoaderData, useLocation } from "@remix-run/react";
 import {
   answersSorterFun,
   AnswerStatus,
@@ -192,6 +192,16 @@ export default function QuestionPage() {
   const { user } = useAuth();
     const { trackEvent } = useAnalytics();
   const { t } = useTranslation();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.fromSubjectsPage && user) {
+      setTimeout(() => {
+        setPostAnswerOpened(true);
+        window.history.pushState({}, '', null);
+      }, 600);
+    }
+  }, []);
 
     useEffect(() => {
       trackEvent('question-page-view');

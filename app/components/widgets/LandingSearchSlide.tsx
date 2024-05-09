@@ -29,7 +29,7 @@ export default function LandingSearchSlide() {
 function SubjectLink({ slug, label, icon }: { slug: string, label: string, icon?: string }) {
   return <Link to={`/subjects/${slug}`}
                className={"flex justify-center flex-col group items-center space-y-2 text-gray-500 font-semibold hover:bg-gray-200 rounded p-2"}>
-    <img src={icon} alt={label} width={16} height={16} className={"w-7 lg:w-4 h-7 lg:h-4 group-hover:scale-105 "} />
+    <img src={icon} alt={label} width={24} height={24} className={"w-7 lg:w-6 h-7 lg:h-6 group-hover:scale-105 "} />
     <div className={"line-clamp-2 text-sm lg:text-xs h-10 group-hover:text-black"}>
       <p> {label}</p>
     </div>
