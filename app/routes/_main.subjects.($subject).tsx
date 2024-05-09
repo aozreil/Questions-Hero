@@ -27,6 +27,7 @@ import { useAuth } from "~/context/AuthProvider";
 import ContentLoader from "~/components/UI/ContentLoader";
 import { getSeoMeta } from "~/utils/seo";
 import { BASE_URL } from "~/config/enviromenet";
+import { getKatexLink } from "~/utils/external-links";
 
 export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
   if (!data) {
@@ -63,6 +64,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
       canonical
     }),
     ...getPrevNextLinks(),
+    ...getKatexLink(),
   ];
 }
 
