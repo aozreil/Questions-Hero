@@ -6,6 +6,7 @@ import LandingSearchSlide from "~/components/widgets/LandingSearchSlide";
 import { useCallback, useEffect, useState } from "react";
 import { BASE_URL } from "~/config/enviromenet";
 import SlidesNavigator from "~/components/UI/SlidesNavigator";
+import { useSlides } from "~/context/SlidesProvider";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({
@@ -16,30 +17,16 @@ export const meta: MetaFunction = () => ([
 const NUMBER_OF_SLIDES = 2;
 
 export default function Index() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [slideSelectedByUser, setSlideSelectedByUser] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isSearchFocused || slideSelectedByUser) return;
-      const nextIndex = (currentSlide + 1) % NUMBER_OF_SLIDES;
-      setCurrentSlide(nextIndex);
-    }, 30000);
-
-    return () => {
-      clearInterval(interval);
-    }
-  }, [currentSlide, isSearchFocused]);
+  const { currentSlide, setCurrentSlide, setPauseSlideNavigation } = useSlides();
 
   const setSlideByUser = useCallback((slideNumber: number) => {
     setCurrentSlide(slideNumber);
-    setSlideSelectedByUser(true);
+    setPauseSlideNavigation(true);
   }, []);
 
   const getHomeContent = () => {
     switch (currentSlide) {
-      case 0: return <LandingSearchSlide setIsSearchFocused={setIsSearchFocused} />;
+      case 0: return <LandingSearchSlide />;
       case 1: return  <LandingAboutSlide />;
       default: return <LandingAboutSlide />;
     }

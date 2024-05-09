@@ -19,6 +19,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
   const pageDesc = type === "LOGIN" ? "Welcome Back" : "Get your free answers now!";
   const bottomText = type === "LOGIN" ? "Don't have an account?" : "Already have an account?";
   const [currentLocation, setCurrentSolution] = useState<string | undefined>(undefined);
+  const [googleInitialized, setGoogleInitialized] = useState(false);
   const location = useLocation();
 
   const status = useScript("https://accounts.google.com/gsi/client", {
@@ -56,7 +57,8 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
         }
       }
     });
-    google.accounts.id.prompt()
+    google.accounts.id.prompt();
+    setGoogleInitialized(true);
     return () =>{
       if(status === 'ready'){
         google.accounts.id.cancel()
@@ -120,7 +122,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
             <p className="text-2xl sm:text-5xl font-bold">{pageDesc}</p>
           </section>
           <section className="w-full mt-12 gap-4 flex flex-col items-center font-semibold text-xl">
-             <SignInWithGoogle isReady={status === 'ready'} type={type}/>
+             <SignInWithGoogle isReady={status === 'ready' && googleInitialized} type={type}/>
           </section>
           {type === "SIGNUP" && (
             <p className="max-sm:w-[90%] text-center sm:text-sm text-[#4d6473] mt-6 sm:mt-12">

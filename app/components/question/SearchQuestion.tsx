@@ -77,7 +77,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
 
   return <>
     <div>
-      <div id={`q-${id}`} className={clsx("relative w-full lg:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
+      <div data-cy="search-question-card" id={`q-${id}`} className={clsx("relative w-full lg:w-fit flex lg:items-baseline lg:space-x-2", isOpen ? focusedOverlayStyles : '')}>
         <div
           className={clsx(
             "flex flex-col border-2 rounded-xl p-4 bg-white border-gray-300 shadow w-full lg:w-[28rem] 2xl:w-[34rem] flex-shrink-0 h-fit",
@@ -93,6 +93,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
             {answerCount > 0 && (
               <button
                 className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-xl"
+                data-cy='show-hide-answer'
                 onClick={handleShowAnswer}
               >
                 {isOpen ? 'Hide' : 'Show Answer'}

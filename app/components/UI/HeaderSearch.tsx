@@ -1,8 +1,9 @@
 import { Form, useLocation, useSearchParams, useNavigation } from "@remix-run/react";
 import clsx from "clsx";
 import Loader from "~/components/UI/Loader";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useOverlay } from "~/context/OverlayProvider";
+import { useSlides } from "~/context/SlidesProvider";
 
 interface Props {
   className?: string;
@@ -19,6 +20,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   const { setOverlayVisible, overlayVisible } = useOverlay();
   const isSearching = navigation.state === 'loading' && navigation.formAction === '/search';
   const searchOutsideSearchPage = !location?.pathname?.includes('search')
+  const slides = location?.pathname === '/' ? useSlides() : undefined;
 
   useEffect(() => {
     const searchTerm = searchParams?.get('term') ?? undefined;
@@ -38,11 +40,16 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   }, []);
 
   const onFocus = () => {
+    slides?.setPauseSlideNavigation && slides.setPauseSlideNavigation(true);
     if (setIsSearchExpanded && window.innerWidth <= 640) {
       setIsSearchExpanded(true);
       setOverlayVisible(true);
     }
   }
+
+  const onBlur = useCallback(() => {
+    slides?.setPauseSlideNavigation && slides.setPauseSlideNavigation(false);
+  }, [slides?.setPauseSlideNavigation])
 
   const onSubmit = () => {
     setOverlayVisible(false);
@@ -76,6 +83,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
       action="/search"
       className={clsx(`relative rounded-md max-sm:flex-1 sm:w-[22rem] lg:w-[34rem]`, className)}
       onSubmit={onSubmit}
+      data-cy="header-search"
     >
       <div className={clsx("absolute inset-y-0 sm:left-3 flex items-center", isSearchExpanded ? 'right-14' : 'max-sm:right-3')}>
         {isSearching && searchOutsideSearchPage
@@ -98,6 +106,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
             sm:rounded-md sm:pl-10 sm:pr-2 sm:bg-[#f2f4f5] sm:ring-1 sm:ring-inset sm:ring-[#99a7af] sm:focus:ring-[#070707] sm:text-sm sm:leading-6`}
           placeholder="Search for acadmic answers"
           onFocus={onFocus}
+          onBlur={onBlur}
           autoComplete='off'
           required={true}
         />

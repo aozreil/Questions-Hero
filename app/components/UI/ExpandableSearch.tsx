@@ -3,33 +3,31 @@ import { Form } from "@remix-run/react";
 import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import CloseIcon from "~/components/icons/CloseIcon";
+import { useSlides } from "~/context/SlidesProvider";
 import { useModals } from "~/context/ModalsProvider";
 
-interface Props {
-    setIsSearchFocused: (isFocused: boolean) => void;
-}
-
-export default function ExpandableSearch({ setIsSearchFocused }: Props) {
+export default function ExpandableSearch() {
     const [hasValue, setHasValue] = useState(false);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const submitButton = useRef<HTMLButtonElement>(null);
     const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
+    const { setPauseSlideNavigation } = useSlides();
     const { ocrOpened, setOcrOpened } = useModals();
 
     useEffect(() => {
-        setIsSearchFocused(ocrOpened);
+        setPauseSlideNavigation(true);
     }, [ocrOpened]);
 
     const onFocus = useCallback(() => {
-        setIsSearchFocused(true);
+        setPauseSlideNavigation(true);
         setOverlayVisible(true);
         if (textAreaRef.current) calculateTextareaRows(textAreaRef.current.value)
 
     }, []);
 
     const onBlur = useCallback(() => {
-        setIsSearchFocused(false);
+        setPauseSlideNavigation(false);
         setOverlayVisible(false);
         if (textAreaRef.current) textAreaRef.current.rows = 1;
     }, []);
@@ -99,6 +97,7 @@ export default function ExpandableSearch({ setIsSearchFocused }: Props) {
            md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
           onBlur={handleBlur}
           onSubmit={handleSubmit}
+          data-cy="landing-search"
         >
             <button ref={submitButton} className='flex-shrink-0' type='submit'>
                 <img

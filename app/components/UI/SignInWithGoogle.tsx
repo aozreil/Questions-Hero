@@ -10,7 +10,7 @@ export default function SignInWithGoogle({isReady, type}: Props) {
   const googleSignInRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!googleSignInRef.current || !type) {
+    if (!isReady || !googleSignInRef.current || !type) {
       return;
     }
     if(googleSignInRef.current.hasChildNodes()){
@@ -31,7 +31,7 @@ export default function SignInWithGoogle({isReady, type}: Props) {
 
   return (
     <div className={'max-h-10'}>
-      <div className={clsx('scale-75 xs:scale-100 sm:scale-125')} ref={googleSignInRef} />
+      <div data-cy="signin-google" className={clsx('scale-75 xs:scale-100 sm:scale-125')} ref={googleSignInRef} />
     </div>
   );
 }

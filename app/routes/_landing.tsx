@@ -1,13 +1,12 @@
 import Header from "~/components/UI/Header";
 import { Outlet } from "@remix-run/react";
-import { Toaster } from "react-hot-toast";
+import SlidesProvider from "~/context/SlidesProvider";
 
-export default function Main() {
+export default function Landing() {
   return (
-    <>
-      <Toaster position='bottom-right' />
+    <SlidesProvider>
       <Header />
       <Outlet />
-    </>
+    </SlidesProvider>
   );
 }
