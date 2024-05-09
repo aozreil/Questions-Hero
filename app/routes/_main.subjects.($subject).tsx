@@ -8,18 +8,57 @@ import {
   useNavigation
 } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@remix-run/router";
-import { json } from "@remix-run/node";
+import { json, MetaFunction } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
 import { getQuestionsById, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
 import { useEffect, useRef, useState } from "react";
-import { getSubjectIdBySlug, getSubjectSlugById } from "~/models/subjectsMapper";
+import { getSubjectIdBySlug, getSubjectSlugById, SUBJECTS_MAPPER } from "~/models/subjectsMapper";
 import clsx from "clsx";
 import { IQuestion, ISubjectFilter, IUser, IUsers, QuestionClass } from "~/models/questionModel";
-import Loader from "~/components/UI/Loader";
 import { clientGetQuestionsById, clientGetUsers } from "~/apis/questionsAPI";
 import { Pagination } from "~/components/UI/Pagination";
 import { useAuth } from "~/context/AuthProvider";
 import ContentLoader from "~/components/UI/ContentLoader";
+import { getSeoMeta } from "~/utils/seo";
+import { BASE_URL } from "~/config/enviromenet";
+
+export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
+  if (!data) {
+    return [];
+  }
+
+  const { page, size, count, mainSubjectId } = data as LoaderData;
+  const canonical = `${BASE_URL}${location?.pathname}${page ? location?.search : ''}`;
+
+  const getPageTitle = () => {
+    const defaultTitle = 'Subjects Page';
+    const subjectTitle = SUBJECTS_MAPPER.hasOwnProperty(Number(mainSubjectId)) && SUBJECTS_MAPPER[Number(mainSubjectId)]?.label;
+    if (subjectTitle) {
+      return `Subject | ${subjectTitle}`;
+    }
+
+    return defaultTitle;
+  }
+
+  const getPrevNextLinks = () => {
+    if (page === undefined || size === undefined || count === undefined) return[];
+    const prevLink = page > 0 && `${BASE_URL}${location?.pathname}?page=${page - 1}`;
+    const nextLink = ((page + 1) * size) < (count) && `${BASE_URL}${location?.pathname}?page=${page + 1}`;
+
+    let links = [];
+    if (prevLink) links.push({ tagName: "link", rel: "prev", href: prevLink })
+    if (nextLink) links.push({ tagName: "link", rel: "next", href: nextLink })
+    return links;
+  }
+
+  return [
+    ...getSeoMeta({
+      title: getPageTitle(),
+      canonical
+    }),
+    ...getPrevNextLinks(),
+  ];
+}
 
 interface LoaderData {
   questions?: IQuestion[];
