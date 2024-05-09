@@ -53,6 +53,7 @@ export default function SearchPage() {
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
   const [searchParams] = useSearchParams();
   const searchTerm = searchParams.get('term');
+  const fromOcrSearch = searchParams.get('ocr');
   const { trackEvent } = useAnalytics();
   const { overlayVisible } = useOverlay();
   const location = useLocation();
@@ -113,7 +114,7 @@ export default function SearchPage() {
             const resultsCount = count ? count : dataWithAiAnswer?.length;
 
             return <>
-              {dataWithAiAnswer.length === 0 && <>
+              {(dataWithAiAnswer.length === 0 && !fromOcrSearch) && <>
                 <EmptyResultsSearch />
               </>}
 
