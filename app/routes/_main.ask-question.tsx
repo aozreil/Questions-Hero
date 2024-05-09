@@ -193,7 +193,7 @@ export default function AskQuestion() {
               <textarea
                 ref={textAreaRef}
                 placeholder='Type your question here'
-                className='h-full flex-1 text-md text-[#4d6473] bg-[#f8f8f8] p-1 focus:outline-none resize-none'
+                className='h-full flex-1 text-md text-[#4d6473] bg-[#f8f8f8] p-1 focus:outline-none resize-none border-0 focus:ring-0'
                 onKeyDown={handleKeyDown}
                 onChange={handleChange}
               />

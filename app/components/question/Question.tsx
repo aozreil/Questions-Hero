@@ -24,7 +24,7 @@ export default function Question({
       </div>
       <hr className='my-2.5' />
 
-      <Link to={`/question/${slug}`} target='_blank' dangerouslySetInnerHTML={{ __html: questionBody }} />
+      <Link className='relative' to={`/question/${slug}`} target='_blank' dangerouslySetInnerHTML={{ __html: questionBody }} />
       {(!!answerStatuses?.length && !!answerCount) && (
         <>
           <hr className='my-2.5' />

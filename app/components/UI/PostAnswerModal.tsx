@@ -89,7 +89,7 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
           </div>
           <div className='flex-1 border border-[#99a7af] bg-[#f7fbff] p-2 rounded-xl overflow-hidden'>
             <textarea
-              className='answer-scrollable focus:outline-none w-full h-full rounded-xl resize-none bg-transparent text-lg placeholder:text-[#4d6473] px-4 py-5'
+              className='answer-scrollable focus:outline-none w-full h-full rounded-xl resize-none bg-transparent text-lg placeholder:text-[#4d6473] px-4 py-5 border-0 focus:ring-0'
               placeholder='Type your answer here'
               ref={textAreaRef}
               onChange={handleChange}
