@@ -10,7 +10,7 @@ import {
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { json, MetaFunction } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
-import { getQuestionsById, getQuestionsInfo, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
+import { getQuestionsByIdV1, getQuestionsInfo, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
 import { useEffect, useRef, useState } from "react";
 import { getSubjectIdBySlug, getSubjectSlugById, SUBJECTS_MAPPER } from "~/models/subjectsMapper";
 import clsx from "clsx";
@@ -21,7 +21,7 @@ import {
   IUsers,
   QuestionClass
 } from "~/models/questionModel";
-import { clientGetQuestionsById, clientGetQuestionsInfo, clientGetUsers } from "~/apis/questionsAPI";
+import { clientGetQuestionsByIdV1, clientGetQuestionsInfo, clientGetUsers } from "~/apis/questionsAPI";
 import { Pagination } from "~/components/UI/Pagination";
 import { useAuth } from "~/context/AuthProvider";
 import ContentLoader from "~/components/UI/ContentLoader";
@@ -95,7 +95,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   try {
     const [questions, subjects] = await Promise.all([
-      getQuestionsById({ params: {
+      getQuestionsByIdV1({ params: {
         topic_ids: mainSubjectId ? [mainSubjectId] : undefined,
         page: page ? page : 0 }
       }),
@@ -146,6 +146,10 @@ export const clientLoader = async ({
   if (!initialLoaderResponse) {
     const serverData = await serverLoader() as LoaderData;
     initialLoaderResponse = serverData;
+
+    // clear session storage on refresh
+    sessionStorage.removeItem('question_types')
+    sessionStorage.removeItem('question_status')
     return serverData;
   }
 
@@ -161,7 +165,7 @@ export const clientLoader = async ({
   const answeredParam = questionStatus?.length === 1
     ? questionStatus?.includes('answered') : undefined
 
-  const questions = await clientGetQuestionsById({ params: {
+  const questions = await clientGetQuestionsByIdV1({ params: {
       topic_ids: mainSubjectId ? [mainSubjectId] : undefined,
       question_types: questionTypes?.length ? questionTypes : undefined,
       is_answered: answeredParam,
@@ -242,13 +246,6 @@ export default function _mainSubjectsSubject() {
       });
     }
   }, [location]);
-
-  useEffect(() => {
-    return () => {
-      sessionStorage.removeItem('question_types')
-      sessionStorage.removeItem('question_status')
-    }
-  }, []);
 
   useEffect(() => {
     if (isFirstLoad.current) {
@@ -350,8 +347,17 @@ const FiltersSection = ({ title, filters, showMoreOn, paramsId }: {
   paramsId?: string;
 }) => {
   const [showMore, setShowMore] = useState(false);
+  const [cashedFilters, setCashedFilters] = useState<string[]>([]);
   const showMoreVisible = showMoreOn && !showMore;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!paramsId) return;
+    const sessionFilter = getStorageArr(paramsId);
+    if (sessionFilter?.length) {
+      setCashedFilters(sessionFilter);
+    }
+  }, []);
 
   const handleChange = (value: string, isChecked: boolean) => {
     if (paramsId) {
@@ -385,7 +391,7 @@ const FiltersSection = ({ title, filters, showMoreOn, paramsId }: {
               label={filter?.label}
               value={filter?.value}
               count={filter?.count}
-              defaultChecked={filter?.defaultChecked}
+              defaultChecked={filter?.defaultChecked || cashedFilters?.includes(filter?.value)}
               onChecked={handleChange}
             />
         )

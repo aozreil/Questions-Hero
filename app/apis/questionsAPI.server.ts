@@ -28,8 +28,16 @@ export async function getRelatedQuestionById(id: string, config?: AxiosRequestCo
   return response?.data;
 }
 
-export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
-    const response = await AxiosServerInstance.get<IQuestionsResponse>(`${CONTENT_CLUSTER}/questions`, {
+export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
+    const response = await AxiosServerInstance.get<IQuestion[]>(`${CONTENT_CLUSTER}/questions`, {
+        ...config,
+        paramsSerializer: paramsSerializerComma,
+    });
+    return response?.data;
+}
+
+export async function getQuestionsByIdV1(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
+    const response = await AxiosServerInstance.get<IQuestionsResponse>(`${CONTENT_CLUSTER}/v1/questions`, {
         ...config,
         paramsSerializer: paramsSerializerComma,
     });

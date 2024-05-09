@@ -3,6 +3,7 @@ import {
   IAnswer,
   IPostQuestion,
   IPreSignedURL,
+  IQuestion,
   IQuestionInfo,
   IQuestionsResponse,
   IUser
@@ -92,8 +93,16 @@ export async function uploadFile (
   return response.data;
 }
 
-export async function clientGetQuestionsById(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
-  const response = await axios.get<IQuestionsResponse>(`${ASKGRAM_BASE}/api/content/questions`, {
+export async function clientGetQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
+  const response = await axios.get<IQuestion[]>(`${ASKGRAM_BASE}/api/content/questions`, {
+    ...config,
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
+}
+
+export async function clientGetQuestionsByIdV1(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
+  const response = await axios.get<IQuestionsResponse>(`${ASKGRAM_BASE}/api/content/v1/questions`, {
     ...config,
     paramsSerializer: paramsSerializerComma
   });

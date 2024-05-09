@@ -4,7 +4,7 @@ interface Props {
   id: string;
   label: string;
   value: string;
-  count?: string;
+  count?: string | number;
   defaultChecked?: boolean;
   onChecked?: (value: string, isChecked: boolean) => void;
 }
