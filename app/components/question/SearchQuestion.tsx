@@ -105,7 +105,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
             to={slug? `/question/${slug}` : `/question/${id}`}
             prefetch={'intent'}
             target='_blank'
-            className={onlyHaveAIAnswer ? 'pointer-events-none' : ''}
+            className={clsx('overflow-x-hidden', onlyHaveAIAnswer && 'pointer-events-none')}
           >
             <hr className="mb-4" />
             <p
