@@ -15,6 +15,7 @@ import { useAnalytics } from "~/hooks/useAnalytics";
 import { useOverlay } from "~/context/OverlayProvider";
 import { AnswerStatus, ISearchQuestion } from "~/models/questionModel";
 import { OCRSearchResponseInterface } from "~/models/searchModel";
+import { getTextFormatted } from "~/utils/text-formatting-utils";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -85,10 +86,10 @@ export default function SearchPage() {
       return [
         {
           id: 'ai-answer',
-          text: searchTerm ?? '',
+          text: searchTerm ? getTextFormatted(searchTerm) : '',
           slug: './',
           answerCount: 1,
-          aiAnswer: aiAnswer,
+          aiAnswer: aiAnswer ? getTextFormatted(aiAnswer) : '',
           answerStatuses: [AnswerStatus.AI_ANSWER],
         },
         ...ocrSearchResults,

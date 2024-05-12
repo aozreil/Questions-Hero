@@ -169,7 +169,7 @@ export default function OcrSearch({ onClose }: Props) {
                 : <FileDrop onClick={handleImageChange} onFileDrop={handleFileDrop} />
             )}
             {uiState === UIState.UPLOADING && <StateLoader text='Uploading...' />}
-            {uiState === UIState.PROCESSING && <StateLoader text='Proccessing Your Image...' />}
+            {uiState === UIState.PROCESSING && <StateLoader text='Processing Your Image...' />}
           </div>
           {uiState === UIState.IMAGE_PICKING && (
             <div className='flex space-x-2 mt-5'>
