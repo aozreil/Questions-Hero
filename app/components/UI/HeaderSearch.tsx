@@ -4,6 +4,7 @@ import Loader from "~/components/UI/Loader";
 import { useCallback, useEffect, useRef } from "react";
 import { useOverlay } from "~/context/OverlayProvider";
 import { useSlides } from "~/context/SlidesProvider";
+import { useModals } from "~/context/ModalsProvider";
 
 interface Props {
   className?: string;
@@ -18,6 +19,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
   const inputRef = useRef<HTMLInputElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const { setOverlayVisible, overlayVisible } = useOverlay();
+  const { setOcrOpened } = useModals();
   const isSearching = navigation.state === 'loading' && navigation.formAction === '/search';
   const searchOutsideSearchPage = !location?.pathname?.includes('search')
   const slides = location?.pathname === '/' ? useSlides() : undefined;
@@ -96,20 +98,25 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
           />
         }
       </div>
-      <div className='w-full flex space-x-2 items-center'>
+      <div className='relative w-full flex space-x-2 items-center'>
         <input
           ref={inputRef}
           type="search"
           name="term"
           className={`w-full border-none py-1.5 bg-[#f8f8f8] placeholder:text-gray-400 focus:outline-none max-sm:text-2xl
-            rounded-full max-sm:pr-10 max-sm:pl-3 focus:ring-1 focus:ring-inset max-sm:focus:ring-gray-300
-            sm:rounded-md sm:pl-10 sm:pr-2 sm:bg-[#f2f4f5] sm:ring-1 sm:ring-inset sm:ring-[#99a7af] sm:focus:ring-[#070707] sm:text-sm sm:leading-6`}
+            rounded-full max-sm:pr-12 max-sm:pl-3 focus:ring-1 focus:ring-inset max-sm:focus:ring-gray-300
+            sm:pr-10 sm:rounded-md sm:pl-2 sm:bg-[#f2f4f5] sm:ring-1 sm:ring-inset sm:ring-[#99a7af] sm:focus:ring-[#070707] sm:text-sm sm:leading-6`}
           placeholder="Search for acadmic answers"
           onFocus={onFocus}
           onBlur={onBlur}
           autoComplete='off'
           required={true}
         />
+        {!isSearchExpanded && (
+          <button type='button' onClick={() => setOcrOpened(true)}>
+            <img src='/assets/images/search-ocr.svg' alt='search-by-image' className='absolute w-6 sm:w-5 h-6 sm:h-5 right-5 sm:right-4 top-0 bottom-0 my-auto' />
+          </button>
+        )}
         {isSearchExpanded && <img
           src='/assets/images/close-button.svg'
           alt='close' className='h-7 w-7'
