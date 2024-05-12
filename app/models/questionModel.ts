@@ -94,6 +94,13 @@ export interface IQuestionInfo {
     answers_count: number;
 }
 
+export interface IQuestionsResponse {
+  count: number;
+  data: IQuestion[];
+  page: number;
+  size: number;
+}
+
 export interface ISearchQuestion extends IQuestion {
     // Derived Props
     answerCount: number;
@@ -176,4 +183,10 @@ export interface IQuestionAttachment {
 
     // Derived Props
     url: string,
+}
+
+export interface ISubjectFilter {
+  id: number;
+  questions_count: number;
+  title: string;
 }

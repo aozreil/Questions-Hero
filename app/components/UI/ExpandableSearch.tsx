@@ -107,7 +107,7 @@ export default function ExpandableSearch() {
                 />
             </button>
             <textarea
-              className='textarea-scrollable max-sm:mt-0.5 rounded-lg cursor-text resize-none w-full text-left py-0.5 flex-1 mx-3 max-h-[158px] bg-white outline-none text-xl'
+              className='textarea-scrollable max-sm:mt-0.5 border-0 rounded-lg cursor-text resize-none w-full text-left py-0.5 flex-1 mx-3 max-h-[158px] bg-white outline-none text-xl border-none focus:ring-0'
               rows={1}
               name='term'
               placeholder='Search for acadmic answers…'
