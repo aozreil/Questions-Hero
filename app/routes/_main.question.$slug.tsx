@@ -50,11 +50,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [];
   }
-  const { canonical, question, internalAnswers, answers } = data;
+  const { canonical, question, internalAnswers, answers, concepts } = data;
   return [
     ...getSeoMeta({
       title: question?.title ?? question?.text,
-      description: getAnswerText(getVerifiedAnswer(internalAnswers?.length ? internalAnswers : answers)),
+      description: internalAnswers?.length ? getAnswerText(getVerifiedAnswer(internalAnswers)) : answers.length ? getAnswerText(getVerifiedAnswer(answers)) : concepts.length ? concepts.map((el) => el ? `${el.concept}: ${el.definition}` : "").join("\n") : question.text,
       canonical
     }),
     ...getStructuredData(data as LoaderData),
@@ -190,7 +190,7 @@ export default function QuestionPage() {
   } = useLoaderData<typeof loader>();
   const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED));
   const { user } = useAuth();
-    const { trackEvent } = useAnalytics();
+  const { trackEvent } = useAnalytics();
   const { t } = useTranslation();
   const location = useLocation();
 
@@ -198,14 +198,14 @@ export default function QuestionPage() {
     if (location.state?.fromSubjectsPage && user) {
       setTimeout(() => {
         setPostAnswerOpened(true);
-        window.history.pushState({}, '', null);
+        window.history.pushState({}, "", null);
       }, 600);
     }
   }, []);
 
-    useEffect(() => {
-      trackEvent('question-page-view');
-    }, []);
+  useEffect(() => {
+    trackEvent("question-page-view");
+  }, []);
 
   const handlePostAnswerSuccess = useCallback(() => {
     setPostAnswerOpened(false);
@@ -213,101 +213,101 @@ export default function QuestionPage() {
 
   return (
     <>
-    <MainContainer>
-      <PostAnswerModal
-        open={postAnswerOpened}
-        onClose={() => setPostAnswerOpened(false)}
-        questionText={question?.text}
-        questionId={question?.id}
-        onSuccess={handlePostAnswerSuccess}
-      />
-      <main
-        className="container max-sm:max-w-full max-sm:mx-0 aligned-with-search max-xs:mx-0 w-full h-fit flex flex-col max-lg:items-center sm:pt-4 sm:py-4">
-        <div className="w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit xl:-ml-2">
-          <div className="flex flex-col lg:flex-row justify-center gap-4">
-            <div
-              className="w-full h-fit sm:max-w-[34rem] lg:w-[34rem] flex flex-col bg-[#f1f5fb] sm:border sm:border-[#00000038] sm:rounded-xl overflow-hidden">
+      <MainContainer>
+        <PostAnswerModal
+          open={postAnswerOpened}
+          onClose={() => setPostAnswerOpened(false)}
+          questionText={question?.text}
+          questionId={question?.id}
+          onSuccess={handlePostAnswerSuccess}
+        />
+        <main
+          className="container max-sm:max-w-full max-sm:mx-0 aligned-with-search max-xs:mx-0 w-full h-fit flex flex-col max-lg:items-center sm:pt-4 sm:py-4">
+          <div className="w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit xl:-ml-2">
+            <div className="flex flex-col lg:flex-row justify-center gap-4">
               <div
-                className="flex flex-col items-center w-full rounded-b-xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]">
-                <QuestionContent
-                  question={question}
-                  user={question?.user_id ? users[question.user_id] : undefined}
-                  isVerified={isVerified}
-                />
-                <AttachmentsViewer attachments={attachments} />
-                {!!concepts?.length && (
-                  <QuestionSection
-                    title={t("Definitions")}
-                    content={(
-                      <>
-                        {concepts?.map((concept) => (
-                          !concept?.definition ? null : (
-                            <div key={concept?.concept} className="text-sm mt-4">
-                              <p className="mb-1 font-bold">{concept?.concept}</p>
-                              <p className="text-[#4d6473]">{concept?.definition}</p>
-                            </div>
-                          )
-                        ))}
-                      </>
-                    )}
+                className="w-full h-fit sm:max-w-[34rem] lg:w-[34rem] flex flex-col bg-[#f1f5fb] sm:border sm:border-[#00000038] sm:rounded-xl overflow-hidden">
+                <div
+                  className="flex flex-col items-center w-full rounded-b-xl bg-white shadow-[0_1px_5px_0_rgba(0,0,0,0.22)]">
+                  <QuestionContent
+                    question={question}
+                    user={question?.user_id ? users[question.user_id] : undefined}
+                    isVerified={isVerified}
                   />
-                )}
-                {!!objectives?.length && (
-                  <QuestionSection
-                    title={t("Learning Objectives")}
-                    className="lg:hidden"
-                    content={(
-                      <div className="text-sm mt-4">
-                        <ul className="list-disc ml-4 text-[#4d6473]">
-                          {objectives?.map((objective, index) => <li key={index}
-                                                                     className="mb-2">{objective?.text}</li>)}
-                        </ul>
-                      </div>
-                    )}
-                  />
-                )}
-                {user && (
-                  <div
-                    className="w-full p-4 border-t-[3px] border-[#ebf2f6] cursor-pointer"
-                    onClick={() => setPostAnswerOpened(true)}
-                  >
+                  <AttachmentsViewer attachments={attachments} />
+                  {!!concepts?.length && (
+                    <QuestionSection
+                      title={t("Definitions")}
+                      content={(
+                        <>
+                          {concepts?.map((concept) => (
+                            !concept?.definition ? null : (
+                              <div key={concept?.concept} className="text-sm mt-4">
+                                <p className="mb-1 font-bold">{concept?.concept}</p>
+                                <p className="text-[#4d6473]">{concept?.definition}</p>
+                              </div>
+                            )
+                          ))}
+                        </>
+                      )}
+                    />
+                  )}
+                  {!!objectives?.length && (
+                    <QuestionSection
+                      title={t("Learning Objectives")}
+                      className="lg:hidden"
+                      content={(
+                        <div className="text-sm mt-4">
+                          <ul className="list-disc ml-4 text-[#4d6473]">
+                            {objectives?.map((objective, index) => <li key={index}
+                                                                       className="mb-2">{objective?.text}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                    />
+                  )}
+                  {user && (
                     <div
-                      className="bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center">
-                      <div className="flex space-x-2.5 items-center">
-                        <UserProfile user={user} className="w-7 h-7 border-none" />
-                        <p className="text-[#4d6473]">{t("Add your answer")}</p>
+                      className="w-full p-4 border-t-[3px] border-[#ebf2f6] cursor-pointer"
+                      onClick={() => setPostAnswerOpened(true)}
+                    >
+                      <div
+                        className="bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center">
+                        <div className="flex space-x-2.5 items-center">
+                          <UserProfile user={user} className="w-7 h-7 border-none" />
+                          <p className="text-[#4d6473]">{t("Add your answer")}</p>
+                        </div>
+                        <img src="/assets/images/right-arrow.svg" alt="arrow" className="w-4 h-4 mr-2" />
                       </div>
-                      <img src="/assets/images/right-arrow.svg" alt="arrow" className="w-4 h-4 mr-2" />
                     </div>
+                  )}
+                </div>
+                {!!answers?.length && (
+                  <div className="mb-2 mt-3 px-3 flex flex-col items-center space-y-2.5">
+                    {answers?.map(answer => (
+                      <AnswerCard
+                        key={answer.created_at}
+                        answer={answer}
+                        user={answer?.user_id ? users[answer?.user_id] : undefined}
+                      />
+                    ))}
                   </div>
                 )}
               </div>
-              {!!answers?.length && (
-                <div className="mb-2 mt-3 px-3 flex flex-col items-center space-y-2.5">
-                  {answers?.map(answer => (
-                    <AnswerCard
-                      key={answer.created_at}
-                      answer={answer}
-                      user={answer?.user_id ? users[answer?.user_id] : undefined}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="block w-full lg:w-[22rem]">
-              {!!objectives?.length &&
-                <div className="hidden lg:block">
-                  <LearningObjectives objectives={objectives} />
-                </div>}
-              {relatedQuestions?.length > 0 && <RelatedQuestions list={relatedQuestions} />}
+              <div className="block w-full lg:w-[22rem]">
+                {!!objectives?.length &&
+                  <div className="hidden lg:block">
+                    <LearningObjectives objectives={objectives} />
+                  </div>}
+                {relatedQuestions?.length > 0 && <RelatedQuestions list={relatedQuestions} />}
+              </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-    </MainContainer>
-  <Footer/>
-  </>
+      </MainContainer>
+      <Footer />
+    </>
   );
 }
 
@@ -339,7 +339,7 @@ const getStructuredData = (data: LoaderData) => {
     "@type": "Quiz",
     "about": {
       "@type": "Thing",
-      "name": questionTitle,
+      "name": questionTitle
     },
     "hasPart": [
       {
