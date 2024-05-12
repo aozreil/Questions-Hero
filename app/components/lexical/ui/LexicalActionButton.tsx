@@ -1,6 +1,9 @@
+import clsx from "clsx";
+
 interface Props {
   command: string;
   onClick: () => void;
+  isSelected?: boolean;
 }
 
 const ASSETS_MAPPER: { [key: string]: string } = {
@@ -14,13 +17,13 @@ const ASSETS_MAPPER: { [key: string]: string } = {
   'text-smaller': '/assets/images/lexical/smaller.png',
 }
 
-export default function LexicalActionButton({ command, onClick }: Props) {
+export default function LexicalActionButton({ command, onClick, isSelected }: Props) {
   if (!ASSETS_MAPPER.hasOwnProperty(command)) return null;
   return (
     <button
       key={command}
       onClick={onClick}
-      className='w-7'
+      className={clsx('w-7', isSelected && 'border-b-[3px] border-b-[#070707]')}
     >
       <img src={ASSETS_MAPPER[command]} alt={command} className='w-full' />
     </button>
