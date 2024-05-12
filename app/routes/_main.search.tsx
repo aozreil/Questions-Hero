@@ -6,7 +6,7 @@ import SearchQuestion from "~/components/question/SearchQuestion";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
-import { AI_ANSWER_ACCEPTED_SCORE, BASE_URL } from "~/config/enviromenet";
+import { BASE_URL } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
 import { Await, defer, useLoaderData, useLocation, useNavigation, useSearchParams } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
@@ -81,12 +81,13 @@ export default function SearchPage() {
     const ocrSearchResults = ocrResponse?.data as ISearchQuestion[];
     if (!searchTerm || !ocrSearchResults) return data;
 
+    const ocrQuestionBody = ocrResponse?.aiImageAnalysis?.ocr_result ?? searchTerm;
     const aiAnswer = ocrResponse?.aiImageAnalysis?.answer;
     if (aiAnswer) {
       return [
         {
           id: 'ai-answer',
-          text: searchTerm ? getTextFormatted(searchTerm) : '',
+          text: ocrQuestionBody ? getTextFormatted(ocrQuestionBody) : '',
           slug: './',
           answerCount: 1,
           aiAnswer: aiAnswer ? getTextFormatted(aiAnswer) : '',
