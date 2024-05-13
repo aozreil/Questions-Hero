@@ -33,7 +33,7 @@ export default function LexicalActionButton({ command, onClick, isSelected }: Pr
     <button
       key={command}
       onClick={onClick}
-      className={clsx('p-1 rounded-md', isSelected ? 'bg-neutral-400' : 'hover:bg-neutral-300')}
+      className={clsx('p-1 rounded-md', isSelected ? 'bg-neutral-300' : 'hover:bg-neutral-200')}
     >
       {ASSETS_MAPPER.hasOwnProperty(command) ? ASSETS_MAPPER[command] : null}
     </button>
