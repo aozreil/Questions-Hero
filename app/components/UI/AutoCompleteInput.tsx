@@ -4,7 +4,7 @@ import { ChangeEvent, Fragment, useState } from "react";
 export interface IAutoCompleteItem { id: string | number; name: string }
 
 interface Props {
-  filteredList: IAutoCompleteItem[];
+  filteredList?: IAutoCompleteItem[];
   selectedItem?: IAutoCompleteItem;
   setSelectedItem: (item: IAutoCompleteItem) => void;
   onQueryChange?: (query: string) => void;
@@ -22,8 +22,12 @@ export default function AutoCompleteInput(
     onQueryChange && onQueryChange(event.target.value);
   }
 
+  const requestInitialList = () => {
+    onQueryChange && onQueryChange('');
+  }
+
   return (
-    <Combobox name={inputId} value={selectedItem} onChange={setSelectedItem}>
+    <Combobox name={inputId} value={selectedItem} defaultValue={selectedItem}>
       <div className="relative mt-1">
         <div className="relative w-full">
           <input className='hidden' name={inputId} id={inputId} value={selectedItem?.id} />
@@ -35,58 +39,61 @@ export default function AutoCompleteInput(
             onChange={handleQueryChange}
             autoComplete='off'
           />
-          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+          <Combobox.Button onClick={requestInitialList} className="absolute inset-y-0 right-0 flex items-center pr-2">
             <UpDownIcon />
           </Combobox.Button>
         </div>
-        <Transition
-          as={Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-          afterLeave={() => setQuery('')}
-        >
-          <Combobox.Options className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-            {filteredList.length === 0 && query !== '' ? (
-              <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
-                {notFoundComponent ? notFoundComponent(query) : <p>Nothing found.</p>}
-              </div>
-            ) : (
-              filteredList.map((item) => (
-                <Combobox.Option
-                  key={item.id}
-                  className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? 'bg-teal-600 text-white' : 'text-gray-900'
-                    }`
-                  }
-                  value={item}
-                >
-                  {({ selected, active }) => (
-                    <>
-                        <span
-                          className={`block truncate ${
-                            selected ? 'font-medium' : 'font-normal'
-                          }`}
-                        >
-                          {item.name}
-                        </span>
-                      {selected ? (
-                        <span
-                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                            active ? 'text-white' : 'text-teal-600'
-                          }`}
-                        >
-                            <CheckIcon />
+        {filteredList &&
+          <Transition
+            as={Fragment}
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            afterLeave={() => setQuery('')}
+          >
+            <Combobox.Options static={true} className="absolute z-30 mt-1 max-h-60 w-full overflow-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+              {filteredList.length === 0 && query !== '' ? (
+                <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                  {notFoundComponent ? notFoundComponent(query) : <p>Nothing found.</p>}
+                </div>
+              ) : (
+                filteredList.map((item) => (
+                  <Combobox.Option
+                    key={item.id}
+                    className={({ active }) =>
+                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                        active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                      }`
+                    }
+                    value={item}
+                    onClick={() => setSelectedItem(item)}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                          <span
+                            className={`block truncate ${
+                              selected ? 'font-medium' : 'font-normal'
+                            }`}
+                          >
+                            {item.name}
                           </span>
-                      ) : null}
-                    </>
-                  )}
-                </Combobox.Option>
-              ))
-            )}
-          </Combobox.Options>
-        </Transition>
+                        {selected ? (
+                          <span
+                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                              active ? 'text-white' : 'text-teal-600'
+                            }`}
+                          >
+                              <CheckIcon />
+                            </span>
+                        ) : null}
+                      </>
+                    )}
+                  </Combobox.Option>
+                ))
+              )}
+            </Combobox.Options>
+          </Transition>
+        }
       </div>
     </Combobox>
   )

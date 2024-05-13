@@ -36,7 +36,7 @@ export function DegreeDropDown({ defaultValue }: IProps) {
   const value = (typeof selected === "string" ? selected : selected?.value) ?? (typeof defaultValue === "string" ? defaultValue : defaultValue?.value);
   return <>
     <Dropdown items={DEGREE_OPTIONS} selected={selected ?? defaultValue} setSelected={setSelected} />
-    <input className="hidden" name="degree" id="degree" required
+    <input className="w-0 h-0 absolute border-none pointer-events-none focus:ring-0" name="degree" id="degree" required
            key={value}
            defaultValue={value} />
   </>;

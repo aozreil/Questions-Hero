@@ -10,11 +10,7 @@ interface Props {
 
 export default function MajorAutoComplete({ defaultSelected }: Props) {
   const [selectedMajor, setSelectedMajor] = useState<IAutoCompleteItem | undefined>(undefined)
-  const [filteredList, setFilteredList] = useState<IAutoCompleteItem[]>([]);
-
-  useEffect(() => {
-    onQueryChange('');
-  }, []);
+  const [filteredList, setFilteredList] = useState<IAutoCompleteItem[] | undefined>(undefined);
 
   const onQueryChange = async (query: string) => {
     try {
@@ -54,6 +50,7 @@ export default function MajorAutoComplete({ defaultSelected }: Props) {
           selectedItem={selectedMajor ?? defaultSelected}
           setSelectedItem={setSelectedMajor}
           onQueryChange={onQueryChange}
+          required={true}
           notFoundComponent={(query) => (
             <button
               className='flex items-center space-x-2 font-semibold text-green-200'
