@@ -167,3 +167,34 @@ export async function getUSerStatsByUserId(id: number, config?: AxiosRequestConf
   return response?.data;
 }
 
+export async function postUniversity(
+  name: string,
+) {
+  const response = await axiosApiInstance.post<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/universities`, {
+    "name": name,
+  });
+  return response.data;
+}
+
+export async function getUniversityById(
+  id: number | string,
+) {
+  const response = await axiosApiInstance.get<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/universities/${id}`);
+  return response.data;
+}
+
+export async function postMajor(
+  name: string,
+) {
+  const response = await axiosApiInstance.post<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/study-fields`, {
+    "name": name,
+  });
+  return response.data;
+}
+
+export async function getMajorById(
+  id: number | string,
+) {
+  const response = await axiosApiInstance.get<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/study-fields/${id}`);
+  return response.data;
+}

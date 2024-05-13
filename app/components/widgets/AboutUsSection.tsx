@@ -1,5 +1,5 @@
 import { IMeUser, IUser, IUserInfo } from "~/models/questionModel";
-import { HTMLProps, JSX, ReactNode } from "react";
+import { HTMLProps, JSX, ReactNode, useEffect, useState } from "react";
 import UserIcon from "~/components/icons/UserIcon";
 import EmailIcon from "~/components/icons/EmailIcon";
 import EduHatIcon from "~/components/icons/EduHatIcon";
@@ -9,7 +9,10 @@ import StudyLevelIcon from "~/components/icons/StudyLevelIcon";
 import clsx from "clsx";
 import { DegreeDropDown, degreeEnumMapper } from "~/components/widgets/DegreeDropDown";
 import { formatDate } from "date-fns";
-
+import UniversityAutoComplete from "~/components/widgets/UniversityAutoComlete";
+import MajorAutoComplete from "~/components/widgets/MajorAutoComplete";
+import { getMajorById, getUniversityById } from "~/apis/questionsAPI";
+import { IAutoCompleteItem } from "~/components/UI/AutoCompleteInput";
 
 interface IProps {
   user: IMeUser | IUser;
@@ -18,6 +21,37 @@ interface IProps {
 }
 
 export default function AboutUsSection({ user, editMode, errors }: IProps) {
+  const [university, setUniversity] = useState<IAutoCompleteItem | undefined>(undefined);
+  const [major, setMajor] = useState<IAutoCompleteItem | undefined>(undefined);
+
+  useEffect(() => {
+    if (user?.user_info?.university_id) {
+      updateUniversity(user?.user_info?.university_id);
+    }
+
+    if (user?.user_info?.study_field_id) {
+      updateMajor(user?.user_info?.study_field_id);
+    }
+  }, [user?.user_info]);
+
+  const updateUniversity = async (id: number | string) => {
+    try {
+      const res = await getUniversityById(id);
+      if (res?.id) setUniversity(res);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const updateMajor = async (id: number | string) => {
+    try {
+      const res = await getMajorById(id);
+      if (res?.id) setMajor(res);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return <div data-cy={'AboutUsSection'}>
     <AboutUsItem Icon={UserIcon} title={"Name"}>
       <div className={"lg:flex justify-between lg:items-center"}>
@@ -36,11 +70,11 @@ export default function AboutUsSection({ user, editMode, errors }: IProps) {
     }
     <AboutUsItem Icon={UniBuildingIcon} title={"University"}>
       {
-        editMode ?
-          <InputField name="university" id="university" required defaultValue={user.user_info?.university}
-                      maxLength={100} error={errors?.university} /> :
-          user.user_info?.university ? <p className="overflow-hidden text-ellipsis">{user.user_info?.university}</p> :
-            <EmptyFieldValue />
+        editMode
+          ? <UniversityAutoComplete defaultSelected={university} />
+          : university?.name
+            ? <p className="overflow-hidden text-ellipsis">{university?.name}</p>
+            : <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />
@@ -55,11 +89,11 @@ export default function AboutUsSection({ user, editMode, errors }: IProps) {
     <hr />
     <AboutUsItem Icon={EduHatIcon} title={"Major"}>
       {
-        editMode ?
-          <InputField name="study_field" id="study_field" required defaultValue={user.user_info?.study_field}
-                      maxLength={100} error={errors?.study_field} /> :
-          user.user_info?.study_field ? <p className="overflow-hidden text-ellipsis">{user.user_info.study_field}</p> :
-            <EmptyFieldValue />
+        editMode
+          ? <MajorAutoComplete defaultSelected={major} />
+          : major?.name
+            ? <p className="overflow-hidden text-ellipsis">{major?.name}</p>
+            : <EmptyFieldValue />
       }
     </AboutUsItem>
     <hr />

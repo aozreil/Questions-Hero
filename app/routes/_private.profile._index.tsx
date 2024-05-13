@@ -59,8 +59,8 @@ export const clientAction = async ({
     const res = await updateMeUserInfo({
       degree: degree as UserDegreeEnum,
       graduation_year: +graduation_year!,
-      study_field: study_field as string,
-      university: university as string
+      study_field_id: study_field as string,
+      university_id: university as string
     });
     return {
       ...res,

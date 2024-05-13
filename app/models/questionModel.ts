@@ -127,8 +127,8 @@ export interface IMeUser extends IUser {
 export interface IUserInfo {
   degree?: UserDegreeEnum,
   graduation_year?: number,
-  study_field?: string,
-  university?: string
+  study_field_id?: string,
+  university_id?: string,
 }
 
 export interface IUsers {
