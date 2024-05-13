@@ -34,7 +34,7 @@ export default function AutoCompleteInput(
           <Combobox.Input
             id={inputId}
             required={required}
-            className="px-4 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            className="px-4 block w-full rounded-md border-0 py-1.5 pr-7 truncate text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             displayValue={(item: IAutoCompleteItem) => item.name}
             onChange={handleQueryChange}
             autoComplete='off'
@@ -52,9 +52,9 @@ export default function AutoCompleteInput(
             afterLeave={() => setQuery('')}
           >
             <Combobox.Options static={true} className="absolute z-30 mt-1 max-h-60 w-full overflow-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              {filteredList.length === 0 && query !== '' ? (
+              {filteredList.length === 0 ? (
                 <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
-                  {notFoundComponent ? notFoundComponent(query) : <p>Nothing found.</p>}
+                  {notFoundComponent && query !== '' ? notFoundComponent(query) : <p>Nothing found.</p>}
                 </div>
               ) : (
                 filteredList.map((item) => (
