@@ -95,8 +95,8 @@ export default function OcrSearch({ onClose }: Props) {
 
                   setUiState(UIState.PROCESSING);
                   const searchRes = await searchByImage(
-                    `${ATTACHMENTS_BASE}/${preSignedKey}`,
                     token,
+                    { params: { imageUrl: `${ATTACHMENTS_BASE}/${preSignedKey}` } }
                   );
 
                   if (searchRes?.term) {

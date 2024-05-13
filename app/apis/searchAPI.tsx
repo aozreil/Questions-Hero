@@ -10,11 +10,11 @@ export async function searchQuestionsAPI(term: string) {
   return res.data
 }
 
-export async function searchByImage(imageUrl: string, recaptchaToken: string): Promise<OCRSearchResponseInterface> {
+export async function searchByImage(recaptchaToken: string, config?: AxiosRequestConfig): Promise<OCRSearchResponseInterface> {
   const res =  await axios.post<OCRSearchResponseInterface>
-    (`${ASKGRAM_BASE}/api/search/askgram/image/search?imageUrl=${imageUrl}`, {
+    (`${ASKGRAM_BASE}/api/search/askgram/image/search`, {
       recaptcha_token: recaptchaToken,
-    });
+    }, { ...config });
 
   if (res?.data) {
     const searchData = await getSearchResultsWithDetails(res?.data, true);
