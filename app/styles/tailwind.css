@@ -241,3 +241,7 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     list-style-type: decimal;
     list-style-position: inside;
 }
+
+.only-show-two-images img:nth-child(n+4) {
+    display: none;
+}
