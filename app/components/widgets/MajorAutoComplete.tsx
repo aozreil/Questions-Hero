@@ -55,6 +55,7 @@ export default function MajorAutoComplete({ defaultSelected }: Props) {
             <button
               className='flex items-center space-x-2 font-semibold text-green-200'
               onClick={() => handleAddingMajor(query)}
+              type="button"
             >
               <AddIcon />
               <p>add <span className='font-bold'>{query}</span> as a new major</p>

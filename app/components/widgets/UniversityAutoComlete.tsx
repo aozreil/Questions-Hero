@@ -55,6 +55,7 @@ export default function UniversityAutoComplete({ defaultSelected }: Props) {
             <button
               className='flex items-center space-x-2 font-semibold text-green-200'
               onClick={() => handleAddingUniversity(query)}
+              type="button"
             >
               <AddIcon />
               <p>add <span className='font-bold'>{query}</span> as a new university</p>

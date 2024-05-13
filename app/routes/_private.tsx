@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "@remix-run/react";
 import { useEffect } from "react";
 import { useAuth } from "~/context/AuthProvider";
 import Footer from "~/components/UI/Footer";
+import { Toaster } from "react-hot-toast";
 
 export default function PrivatePage() {
   const { user, isLoadingUserData } = useAuth();
@@ -15,6 +16,7 @@ export default function PrivatePage() {
   }, [navigator, user, isLoadingUserData]);
   return (
     <>
+      <Toaster position='bottom-right' />
       <Header />
       <Outlet />
       <Footer />
