@@ -60,7 +60,7 @@ export default function MajorAutoComplete({ defaultSelected }: Props) {
               onClick={() => handleAddingMajor(query)}
             >
               <AddIcon />
-              <p>add <span className='font-bold'>{query}</span> as a new university</p>
+              <p>add <span className='font-bold'>{query}</span> as a new major</p>
             </button>
           )}
         />
