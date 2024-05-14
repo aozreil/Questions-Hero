@@ -69,7 +69,7 @@ export default function UserProfileQuestionsPage() {
       Questions <span className={"hidden md:inline"}>({count})</span>
     </p>
     {data.length === 0 && (
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-4 mb-10">
         <p>
           You haven’t asked any questions yet!
         </p>
@@ -83,11 +83,13 @@ export default function UserProfileQuestionsPage() {
       {data.map((el, index) => {
         return <MyAskedQuestions key={`${el.id}-${index}`} question={el} user={user} text={"You asked"} />;
       })}
-      <Pagination page={currentPage}
-                  size={PAGE_SIZE}
-                  total={count}
-                  previous={`/profile/questions?page=${currentPage - 1}`}
-                  next={`/profile/questions?page=${currentPage + 1}`} />
+      {count > 0 && (
+        <Pagination page={currentPage}
+                    size={PAGE_SIZE}
+                    total={count}
+                    previous={`/profile/questions?page=${currentPage - 1}`}
+                    next={`/profile/questions?page=${currentPage + 1}`} />
+      )}
     </div>
   </div>;
 }

@@ -80,7 +80,7 @@ export default function UserProfileQuestionsPage() {
       Questions <span className={"hidden md:inline"}>({count})</span>
     </p>
     {data.length === 0 && (
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-4 mb-10">
         <p>
           The user hasn&apos;t asked any questions yet!
         </p>

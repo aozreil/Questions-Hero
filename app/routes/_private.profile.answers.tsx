@@ -97,11 +97,13 @@ export default function UserProfileAnswersPage() {
       {data.map((el, index) => {
         return <MyAnswers key={`${el.question_id}-${index}`} answer={el} user={user} question={el.question} text={'You answered'} />;
       })}
-      <Pagination page={currentPage}
-                  size={PAGE_SIZE}
-                  total={count}
-                  previous={`/profile/answers?page=${currentPage - 1}`}
-                  next={`/profile/answers?page=${currentPage + 1}`} />
+      {count > 0 && (
+        <Pagination page={currentPage}
+                    size={PAGE_SIZE}
+                    total={count}
+                    previous={`/profile/answers?page=${currentPage - 1}`}
+                    next={`/profile/answers?page=${currentPage + 1}`} />
+      )}
     </div>
 
   </div>;
