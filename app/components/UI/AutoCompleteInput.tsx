@@ -36,7 +36,7 @@ export default function AutoCompleteInput(
   const renderedList = filteredList?.length === 0 && query === '' ? initialList : filteredList;
 
   return (
-    <Combobox name={inputId} value={selectedItem} defaultValue={selectedItem}>
+    <Combobox name={inputId} value={selectedItem} defaultValue={selectedItem} onChange={setSelectedItem}>
       <div className="relative mt-1">
         <div className="relative w-full">
           <input className='hidden' name={inputId} id={inputId} value={selectedItem?.id} />
@@ -75,7 +75,6 @@ export default function AutoCompleteInput(
                       }`
                     }
                     value={item}
-                    onClick={() => setSelectedItem(item)}
                   >
                     {({ selected, active }) => (
                       <>
