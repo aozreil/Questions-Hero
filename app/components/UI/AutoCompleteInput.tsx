@@ -1,5 +1,5 @@
 import { Combobox, Transition } from "@headlessui/react";
-import { ChangeEvent, Fragment, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useState } from "react";
 
 export interface IAutoCompleteItem { id: string | number; name: string }
 
@@ -15,7 +15,14 @@ interface Props {
 
 export default function AutoCompleteInput(
   {filteredList, selectedItem, setSelectedItem, onQueryChange, notFoundComponent, inputId, required}: Props) {
+  const [initialList, setInitialList] = useState<IAutoCompleteItem[] | undefined>(undefined);
   const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    if (filteredList?.length && !initialList) {
+      setInitialList(filteredList);
+    }
+  }, [filteredList]);
 
   const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value)
@@ -25,6 +32,8 @@ export default function AutoCompleteInput(
   const requestInitialList = () => {
     onQueryChange && onQueryChange('');
   }
+
+  const renderedList = filteredList?.length === 0 && query === '' ? initialList : filteredList;
 
   return (
     <Combobox name={inputId} value={selectedItem} defaultValue={selectedItem}>
@@ -43,7 +52,7 @@ export default function AutoCompleteInput(
             <UpDownIcon />
           </Combobox.Button>
         </div>
-        {filteredList &&
+        {renderedList &&
           <Transition
             as={Fragment}
             leave="transition ease-in duration-100"
@@ -52,12 +61,12 @@ export default function AutoCompleteInput(
             afterLeave={() => setQuery('')}
           >
             <Combobox.Options static={true} className="absolute z-30 mt-1 max-h-60 w-full overflow-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              {filteredList.length === 0 ? (
+              {renderedList.length === 0 ? (
                 <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
                   {notFoundComponent && query !== '' ? notFoundComponent(query) : <p>Nothing found.</p>}
                 </div>
               ) : (
-                filteredList.map((item) => (
+                renderedList.map((item) => (
                   <Combobox.Option
                     key={item.id}
                     className={({ active }) =>
