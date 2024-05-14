@@ -7,9 +7,12 @@ interface IProps {
   items: { title: string, value: string }[],
   selected?: string | { title: string, value: string }
   setSelected?: (param: { title: string, value: string }) => void
+  placeholder?: string
+  required?: boolean
+  optionsContainerWidth?: string
 }
 
-export default function Dropdown({ selected, setSelected, items }: IProps) {
+export default function Dropdown({ selected, setSelected, items, placeholder, required, optionsContainerWidth }: IProps) {
 
   const selectedItem = items.find(el => {
     if (typeof selected === "string") {
@@ -25,7 +28,10 @@ export default function Dropdown({ selected, setSelected, items }: IProps) {
             <Listbox.Button
               className="relative top-0 w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
               <span
-                className="block truncate min-h-6">{selectedItem && selectedItem.title}</span>
+                className="block truncate min-h-6">
+                {selectedItem?.title ? selectedItem.title : placeholder}
+                <span className={`ml-0.5 text-red-600 ${required ? 'inline' : 'hidden'}`}>*</span>
+              </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                      stroke="currentColor" className="w-6 h-6">
@@ -43,7 +49,7 @@ export default function Dropdown({ selected, setSelected, items }: IProps) {
               leaveTo="opacity-0"
             >
               <Listbox.Options
-                className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                className={`absolute z-10 mt-1 max-h-60 ${optionsContainerWidth ? optionsContainerWidth : 'w-full'} overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}>
                 {items.map((el) => (
                   <Listbox.Option
                     key={el.value}
