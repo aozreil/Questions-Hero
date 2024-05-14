@@ -43,6 +43,10 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   });
   const questionIds = answers.data.map(el => el.question_id).filter(el => !!el);
 
+  if (!questionIds?.length) {
+    return { count: 0, data: [] };
+  }
+
   const questions = await getQuestionsById({
     params: {
       ids: questionIds
@@ -80,7 +84,7 @@ export default function UserProfileAnswersPage() {
       Answers <span className={"hidden md:inline"}>({count})</span>
     </p>
     {data.length === 0 && (
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-4 mb-10">
         <p>
           You haven’t answered any questions yet!
         </p>
