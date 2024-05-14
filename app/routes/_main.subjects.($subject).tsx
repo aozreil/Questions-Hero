@@ -544,7 +544,7 @@ const STATUS_FILTERS: IFilter[] = [
 ];
 
 const TYPE_FILTERS: IFilter[] = [
-  { label: 'Multiple answers', value: 'MULTIPLE_CHOICE' },
+  { label: 'Multiple Choice', value: 'MULTIPLE_CHOICE' },
   { label: 'True/False', value: 'TRUE_FALSE' },
   { label: 'Essay', value: 'ESSAY' },
   { label: 'Short answer', value: 'SHORT_ANSWER' },

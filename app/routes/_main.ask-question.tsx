@@ -127,7 +127,7 @@ export default function AskQuestion() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
+    const formData = new FormData(event.target as any);
     const type = formData.get("type") as string;
     const topic = formData.get("topic");
     if (type && topic) {
@@ -136,6 +136,7 @@ export default function AskQuestion() {
   }
 
   return (
+    <>
     <div className='flex-1 relative max-h-[calc(100vh-6rem)] flex flex-col overflow-y-auto bg-[#070707] pt-4 sm:pt-14'>
       {shouldLoadRecaptcha && (
         <ReCAPTCHA
@@ -196,9 +197,8 @@ export default function AskQuestion() {
           />
         </section>
       </div>
-      <div className='mt-auto w-full'>
-        <Footer />
-      </div>
     </div>
+    <Footer />
+  </>
   )
 }

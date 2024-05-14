@@ -43,7 +43,6 @@ export default function Dropdown({ selected, setSelected, items, placeholder, re
 
             <Transition
               show={open}
-              as={Fragment}
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
@@ -71,6 +70,7 @@ export default function Dropdown({ selected, setSelected, items, placeholder, re
                   </Listbox.Option>
                 ))}
               </Listbox.Options>
+              <div className='absolute h-72 w-2' />
             </Transition>
           </div>
         </>

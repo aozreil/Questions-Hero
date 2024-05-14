@@ -17,7 +17,7 @@ export default function QuestionTopicDropdown() {
       items={TOPICS}
       selected={selected}
       setSelected={setSelected}
-      placeholder='Topic'
+      placeholder='Subject'
       required={true}
       optionsContainerWidth='w-[250px]'
     />
