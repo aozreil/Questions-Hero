@@ -32,7 +32,7 @@ export default function UserProfilePage() {
     return <LoadingContent />;
   }
   return <>
-    <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-44">
+    <div className="container flex md:space-x-12 md:space-y-0 space-y-4 pt-10 flex-col md:flex-row lg:px-4 pb-10">
       <UserProfileInfo user={user} links={
         [
           {

@@ -19,7 +19,9 @@ export default function PrivatePage() {
       <Toaster position='bottom-right' />
       <Header />
       <Outlet />
-      <Footer />
+      <div className='flex w-full mt-auto'>
+        <Footer />
+      </div>
     </>
   );
 }

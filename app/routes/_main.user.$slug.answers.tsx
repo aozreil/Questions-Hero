@@ -94,7 +94,7 @@ export default function PublicUserProfileAnswersPage() {
   const slug = params.slug;
 
   return <div>
-    <p className="font-bold text-4xl text-black mb-10">
+    <p className="max-md:hidden font-bold text-3xl text-black mb-10">
       Answers <span className={"hidden md:inline"}>({count})</span>
     </p>
     {data.length === 0 && (

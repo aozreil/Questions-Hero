@@ -148,7 +148,7 @@ function EmptyFieldValue() {
 
 function AboutUsItem({ children, title, Icon }: { title: string, children: ReactNode, Icon: JSX.ElementType }) {
   return <div className={"my-4"} data-cy={'AboutUsItem'}>
-    <div className={"grid grid-cols-2 gap-4 text-xl md:text-2xl text-[#070707] mb-4"}>
+    <div className={"grid grid-cols-2 gap-4 text-xl text-[#070707] mb-4"}>
       <p className="overflow-hidden text-ellipsis line-clamp-1">
         <Icon className="h-8 w-8 text-[#ccd3d7] inline me-2 sm:me-7" />
         {title}

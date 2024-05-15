@@ -108,19 +108,34 @@ export default function UserProfileAboutPage() {
       fetcher.submit(formData, { method: "post" });
     }}>
       <div className="flex justify-between">
-        <p className="font-bold text-4xl text-black mb-10">
+        <p className="max-md:hidden font-bold text-3xl text-black mb-10">
           About
         </p>
-        <button
-          disabled={fetcher.state === "loading" || fetcher.state === "submitting"}
-          className={"text-[#163bf3] hover:bg-gray-100 rounded px-4 h-fit py-2 text-lg"} onClick={(e) => {
-          if (!editMode) {
-            e.preventDefault();
-            setEditMode(true);
-          }
-        }}>
-          {editMode ? fetcher.state === "submitting" ? "Saving..." : "Save" : "Edit Info"}
-        </button>
+        <div className='flex items-center space-x-2'>
+          {editMode && fetcher.state !== 'submitting' && (
+            <button
+              className={"text-[#163bf3] hover:bg-gray-100 rounded px-4 h-fit py-2 text-lg"}
+              onClick={(e) => {
+                setEditMode(false);
+            }}>
+              Cancel
+            </button>
+          )}
+          <button
+            disabled={fetcher.state === "loading" || fetcher.state === "submitting"}
+            className={"text-[#163bf3] hover:bg-gray-100 rounded px-4 h-fit py-2 text-lg"} onClick={(e) => {
+            if (!editMode) {
+              e.preventDefault();
+              setEditMode(true);
+            }
+          }}>
+            {editMode
+              ? fetcher.state === "submitting"
+                ? "Saving..."
+                : "Save"
+              : "Edit Info"}
+          </button>
+        </div>
       </div>
 
       {fetcher?.data?.errors?.general && <div className="rounded-md bg-red-50 p-4">

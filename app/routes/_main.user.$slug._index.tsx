@@ -28,7 +28,7 @@ export default function UserProfileAboutPage() {
   
   return <div>
     <div className="flex justify-between">
-      <p className="font-bold text-4xl text-black mb-10">
+      <p className="max-md:hidden font-bold text-3xl text-black mb-10">
         About
       </p>
     </div>
