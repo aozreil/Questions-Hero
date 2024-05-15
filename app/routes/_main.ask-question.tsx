@@ -168,7 +168,7 @@ export default function AskQuestion() {
         </Transition>
         <section className='w-full flex max-lg:flex-col max-lg:space-y-12 lg:space-x-5 pb-40 sm:pb-10'>
           <div className='relative w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[8rem] sm:min-h-[13rem] pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
-            <section data-cy='question-editor' className='text-black h-[8rem] sm:h-[13rem]'>
+            <section data-cy='question-editor' className='text-black h-[10rem] sm:h-[35vh]'>
               <Suspense>
                 <LexicalEditor
                   ref={lexicalRef}
@@ -178,9 +178,11 @@ export default function AskQuestion() {
                 />
               </Suspense>
             </section>
-            <Form onSubmit={handleSubmit} className='w-full p-4 flex-1 py-2 flex items-center justify-end space-x-2 text-sm'>
-              <QuestionTypeDropdown setIsTypeSelected={setIsTypeSelected} />
-              <QuestionTopicDropdown setIsTopicSelected={setIsTopicSelected} />
+            <Form onSubmit={handleSubmit} className='w-full p-4 flex-1 py-2 flex items-center justify-between text-sm'>
+              <div className='flex space-x-2'>
+                <QuestionTypeDropdown setIsTypeSelected={setIsTypeSelected} />
+                <QuestionTopicDropdown setIsTopicSelected={setIsTopicSelected} />
+              </div>
               <button
                 disabled={isPostingDisabled}
                 className={`${!isPostingDisabled ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
