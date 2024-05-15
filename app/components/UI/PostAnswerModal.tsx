@@ -45,12 +45,9 @@ export default function PostAnswerModal({ open, onClose, questionText, questionI
         }, 1000);
         return;
       }
-      if (!textOutput || !htmlOutput) {
-        setError('Something went wrong, please try again');
-        return;
-      }
-      if (countRealCharacters(textOutput) < 10) {
-        setError('Your answer must be at least 10 characters long');
+      if (!textOutput || !htmlOutput || countRealCharacters(textOutput) < 10) {
+        setError('Please write at least 10 characters to explain your answer');
+        setIsPosting(false);
         return;
       }
 

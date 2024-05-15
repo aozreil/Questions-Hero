@@ -32,7 +32,7 @@ export default function AnswerCard({ answer, user }: Props) {
           )}
           <div className='flex gap-3 w-full p-5 mt-3'>
             <UserProfile user={user} />
-            <div className='flex flex-col text-sm text-black pr-2 overflow-x-hidden'>
+            <div className='flex flex-col text-sm text-black pr-2 h-auto w-full overflow-hidden'>
               <p className='text-sm font-bold capitalize'>{user?.view_name ?? 'Answered By Askgram User'}</p>
               {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
               {answer?.text && (
