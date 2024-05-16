@@ -139,7 +139,6 @@ export default function AskQuestion() {
   }
 
   const getButtonTitle = () => {
-    if (hasExactMatch) return 'An exact match to your question is found.';
     if (!hasValue) return 'Please write at least 10 characters to explain your question.';
     if (!isTypeSelected) return 'Please select question type';
     if (!isTopicSelected) return 'Please select question subject';
