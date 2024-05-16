@@ -49,6 +49,12 @@ export default function AskQuestion() {
   }, []);
 
   useEffect(() => {
+    if (!hasExactMatch && showMatchError) {
+      setShowMatchError(false);
+    }
+  }, [hasExactMatch]);
+
+  useEffect(() => {
     if (hasValue && !shouldLoadRecaptcha) {
       setShouldLoadRecaptcha(true);
     }
