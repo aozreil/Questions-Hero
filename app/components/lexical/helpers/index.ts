@@ -20,6 +20,15 @@ export const isUploadingImages = (jsonState: any) => {
   return false;
 };
 
+export const doesIncludeImages = (jsonState: any) => {
+  for (const child of jsonState?.root?.children) {
+    if (child.type === 'user_image') {
+      return true;
+    }
+  }
+  return false;
+};
+
 export const filterEmptyNodes = (nodes: [string, LexicalNode][]) => {
   for (const [, node] of nodes) {
     if (node instanceof ParagraphNode) {

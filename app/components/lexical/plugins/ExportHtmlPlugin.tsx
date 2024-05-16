@@ -2,10 +2,15 @@ import { forwardRef, useImperativeHandle } from "react";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$generateHtmlFromNodes} from '@lexical/html';
 import sanitizeHtml from "sanitize-html";
-import { filterEmptyNodes, getEditorTextOutput, isUploadingImages } from "~/components/lexical/helpers";
+import {
+  doesIncludeImages,
+  filterEmptyNodes,
+  getEditorTextOutput,
+  isUploadingImages
+} from "~/components/lexical/helpers";
 
 export interface LexicalExportRef {
-  getEditorState: () => { htmlOutput: string, textOutput: string, isUploadingImages: boolean }
+  getEditorState: () => { htmlOutput: string, textOutput: string, isUploadingImages: boolean, haveImages: boolean }
 }
 
 export const ExportHtmlPlugin = forwardRef((props, ref) => {
@@ -13,7 +18,7 @@ export const ExportHtmlPlugin = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     getEditorState: () => {
-      let htmlOutput = '', textOutput = '', uploadingImages = false;
+      let htmlOutput = '', textOutput = '', uploadingImages = false, haveImages = false;
 
       editor.update(() => {
         const editorState = editor.getEditorState();
@@ -25,6 +30,7 @@ export const ExportHtmlPlugin = forwardRef((props, ref) => {
           return;
         }
 
+        haveImages = doesIncludeImages(jsonState);
         filterEmptyNodes(nodes);
         filterEmptyNodes(nodes.reverse());
 
@@ -41,7 +47,7 @@ export const ExportHtmlPlugin = forwardRef((props, ref) => {
         textOutput = getEditorTextOutput();
       });
 
-      return { htmlOutput, textOutput, isUploadingImages: uploadingImages };
+      return { htmlOutput, textOutput, isUploadingImages: uploadingImages, haveImages };
     }
   }));
 

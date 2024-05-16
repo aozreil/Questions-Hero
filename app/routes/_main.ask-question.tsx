@@ -30,6 +30,7 @@ export const meta: MetaFunction<typeof loader> = ({ location }) => {
 export default function AskQuestion() {
   const [searchTerm, setSearchTerm] = useState('');
   const [hasExactMatch, setHasExactMatch] = useState(false);
+  const [showMatchError, setShowMatchError] = useState(false);
   const [isSearchingForSimilar, setIsSearchingForSimilar] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
   const [postPendingOnUser, setPostPendingOnUser] = useState(false);
@@ -40,7 +41,7 @@ export default function AskQuestion() {
   const { user, openSignUpModal } = useAuth();
   const lexicalRef = useRef<LexicalExportRef>(null);
   const hasValue = !!searchTerm;
-  const isPostingDisabled = !hasValue || isPosting || hasExactMatch || isSearchingForSimilar;
+  const isPostingDisabled = !hasValue || isPosting || isSearchingForSimilar;
   const { trackEvent } = useAnalytics();
 
   useEffect(() => {
@@ -67,7 +68,7 @@ export default function AskQuestion() {
       return;
     }
     if (!lexicalRef.current) return;
-    const { textOutput, htmlOutput, isUploadingImages } = lexicalRef.current.getEditorState();
+    const { textOutput, htmlOutput, isUploadingImages, haveImages } = lexicalRef.current.getEditorState();
     if (isUploadingImages) {
       setIsPosting(true);
       setTimeout(() => {
@@ -75,13 +76,24 @@ export default function AskQuestion() {
       }, 1000);
       return;
     }
-    if (textOutput && hasValue && recaptchaRef.current) {
-      setIsPosting(true);
+
+    if (!haveImages && hasExactMatch) {
+      setIsPosting(false);
+      setShowMatchError(true);
+      return;
+    } else if (!haveImages) {
       const haveExactMatch = await isThereExactMatch(textOutput);
       if (haveExactMatch) {
         setIsPosting(false);
+        setShowMatchError(true);
         return;
       }
+    } else {
+      setShowMatchError(false);
+    }
+
+    if (textOutput && hasValue && recaptchaRef.current) {
+      setIsPosting(true);
       try {
         const token = await recaptchaRef.current.executeAsync();
         const res = await postQuestion(htmlOutput, textOutput, token);
@@ -97,7 +109,7 @@ export default function AskQuestion() {
         setIsPosting(false);
       }
     }
-  }, [hasValue, user]);
+  }, [hasValue, user, hasExactMatch]);
 
   return (
     <div className='flex-1 relative max-h-[calc(100vh-6rem)] flex flex-col overflow-y-auto bg-[#070707] pt-4 sm:pt-14'>
@@ -119,8 +131,8 @@ export default function AskQuestion() {
           <p className='text-xl lg:text-3xl w-full mb-7' >Need assistance with your homework? Feel free to ask your question here
             and get the help<br className='max-xl:hidden' /> you need to complete your assignment!</p>
         </Transition>
-        <section className='w-full flex max-lg:flex-col max-lg:space-y-5 lg:space-x-5 pb-40 sm:pb-10'>
-          <div className='w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[8rem] sm:min-h-[13rem] pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
+        <section className='w-full flex max-lg:flex-col max-lg:space-y-12 lg:space-x-5 pb-40 sm:pb-10'>
+          <div className='relative w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[8rem] sm:min-h-[13rem] pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
             <section data-cy='question-editor' className='text-black h-[8rem] sm:h-[13rem]'>
               <Suspense>
                 <LexicalEditor
@@ -143,6 +155,11 @@ export default function AskQuestion() {
                 <p>{isPosting ? 'Posting...' : isSearchingForSimilar ? 'Searching for similar questions' : 'Ask your question'}</p>
               </button>
             </section>
+            {showMatchError && (
+              <div className='absolute -bottom-10 right-0 w-fit bg-red-500 p-1 px-4 rounded-md'>
+                <p className='text-base text-white'>An exact match to your question is found!</p>
+              </div>
+            )}
           </div>
           <SimilarQuestions
             searchTerm={searchTerm}
