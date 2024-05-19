@@ -1,5 +1,6 @@
 import { Listbox, Transition } from "@headlessui/react";
 import clsx from "clsx";
+import { useEffect, useRef, useState } from "react";
 
 
 interface IProps {
@@ -11,9 +12,18 @@ interface IProps {
   optionsContainerWidth?: string
   useDropIcon?: boolean;
   variant?: 'ask-question-page';
+  enableMenuInvert?: boolean;
 }
 
-export default function Dropdown({ selected, setSelected, items, placeholder, required, optionsContainerWidth, useDropIcon, variant }: IProps) {
+export default function Dropdown({ selected, setSelected, items, placeholder, required, optionsContainerWidth, useDropIcon, variant, enableMenuInvert }: IProps) {
+  const [shouldInvertDropDown, setShouldInvertDropDown] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ref.current && enableMenuInvert && window.innerHeight - ref.current.getBoundingClientRect().y < 260) {
+     setShouldInvertDropDown(true);
+    }
+  }, [ref]);
 
   const selectedItem = items.find(el => {
     if (typeof selected === "string") {
@@ -25,7 +35,7 @@ export default function Dropdown({ selected, setSelected, items, placeholder, re
     <Listbox value={selectedItem} onChange={setSelected}>
       {({ open }) => (
         <>
-          <div className="relative">
+          <div ref={ref} className="relative">
             <Listbox.Button
               className={clsx("relative cursor-pointer top-0 w-full bg-white pl-3 pr-10 text-left text-gray-900 shadow-sm sm:text-sm sm:leading-6",
                 variant === 'ask-question-page' ? 'rounded-lg py-[3px]' : 'rounded-md py-1.5',
@@ -65,6 +75,7 @@ export default function Dropdown({ selected, setSelected, items, placeholder, re
                 className={clsx(
                   `absolute z-10 mt-1 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`,
                   optionsContainerWidth ? optionsContainerWidth : 'w-full',
+                  shouldInvertDropDown ? '-translate-y-full -top-2' : '',
                 )}>
                 {items.map((el) => (
                   <Listbox.Option
@@ -87,7 +98,6 @@ export default function Dropdown({ selected, setSelected, items, placeholder, re
                   </Listbox.Option>
                 ))}
               </Listbox.Options>
-              <div className='absolute h-72 w-2' />
             </Transition>
           </div>
         </>
