@@ -5,6 +5,8 @@ import { getCreatedAt } from "~/utils";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import SanitizedText from "~/components/question/SanitizedText";
+import { Link } from "@remix-run/react";
+import { UserNameLink } from "~/components/UI/UserNameLink";
 
 interface Props {
     answer?: IAnswer;
@@ -33,7 +35,7 @@ export default function AnswerCard({ answer, user }: Props) {
           <div className='flex gap-3 w-full p-5 mt-3'>
             <UserProfile user={user} />
             <div className='flex flex-col text-sm text-black pr-2 h-auto w-full overflow-hidden'>
-              <p className='text-sm font-bold capitalize'>{user?.view_name ?? 'Answered By Askgram User'}</p>
+              <UserNameLink user={user} className="text-sm font-bold capitalize"/>
               {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
               {answer?.text && (
                 <div data-cy="final-answer">

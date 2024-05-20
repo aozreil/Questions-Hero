@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { BASE_URL, RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
-import { MetaFunction } from "@remix-run/node";
+import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
 import { loader } from "~/routes/_main.search";
 import Footer from "~/components/UI/Footer";
@@ -17,15 +17,20 @@ import { useAnalytics } from "~/hooks/useAnalytics";
 import { LexicalExportRef } from "~/components/lexical/plugins/ExportHtmlPlugin";
 const LexicalEditor = lazy(() => import("~/components/lexical/LexicalEditor"));
 
-export const meta: MetaFunction<typeof loader> = ({ location }) => {
+export const meta: MetaFunction<typeof loader> = () => {
   return [
     ...getSeoMeta({
       title: 'Askgram - Ask Question',
       canonical: `${BASE_URL}/ask-question`
-    }),
-    ...getKatexLink(),
+    })
   ];
 };
+
+export const links: LinksFunction = () => {
+  return [
+    ...getKatexLink()
+  ];
+}
 
 export default function AskQuestion() {
   const [searchTerm, setSearchTerm] = useState('');

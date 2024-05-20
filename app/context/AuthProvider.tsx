@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import LoginModal from "~/components/LoginModal";
 import { getMe, loginWithGoogle, logoutAPI } from "~/apis/userAPI";
-import { AxiosError } from "axios";
-import { IUser } from "~/models/questionModel";
+import { IMeUser } from "~/models/questionModel";
 import { useAnalytics } from "~/hooks/useAnalytics";
+import { CanceledError } from "axios";
 
 interface Props {
   children: ReactNode;
@@ -12,32 +12,48 @@ interface Props {
 export interface AuthContextType {
   openLoginModal: () => void;
   openSignUpModal: () => void;
-  user?: IUser;
+  user?: IMeUser;
   logout: () => void;
   isLoadingUserData: boolean;
+  updateUserInfo: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export default function AuthProvider({ children }: Props) {
   const [authModal, setAuthModal] = useState<undefined | "LOGIN" | "SIGNUP">(undefined);
-  const [user, setUser] = useState<undefined | IUser>(undefined);
+  const [user, setUser] = useState<undefined | IMeUser>(undefined);
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
-  const {trackSignUpEvent, trackLoginEvent, trackEvent, identifyUserById} = useAnalytics()
+  const { trackSignUpEvent, trackLoginEvent, trackEvent, identifyUserById } = useAnalytics();
+
+  async function getMeUser(controller?: AbortController) {
+    try {
+      const data = await getMe({
+        signal: controller?.signal
+      });
+      if (data?.view_name) {
+        setUser({
+          ...data, user_info: {
+            ...data.user_info,
+          }
+        });
+        setIsLoadingUserData(false);
+      } else {
+        setIsLoadingUserData(false);
+      }
+    } catch (e) {
+      if (!(e instanceof CanceledError)) {
+        setIsLoadingUserData(false);
+      }
+    }
+  }
 
   useEffect(() => {
     const controller = new AbortController();
-    getMe({
-      signal: controller.signal
-    }).then((data) => {
-      if (data?.view_name) {
-        setUser(data);
-      }
-    }).catch(() => {
+    getMeUser(controller)
+      .then(() => {
 
-    }).finally(() => {
-      setIsLoadingUserData(false);
-    });
+      });
     return () => {
       controller.abort();
     };
@@ -45,14 +61,14 @@ export default function AuthProvider({ children }: Props) {
 
 
   useEffect(() => {
-    if(user?.id){
-      identifyUserById(`${user.id}`)
+    if (user?.id) {
+      identifyUserById(`${user.id}`);
     }
   }, [user]);
 
   const logout = async () => {
     setUser(undefined);
-    trackEvent('logout')
+    trackEvent("logout");
     await logoutAPI();
   };
 
@@ -60,15 +76,19 @@ export default function AuthProvider({ children }: Props) {
     if (user) {
       return;
     }
-    trackEvent('login_open_login')
+    trackEvent("login_open_login");
     setAuthModal("LOGIN");
+  };
+
+  const updateUserInfo = async () => {
+    return await getMeUser();
   };
 
   const openSignUpModal = () => {
     if (user) {
       return;
     }
-    trackEvent('login_open_sign_up')
+    trackEvent("login_open_sign_up");
     setAuthModal("SIGNUP");
   };
 
@@ -76,18 +96,18 @@ export default function AuthProvider({ children }: Props) {
     const user = await loginWithGoogle(credential);
     if (user?.id) {
       setUser(user);
-      if(authModal === 'LOGIN'){
-        trackLoginEvent('Google')
-      }else if(authModal === 'SIGNUP'){
-        trackSignUpEvent('Google')
-      }else {
-        trackSignUpEvent('Google')
+      if (authModal === "LOGIN") {
+        trackLoginEvent("Google");
+      } else if (authModal === "SIGNUP") {
+        trackSignUpEvent("Google");
+      } else {
+        trackSignUpEvent("Google");
       }
     }
   };
 
-  const closeModal =() => {
-    trackEvent('login_close_login')
+  const closeModal = () => {
+    trackEvent("login_close_login");
     setAuthModal(undefined);
   };
 
@@ -98,7 +118,8 @@ export default function AuthProvider({ children }: Props) {
         openSignUpModal,
         user,
         logout,
-        isLoadingUserData
+        isLoadingUserData,
+        updateUserInfo
       }}
     >
       {children}

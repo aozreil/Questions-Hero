@@ -10,6 +10,7 @@ interface Props {
 export default function UserProfile({ user, className }: Props) {
   return (
     <div
+      data-cy={'UserProfile'}
       className={clsx(`overflow-hidden h-11 w-11 bg-[#002237] text-white text-sm flex items-center justify-center
         rounded-full border border-[#070707] flex-shrink-0 font-semibold`, className,
         user?.picture && 'border-none')}

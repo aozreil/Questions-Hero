@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, HeadersFunction, json, MetaFunction } from "@remix-run/node";
+import { ActionFunctionArgs, HeadersFunction, json, LinksFunction, MetaFunction } from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
@@ -47,6 +47,13 @@ import { useAnalytics } from "~/hooks/useAnalytics";
 import Footer from "~/components/UI/Footer";
 import { useTranslation } from "react-i18next";
 
+
+export const links: LinksFunction = () => {
+  return [
+    ...getKatexLink()
+  ];
+};
+
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [];
@@ -59,7 +66,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
       canonical
     }),
     ...getStructuredData(data as LoaderData),
-    ...[question?.includesLatex ? getKatexLink() : {}],
     ...data?.attachments?.map(file => ({
       tagName: "link",
       rel: "preload",

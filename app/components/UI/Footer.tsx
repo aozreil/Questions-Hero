@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import { TERMS_NAVIGATION_LINKS } from "~/components/UI/Terms";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 
 interface Props {
   slidesNavigator?: React.ReactNode;
