@@ -9,7 +9,7 @@ interface Props {
 export default function SanitizedText({ html, className }: Props) {
   if (!html) return null;
   const sanitizedText = sanitizeHtml(html, {
-    allowedTags: sanitizeHtml.defaults.allowedTags,
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
       img: ['src', 'alt', 'width', 'height'],
