@@ -2,6 +2,7 @@ import PostedByUser from "~/components/question/PostedByUser";
 import QuestionType from "~/components/question/QuestionType";
 import { AnswerStatus, IUser } from "~/models/questionModel";
 import { Link } from "@remix-run/react";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface Props {
   questionBody: string;
@@ -24,18 +25,19 @@ export default function Question({
       </div>
       <hr className='my-2.5' />
 
-      <Link className='relative' to={`/question/${slug}`} target='_blank' dangerouslySetInnerHTML={{ __html: questionBody }} />
-      {(!!answerStatuses?.length && !!answerCount) && (
-        <>
-          <hr className='my-2.5' />
-          <div className='flex items-center justify-end'>
-            <QuestionType
-              answerCount={answerCount}
-              answerStatuses={answerStatuses}
-            />
-          </div>
-        </>
-      )}
+      <Link className='relative' to={`/question/${slug}`} target='_blank'/>
+        <SanitizedText html={questionBody}/>
+        {(!!answerStatuses?.length && !!answerCount) && (
+          <>
+            <hr className='my-2.5' />
+            <div className='flex items-center justify-end'>
+              <QuestionType
+                answerCount={answerCount}
+                answerStatuses={answerStatuses}
+              />
+            </div>
+          </>
+        )}
     </div>
   )
 }

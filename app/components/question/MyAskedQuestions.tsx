@@ -2,6 +2,7 @@ import { IQuestion, IUser } from "~/models/questionModel";
 import UserProfile from "~/components/UI/UserProfile";
 import { Link } from "@remix-run/react";
 import { formatDate } from "date-fns";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface IProps {
   question: IQuestion;
@@ -30,9 +31,7 @@ export default function MyAskedQuestions({ question, user, text }: IProps) {
     </div>
     <hr className="my-3" />
 
-    <p className='line-clamp-3' dangerouslySetInnerHTML={{ __html: question.text }}>
-
-    </p>
+    <SanitizedText className='line-clamp-3' html={question.text} />
 
   </div>;
 }
