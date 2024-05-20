@@ -1,5 +1,9 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { IAnswer, IPostQuestion, IPreSignedURL, IQuestion, IQuestionInfo, IUser } from "~/models/questionModel";
+import { IAnswer, IPostQuestion, IPreSignedURL, IQuestion,
+  IQuestionInfo,
+  IQuestionsResponse,
+  IUser
+} from "~/models/questionModel";
 import { ASKGRAM_BASE } from "~/config/enviromenet";
 import { axiosApiInstance, paramsSerializerComma } from "~/interceptors/client-interceptors";
 
@@ -22,12 +26,14 @@ export async function clientGetQuestionsInfo(config: AxiosRequestConfig): Promis
 }
 
 export async function postQuestion(
-  questionBody: string,
+  htmlBody: string,
+  innerText: string,
   recaptchaToken: string | null,
   attachments: { key: string; filename: string }[]
 ) {
   const response = await axiosApiInstance.post<IPostQuestion>(`${ASKGRAM_BASE}/api/content/questions`, {
-    question_body: questionBody,
+    question_body: innerText,
+    rendered_body: htmlBody,
     recaptcha_token: recaptchaToken,
     attachments
   }, {
@@ -40,9 +46,10 @@ export async function postQuestion(
   return response?.data;
 }
 
-export async function postAnswer(answerBody: string, questionId: string, recaptchaToken: string | null) {
+export async function postAnswer(htmlBody: string, innerText: string, questionId: string, recaptchaToken: string | null) {
   const response = await axiosApiInstance.post<IUser[]>(`${ASKGRAM_BASE}/api/content/answers`, {
-    answer_body: answerBody,
+    answer_body: innerText,
+    rendered_body: htmlBody,
     question_id: questionId,
     recaptcha_token: recaptchaToken
   }, {
@@ -197,4 +204,20 @@ export async function getMajorById(
 ) {
   const response = await axiosApiInstance.get<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/study-fields/${id}`);
   return response.data;
+}
+
+export async function clientGetQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
+  const response = await axios.get<IQuestion[]>(`${ASKGRAM_BASE}/api/content/questions`, {
+    ...config,
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
+}
+
+export async function clientGetQuestionsByIdV1(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
+  const response = await axios.get<IQuestionsResponse>(`${ASKGRAM_BASE}/api/content/v1/questions`, {
+    ...config,
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
 }

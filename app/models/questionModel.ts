@@ -1,4 +1,9 @@
-import { getTextFormatted, isTextIncludingLatex, title } from "~/utils/text-formatting-utils";
+import {
+   getCleanText, getTextFormatted,
+    isTextIncludingLatex,
+    title
+} from "~/utils/text-formatting-utils";
+import { ATTACHMENTS_BASE } from "~/config/enviromenet";
 
 export enum UserDegreeEnum {
   "HIGH_SCHOOL" = "HIGH_SCHOOL",
@@ -12,16 +17,26 @@ export class QuestionClass {
   static questionExtraction(question: IQuestion): IQuestion {
     return {
       ...question,
-      text: getTextFormatted(question.text, question?.type),
-      title: title(question?.text),
+      text: question?.rendered_text
+       ? question?.text
+       :getTextFormatted(question.text, question?.type),
+      rendered_text: getRenderedText(question?.rendered_text),
+            title: getCleanText(title(question?.text)),
       includesLatex: isTextIncludingLatex(question?.text)
     };
   }
 
-  static answerExtraction(answer?: IAnswer): IAnswer {
+  static questionTextExtraction(text?: string): string | undefined {
+    return text
+      ? getRenderedText(text)
+      : undefined;
+  }static answerExtraction(answer?: IAnswer): IAnswer {
     return {
       ...answer,
-      text: getTextFormatted(answer?.text),
+      text: answer?.rendered_text
+        ? answer?.text
+        : getTextFormatted(answer?.text),
+      rendered_text: getRenderedText(answer?.rendered_text),
       answer_steps: answer?.answer_steps?.map(step => ({
         ...step,
         text: getTextFormatted(step?.text)
@@ -39,6 +54,22 @@ export class QuestionClass {
 
     return usersObject;
   }
+}
+
+export function getQuestionBody (question: IQuestion) {
+  return question?.rendered_text ?? question.text ?? '';
+}
+
+export function getAnswerBody (answer: IAnswer) {
+  return answer?.rendered_text ?? answer.text ?? '';
+}
+
+function getRenderedText(text?: string) {
+  if (text) {
+    return text.replaceAll('$ATTACHMENTS_BASE', ATTACHMENTS_BASE);
+  }
+
+  return undefined;
 }
 
 export function answersSorterFun(a: IAnswer, b: IAnswer) {
@@ -63,7 +94,8 @@ export enum AnswerStatus {
 
 export interface IAnswer {
   text?: string,
-  user_id?: number,
+  // rendered_text is the html version of the posted user answer
+    rendered_text?: string;user_id?: number,
   answer_steps?: {
     text?: string,
     step_number?: number
@@ -77,7 +109,8 @@ export interface IQuestion {
   id: string,
   user_id?: number,
   text: string,
-  type?: string,
+  // rendered_text is the html version of the posted user question
+    rendered_text?: string;type?: string,
   slug: string,
   created_at?: string,
   error?: string;
@@ -88,12 +121,25 @@ export interface IQuestion {
   answerCount?: number;
 }
 
+export interface IQuestionInfo {
+    id: string;
+    answers_count: number;
+}
+
+export interface IQuestionsResponse {
+  count: number;
+  data: IQuestion[];
+  page: number;
+  size: number;
+}
+
 export interface ISearchQuestion extends IQuestion {
   // Derived Props
   answerCount: number;
   aiAnswer?: string;
   relevant_score?: number;
   answerStatuses?: AnswerStatus[];
+    rendered_text?: string;
 }
 
 export interface IQuestionInfo {
@@ -183,4 +229,10 @@ export interface IQuestionAttachment {
 
   // Derived Props
   url: string,
+}
+
+export interface ISubjectFilter {
+  id: number;
+  questions_count: number;
+  title: string;
 }

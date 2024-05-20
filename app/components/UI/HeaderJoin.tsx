@@ -11,15 +11,15 @@ export default function HeaderJoin() {
       ? (
         <>
           <div className="bg-[#dfe4ea] h-5 w-0.5 max-lg:hidden" />
-          <button onClick={openLoginModal} className={"hidden sm:block"}>Log in</button>
-          <button onClick={openSignUpModal} className="text-white px-5 py-2 rounded-2xl bg-[#070707]">
+          <button data-cy="header-login" onClick={openLoginModal} className={"hidden sm:block"}>Log in</button>
+          <button data-cy="header-join" onClick={openSignUpModal} className="text-white px-5 py-2 rounded-2xl bg-[#070707]">
             Join for free
           </button>
         </>
       ) : (
         <>
           <div className="bg-[#dfe4ea] h-5 w-0.5 max-sm:hidden" />
-          <Menu as="div" className="relative">
+          <Menu data-cy="header-user" as="div" className="relative">
             <Menu.Button
               className="cursor-pointer overflow-hidden h-9 w-9 bg-[#002237] text-white text-sm flex items-center justify-center
                         rounded-full border border-[#070707] flex-shrink-0 font-semibold"
@@ -47,6 +47,7 @@ export default function HeaderJoin() {
                 </Link>
                 <button
                   className="cursor-pointer font-semibold rounded-md bg-white py-2 text-sm hover:bg-gray-50 w-full text-left px-4"
+                  data-cy='user-menu-logout'
                   onClick={logout}
                 >
                   Logout

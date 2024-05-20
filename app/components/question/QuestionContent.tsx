@@ -1,6 +1,8 @@
-import { IQuestion, IUser } from "~/models/questionModel";
+import { getQuestionBody, IQuestion, IUser } from "~/models/questionModel";
 import {format} from "date-fns";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface Props {
     question?: IQuestion;
@@ -10,8 +12,9 @@ interface Props {
 
 export default function QuestionContent({ question, user, isVerified }: Props) {
     const createdAt = useMemo(() => getCreatedAtDate(question), [question]);
+    const { t } = useTranslation();
     return (
-        <div className='flex flex-col w-full p-4'>
+        <div data-cy="question-content" className='flex flex-col w-full p-4'>
             <div className='w-full flex flex-col-reverse sm:flex-row flex-wrap sm:justify-between sm:items-center mb-3'>
                 {(question?.created_at || user) && (
                     <p className='text-[#667a87] text-sm'>
@@ -24,15 +27,12 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
                 {isVerified && (
                   <div className='flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0'>
                       <img src='/assets/images/verified.svg' alt='verifed' />
-                      <p>Verified</p>
+                      <p>{t('Verified')}</p>
                   </div>
                 )}
             </div>
             {question?.text && (
-                <h1
-                    className='lg:text-xl font-medium mb-3'
-                    dangerouslySetInnerHTML={{ __html: question.text }}
-                />
+              <SanitizedText className='lg:text-xl font-medium mb-3' html={getQuestionBody(question)} />
             )}
         </div>
     )

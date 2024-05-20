@@ -5,6 +5,7 @@ import { getTextFormatted } from "~/utils/text-formatting-utils";
 import { AnswerStatus, IQuestionInfo } from "~/models/questionModel";
 import QuestionType from "~/components/question/QuestionType";
 import { useAnalytics } from "~/hooks/useAnalytics";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface Props {
   text: string;
@@ -32,6 +33,7 @@ export default function AskQuestionSearchCard({ questionId, slug, text, question
       prefetch={'intent'}
       target='_blank'
       onClick={onQuestionClick}
+      data-cy="search-card"
     >
       <div className="flex justify-between pb-4">
         <QuestionType
@@ -47,7 +49,7 @@ export default function AskQuestionSearchCard({ questionId, slug, text, question
         </button>
       </div>
       <hr className="mb-4" />
-      <div className='line-clamp-3 relative' dangerouslySetInnerHTML={{ __html: formattedText }} />
+      <SanitizedText className='line-clamp-3 relative' html={formattedText} />
     </Link>
   )
 }

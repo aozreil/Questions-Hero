@@ -3,10 +3,11 @@ import ContentLoader from "~/components/UI/ContentLoader";
 import { Link } from "@remix-run/react";
 import Loader from "~/components/UI/Loader";
 import React, { Fragment, useEffect } from "react";
-import { AnswerStatus, IAnswer, IUser, IUsers } from "~/models/questionModel";
+import { AnswerStatus, getAnswerBody, IAnswer, IUser, IUsers } from "~/models/questionModel";
 import clsx from "clsx";
 import UserProfile from "~/components/UI/UserProfile";
 import { UserNameLink } from "~/components/UI/UserNameLink";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface Props {
   answers?: IAnswer[];
@@ -23,7 +24,7 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
     handleAnswerOpen && handleAnswerOpen();
   }, []);
   return (
-    <div className="relative flex h-fit max-sm:w-full items-end justify-center lg:p-4 pr-0 lg:pt-0 text-center">
+    <div data-cy="search-answer-card" className="relative flex h-fit max-sm:w-full items-end justify-center lg:p-4 pr-0 lg:pt-0 text-center">
       <div className={clsx(
         "thin-scrollbar h-fit lg:max-h-[83vh] lg:overflow-y-auto bg-white w-full lg:w-[28rem] 2xl:w-[34rem] z-20",
         mobileVersion ? "px-0" : "border-2 border-[#5fc9a2] rounded-xl pb-4"
@@ -57,10 +58,12 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
                 {!!slug && (
                   <>
                     <Link to={`/question/${slug}`} onClick={close}
+                         data-cy='go-to-question'
                           className="max-lg:hidden p-4 pt-0 text-sm mt-4 hover:text-[#070707] text-gray-500 text-center">
                       Go to question page for more information
                     </Link>
                     <Link to={`/question/${slug}`} onClick={close}
+                         data-cy='go-to-question'
                           className="lg:hidden outline-none block text-white py-3 bg-[#070707] w-[90%] my-4 max-sm:-mt-3 mx-auto rounded-2xl text-center">
                       Go to Question Page
                     </Link>
@@ -108,21 +111,21 @@ const Answer = ({ askedBy, answer }: {
             </div>
           )}
           {answer?.text && (
-            <p className="max-sm:text-lg">
+            <div className="max-sm:text-lg">
               <span className="font-medium">Final Answer : </span>
-              <span dangerouslySetInnerHTML={{ __html: answer?.text }} />
-            </p>
+              <SanitizedText html={getAnswerBody(answer)} className='inline' />
+            </div>
           )}
           {!!answer?.answer_steps?.length && (
             answer.answer_steps.map((step, index) => (
               step?.text ? (
-                <p
+                <div
                   className="mt-2 max-sm:text-lg"
                   key={index}
                 >
                   <span className="font-medium">Explanation : </span>
-                  <span dangerouslySetInnerHTML={{ __html: step?.text }} />
-                </p>
+                  <SanitizedText html={step?.text} className='inline' />
+                </div>
               ) : null
             ))
           )}
