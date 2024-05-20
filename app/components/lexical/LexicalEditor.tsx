@@ -4,18 +4,16 @@ import {RichTextPlugin} from "@lexical/react/LexicalRichTextPlugin";
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
+import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import { ImageNode } from "./nodes/ImageNode";
 import {ListItemNode, ListNode} from '@lexical/list';
 import { CustomImagePlugin } from "./plugins/CustomImagePlugin";
-import { CustomTextActions } from "./actions/CustomTextActions";
-import { CustomImageActions } from "./actions/CustomImageActions";
 import { ExportHtmlPlugin } from "~/components/lexical/plugins/ExportHtmlPlugin";
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { CustomListActions } from "~/components/lexical/actions/CustomListActions";
-import { CustomFontSizeActions } from "~/components/lexical/actions/CustomFontSizeActions";
 import { OnUpdatePlugin } from "~/components/lexical/plugins/OnUpdatePlugin";
 import clsx from "clsx";
 import DragDropPaste from "~/components/lexical/plugins/DragDropPaste";
+import ToolbarActions from "~/components/lexical/actions/ToolbarActions";
 
 interface Props {
   onFocus?: () => void;
@@ -82,14 +80,10 @@ const LexicalEditor = forwardRef(({
           <ExportHtmlPlugin ref={ref} />
           <OnUpdatePlugin onCharDifference={onCharDifference} />
           <DragDropPaste />
+          <AutoFocusPlugin />
           <div className='absolute bottom-0 left-0 w-full h-10 bg-white rounded-t-xl
            border-t border-[#99a7af] flex items-center justify-center px-5'>
-            <div className='max-w-[470px] flex items-center justify-between space-x-10'>
-              <CustomTextActions />
-              <CustomFontSizeActions />
-              <CustomListActions />
-              <CustomImageActions />
-            </div>
+            <ToolbarActions />
           </div>
         </LexicalComposer>
       </div>

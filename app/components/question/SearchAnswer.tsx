@@ -110,7 +110,7 @@ const Answer = ({ askedBy, answer }: {
           {answer?.text && (
             <div className='max-sm:text-lg'>
               <span className='font-medium'>Final Answer : </span>
-              <SanitizedText html={getAnswerBody(answer)} />
+              <SanitizedText html={getAnswerBody(answer)} className='inline' />
             </div>
           )}
           {!!answer?.answer_steps?.length && (
@@ -121,7 +121,7 @@ const Answer = ({ askedBy, answer }: {
                   key={index}
                 >
                   <span className='font-medium'>Explanation : </span>
-                  <SanitizedText html={step?.text} />
+                  <SanitizedText html={step?.text} className='inline' />
                 </div>
               ) :null
             ))

@@ -87,7 +87,7 @@ export default function SearchQuestion({ handleAnswerOpen, question }: IProps) {
             )}
           </div>
           <hr className="mb-4" />
-          <SanitizedText className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : ''}`} html={rendered_text ?? text} />
+          <SanitizedText className={`${isOpen ? 'overflow-y-auto thin-scrollbar pr-2' : 'line-clamp-3 only-show-two-images'}`} html={rendered_text ?? text} />
         </Link>
         {isOpen && (
           <div className="max-lg:hidden lg:absolute lg:left-[27.5rem] 2xl:left-[33.5rem] lg:top-0 max-sm:w-full overflow-y-auto">
