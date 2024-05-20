@@ -17,6 +17,7 @@ import {
 import { redirect, useLoaderData, useLocation } from "@remix-run/react";
 import {
   answersSorterFun,
+  getQuestionBody,
   AnswerStatus,
   IAnswer,
   IConcept,
@@ -153,7 +154,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
         }
         return {
           slug: el.slug,
-          text: text
+          text: getCleanText(text),
         };
       }).slice(0, 5)
     });
@@ -213,11 +214,11 @@ export default function QuestionPage() {
 
   return (
     <>
-      <MainContainer>
+      <MainContainer className='flex-1'>
         <PostAnswerModal
           open={postAnswerOpened}
           onClose={() => setPostAnswerOpened(false)}
-          questionText={question?.text}
+          questionText={getQuestionBody(question)}
           questionId={question?.id}
           onSuccess={handlePostAnswerSuccess}
         />

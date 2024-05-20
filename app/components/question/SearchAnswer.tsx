@@ -3,9 +3,10 @@ import ContentLoader from "~/components/UI/ContentLoader";
 import { Link } from "@remix-run/react";
 import Loader from "~/components/UI/Loader";
 import React, { Fragment, useEffect } from "react";
-import { AnswerStatus, IAnswer, IUser, IUsers } from "~/models/questionModel";
+import { AnswerStatus, getAnswerBody, IAnswer, IUser, IUsers } from "~/models/questionModel";
 import clsx from "clsx";
 import UserProfile from "~/components/UI/UserProfile";
+import SanitizedText from "~/components/question/SanitizedText";
 
 interface Props {
   answers?: IAnswer[];
@@ -107,21 +108,21 @@ const Answer = ({ askedBy, answer }: {
             </div>
           )}
           {answer?.text && (
-            <p className='max-sm:text-lg'>
+            <div className='max-sm:text-lg'>
               <span className='font-medium'>Final Answer : </span>
-              <span dangerouslySetInnerHTML={{ __html: answer?.text }} />
-            </p>
+              <SanitizedText html={getAnswerBody(answer)} className='inline' />
+            </div>
           )}
           {!!answer?.answer_steps?.length && (
             answer.answer_steps.map((step, index) => (
               step?.text ? (
-                <p
+                <div
                   className='mt-2 max-sm:text-lg'
                   key={index}
                 >
                   <span className='font-medium'>Explanation : </span>
-                  <span dangerouslySetInnerHTML={{ __html: step?.text }} />
-                </p>
+                  <SanitizedText html={step?.text} className='inline' />
+                </div>
               ) :null
             ))
           )}

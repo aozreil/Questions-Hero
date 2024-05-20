@@ -30,14 +30,14 @@ export async function clientGetQuestionsInfo(config: AxiosRequestConfig): Promis
 }
 
 export async function postQuestion (
-  questionBody: string,
+  htmlBody: string,
+  innerText: string,
   recaptchaToken: string | null,
-  attachments: { key: string; filename: string }[],
 ) {
   const response = await axiosApiInstance.post<IPostQuestion>(`${ASKGRAM_BASE}/api/content/questions`, {
-    question_body: questionBody,
+    question_body: innerText,
+    rendered_body: htmlBody,
     recaptcha_token: recaptchaToken,
-    attachments,
   }, {
     withCredentials: true,
     headers: {
@@ -48,9 +48,10 @@ export async function postQuestion (
   return response?.data;
 }
 
-export async function postAnswer (answerBody: string, questionId: string, recaptchaToken: string | null) {
+export async function postAnswer (htmlBody: string, innerText: string, questionId: string, recaptchaToken: string | null) {
   const response = await axiosApiInstance.post<IUser[]>(`${ASKGRAM_BASE}/api/content/answers`, {
-    answer_body: answerBody,
+    answer_body: innerText,
+    rendered_body: htmlBody,
     question_id: questionId,
     recaptcha_token: recaptchaToken,
   }, {

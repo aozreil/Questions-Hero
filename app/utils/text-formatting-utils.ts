@@ -1,4 +1,5 @@
 import katex from "katex";
+import * as htmlparser from "htmlparser2";
 
 const htmlContentTags = [
     "<p>",
@@ -943,5 +944,26 @@ export function removeKatexFromString(text: string): string {
 
 export function getCleanText(text?: string): string {
     if (!text) return '';
-    return replaceHTMLCodesByEmptyString(removeImage(text));
+    const cleanText = replaceHTMLCodesByEmptyString(removeImage(text));
+
+    if (!hasHTMLTags(cleanText)) {
+        return cleanText;
+    }
+
+    let innerTexts: string[] = [];
+    const parser = new htmlparser.Parser({
+        ontext(text) {
+            innerTexts.push(text);
+        }
+    }, {decodeEntities: true});
+
+    parser.write(cleanText);
+    parser.end();
+
+    return innerTexts.join(' ');
+}
+
+function hasHTMLTags(inputString: string) {
+    const htmlTagsRegex = /<[^>]*>/;
+    return htmlTagsRegex.test(inputString);
 }
