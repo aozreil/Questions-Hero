@@ -25,7 +25,7 @@ export default function Question({
       </div>
       <hr className='my-2.5' />
 
-      <Link className='relative' to={`/question/${slug}`} target='_blank'/>
+      <Link className='relative' to={`/question/${slug}`} target='_blank'>
         <SanitizedText html={questionBody}/>
         {(!!answerStatuses?.length && !!answerCount) && (
           <>
@@ -38,6 +38,7 @@ export default function Question({
             </div>
           </>
         )}
+      </Link>
     </div>
   )
 }
