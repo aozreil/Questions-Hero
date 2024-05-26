@@ -234,8 +234,8 @@ const FileDrop = ({ onClick, onFileDrop }: {
   return (
     <div
       className={clsx(
-        'h-full w-full text-xl font-medium cursor-pointer flex items-center justify-center',
-        isDragging ? 'bg-gray-400' : 'bg-gray-200',
+        'h-full w-full text-xl font-medium cursor-pointer flex flex-col items-center justify-center space-y-5 border-dashed border-2 border-[#b9bcbd]',
+        isDragging ? 'bg-[#b9bcbd]' : 'bg-[#e4e7eb]',
       )
     }
       onDragEnter={handleDragEnter}
@@ -244,8 +244,9 @@ const FileDrop = ({ onClick, onFileDrop }: {
       onDrop={handleDrop}
       onClick={onClick}
     >
-      <p className='max-sm:hidden'>{isDragging ? 'Drop Image' : 'Upload Or Drag Image here'}</p>
-      <p className='sm:hidden'>Upload Image here</p>
+      <img src='/assets/images/upload-image.png' alt='upload image' className='w-28 h-28' width={112} height={112} />
+      <p className='max-sm:hidden font-semibold'>{isDragging ? 'Drop Image here' : 'Drag & drop files here or upload from your computer'}</p>
+      <p className='sm:hidden text-center'>Select Image from your device</p>
     </div>
   )
 }
