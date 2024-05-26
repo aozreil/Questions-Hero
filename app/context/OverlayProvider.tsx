@@ -31,7 +31,7 @@ export default function OverlayProvider({ children }: Props) {
   return (
     <div className="relative min-h-screen bg-[#f7f8fa] flex flex-col">
       {shouldShowAskQuestion && (
-        <Link to='/ask-question' className='sm:hidden fixed z-50 right-2 bottom-20 w-16 h-16 bg-[#0b39dc] rounded-full flex items-center justify-center'>
+        <Link to='/ask-question' className='lg:hidden fixed z-50 right-2 bottom-20 w-16 h-16 bg-[#0b39dc] rounded-full flex items-center justify-center'>
           <img src='/assets/images/chat-icon.png' alt='ask-question' className='w-10 h-10' />
         </Link>
       )}
