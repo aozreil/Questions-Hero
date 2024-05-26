@@ -297,7 +297,7 @@ export default function _mainSubjectsSubject() {
                 onClick={() => setFiltersModalVisible(true)}
                 className='border border-black rounded-md px-4 py-2 flex items-center space-x-1.5'
               >
-                <img src='/assets/images/filters.svg' alt='filters' className='w-4 h-4' />
+                <img src='/assets/images/filters.svg' alt='filters' className='w-4 h-4 rotate-90' />
                 <span className='font-semibold'>Filters</span>
                 {!!filtersCount && (
                   <span className='text-white rounded-full bg-black flex-shrink-0 w-5 h-5 flex items-center justify-center'>
