@@ -21,6 +21,11 @@ export default function CheckboxWithLabel({ id, label, value, count, defaultChec
     onChecked && onChecked(event.target.value, event.target.checked);
   };
 
+  const onLabelClick = () => {
+    setIsChecked(!isChecked);
+    onChecked && onChecked(value, !isChecked);
+  }
+
   return (
     <div className="flex items-center me-4 overflow-x-hidden">
       <input
@@ -31,7 +36,12 @@ export default function CheckboxWithLabel({ id, label, value, count, defaultChec
         onChange={handleCheckboxChange}
         checked={isChecked}
       />
-      <label htmlFor={id} className="ms-2.5 text font-medium text-black whitespace-nowrap truncate">{label}</label>
+      <button
+        onClick={onLabelClick}
+        className="ms-2.5 cursor-pointer text font-semibold text-black whitespace-nowrap truncate"
+      >
+        {label}
+      </button>
       {count && <p className='text-[#99a7af] text-sm ml-auto'>{count}</p>}
     </div>
   )
