@@ -11,7 +11,7 @@ import { LoaderFunctionArgs } from "@remix-run/router";
 import { json, MetaFunction } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
 import { getQuestionsByIdV1, getQuestionsInfo, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getSubjectIdBySlug, getSubjectSlugById, SUBJECTS_MAPPER } from "~/models/subjectsMapper";
 import clsx from "clsx";
 import {
@@ -28,6 +28,8 @@ import ContentLoader from "~/components/UI/ContentLoader";
 import { getSeoMeta } from "~/utils/seo";
 import { BASE_URL } from "~/config/enviromenet";
 import { getKatexLink } from "~/utils/external-links";
+import CustomModal from "~/components/UI/CustomModal";
+import CloseIcon from "~/components/icons/CloseIcon";
 
 export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
   if (!data) {
@@ -232,10 +234,13 @@ export default function _mainSubjectsSubject() {
   const [filteredSubjects, setFilteredSubjects] = useState<IFilter[] | undefined>(
     () => getFilteredSubjects(subjects, mainSubjectId, count));
   const [questionsFilterExpanded, setQuestionsFilterExpanded] = useState(true);
+  const [filtersModalVisible, setFiltersModalVisible] = useState(false);
+  const [filtersCount, setFiltersCount] = useState(0);
   const isFirstLoad = useRef(true);
   const containerDiv = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigation = useNavigation();
+  const navigate = useNavigate();
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname?.includes('subjects');
   const { user } = useAuth();
 
@@ -257,6 +262,21 @@ export default function _mainSubjectsSubject() {
     setFilteredSubjects(list);
   }, [questions]);
 
+  useEffect(() => {
+    const statusesFilter = getStorageArr('question_status');
+    const typesFilter = getStorageArr('question_types');
+    setFiltersCount(statusesFilter.length + typesFilter.length);
+  }, [questions]);
+
+  const clearFilters = useCallback(() => {
+    sessionStorage.setItem('question_status', JSON.stringify([]));
+    sessionStorage.setItem('question_types', JSON.stringify([]));
+    navigate(".", {
+      replace: true,
+      relative: "path",
+    });
+  }, []);
+
   return (
     <div ref={containerDiv} className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
       <div className='flex flex-col items-center'>
@@ -271,8 +291,50 @@ export default function _mainSubjectsSubject() {
               </Link>
             </div>
           </div>
-          <div className='w-full flex max-md:flex-col md:space-x-4'>
-            <div className='w-full md:w-[14rem] mb-5 rounded-xl shadow-md p-2 text-black h-fit bg-white'>
+          <div className='w-full flex max-md:flex-col'>
+            <div className='md:hidden flex items-center space-x-4 mb-4'>
+              <button
+                onClick={() => setFiltersModalVisible(true)}
+                className='border border-black rounded-md px-4 py-2 flex items-center space-x-1.5'
+              >
+                <img src='/assets/images/filters.svg' alt='filters' className='w-4 h-4 rotate-90' />
+                <span className='font-semibold'>Filters</span>
+                {!!filtersCount && (
+                  <span className='text-white rounded-full bg-black flex-shrink-0 w-5 h-5 flex items-center justify-center'>
+                    {filtersCount}
+                  </span>
+                )}
+              </button>
+              {!!filtersCount && (
+                <button className='text-[#2563eb] font-semibold' onClick={clearFilters}>
+                  Reset
+                </button>
+              )}
+            </div>
+            <CustomModal open={filtersModalVisible} closeModal={() => setFiltersModalVisible(false)} className='justify-end bottom-0'>
+              <div className='w-screen h-screen flex items-end'>
+                <div className='w-screen h-[90vh] z-50 bg-white rounded-md px-5 py-6 flex flex-col overflow-y-auto thin-scrollbar'>
+                  <div className='w-full flex justify-between font-bold mb-4'>
+                    <button onClick={() => setFiltersModalVisible(false)}>
+                      <CloseIcon colorfill='#000' className='w-5 h-5' />
+                    </button>
+                    <span className='text-2xl'>Questions filter</span>
+                    <button
+                      onClick={() => setFiltersModalVisible(false)}
+                      className='text-[#2563eb] text-xl'
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  <SubjectsSection subjects={filteredSubjects} />
+                  <hr className='my-5' />
+                  <FiltersSection title='Status' filters={STATUS_FILTERS} paramsId='question_status' />
+                  <hr className='my-5' />
+                  <FiltersSection title='Type' filters={TYPE_FILTERS} paramsId='question_types' />
+                </div>
+              </div>
+            </CustomModal>
+            <div className='max-md:hidden md:w-[14rem] mr-4 mb-5 rounded-xl shadow-md p-2 text-black h-fit bg-white'>
               <button
                 className='flex items-center justify-between w-full sm:pointer-events-none'
                 onClick={() => setQuestionsFilterExpanded(!questionsFilterExpanded)}
@@ -425,7 +487,7 @@ const SubjectsSection = ({ subjects }: { subjects?: IFilter[] }) => {
             <p
               className={clsx(
                 "text text-black whitespace-nowrap truncate",
-                subject?.defaultChecked && 'font-medium'
+                subject?.defaultChecked ? 'font-bold' : 'font-medium'
               )}
             >
               {subject?.label}
