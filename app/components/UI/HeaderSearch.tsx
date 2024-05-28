@@ -8,13 +8,11 @@ import { useNavigate } from "react-router";
 import CloseIcon from "~/components/icons/CloseIcon";
 
 interface Props {
-  className?: string;
-  setIsSearchExpanded?: (expanded: boolean) => void;
   setIsSearchFocused?: (focused: boolean) => void;
-  isSearchExpanded?: boolean;
+  isSearchFocused?: boolean;
 }
 
-export default function HeaderSearch({ className, setIsSearchExpanded, isSearchExpanded, setIsSearchFocused }: Props) {
+export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Props) {
   const [hasValue, setHasValue] = useState(false);
   const textareaRef = useRef<IExpandableTextarea>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -45,6 +43,7 @@ export default function HeaderSearch({ className, setIsSearchExpanded, isSearchE
     if (textareaRef.current) {
       textareaRef.current.collapseRows();
       textareaRef.current.blur();
+      textareaRef.current.scrollToTop();
     }
   }, []);
 
