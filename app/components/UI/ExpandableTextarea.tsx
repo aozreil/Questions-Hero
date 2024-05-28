@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import clsx from "clsx";
 
 export interface IExpandableTextarea {
   collapseRows: () => void;
@@ -6,6 +7,7 @@ export interface IExpandableTextarea {
   getValue: () => string;
   setValue: (value: string) => void;
   blur: () => void;
+  scrollToTop: () => void;
 }
 
 interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement>{
@@ -17,6 +19,7 @@ export const ExpandableTextarea = forwardRef<
   IExpandableTextarea, Props>
   ((props, ref) => {
   const [hasValue, setHasValue] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -41,7 +44,13 @@ export const ExpandableTextarea = forwardRef<
 
   const onFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (textAreaRef.current) calculateTextareaRows(textAreaRef.current.value)
+    setIsFocused(true);
     props.onFocus && props.onFocus(e);
+  }, []);
+
+  const onBlur = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
+    setIsFocused(false);
+    props.onBlur && props.onBlur(e);
   }, []);
 
   const calculateTextareaRows = useCallback((text?: string) => {
@@ -63,7 +72,8 @@ export const ExpandableTextarea = forwardRef<
     clearValue: () => { if (textAreaRef.current) textAreaRef.current.value = '' },
     getValue: () => ( textAreaRef.current ? textAreaRef.current.value : '' ),
     setValue: (value) => { if (textAreaRef.current) textAreaRef.current.value = value },
-    blur: () => { if (textAreaRef.current) textAreaRef.current.blur() }
+    blur: () => { if (textAreaRef.current) textAreaRef.current.blur() },
+    scrollToTop: () => { if (textAreaRef.current) textAreaRef.current.scrollTop = 0 }
   }));
 
   return (
@@ -74,6 +84,9 @@ export const ExpandableTextarea = forwardRef<
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       onFocus={onFocus}
+      onBlur={onBlur}
+      className={clsx(props.className, !isFocused && 'overflow-y-hidden')}
+      autoFocus={false}
     />
   )
 })

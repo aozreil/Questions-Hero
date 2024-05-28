@@ -33,6 +33,7 @@ export default function Header() {
             {!shouldHideSearch &&
               <HeaderSearch
                 setIsSearchFocused={setIsSearchFocused}
+                isSearchFocused={isSearchFocused}
               />
             }
             {!shouldHideSearch &&
