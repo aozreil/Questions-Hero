@@ -40,6 +40,7 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
   const onBlur = useCallback(() => {
     slides?.setPauseSlideNavigation && slides?.setPauseSlideNavigation(false);
     setOverlayVisible(false);
+    setIsSearchFocused && setIsSearchFocused(false);
     if (textareaRef.current) {
       textareaRef.current.collapseRows();
       textareaRef.current.blur();
@@ -89,7 +90,7 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
       <Form
         action='/search'
         ref={formRef}
-        className={clsx(`z-10 py-1 px-3 bg-[#f8f8f8] border border-[#99a7af] min-h-[36px] h-fit sm:w-[22rem] lg:w-[34rem]
+        className={clsx(`relative z-10 py-1 px-3 bg-[#f8f8f8] border border-[#99a7af] min-h-[36px] h-fit sm:w-[22rem] xl:w-[34rem]
          rounded-md flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
         onBlur={handleBlur}
         onSubmit={handleSubmit}
