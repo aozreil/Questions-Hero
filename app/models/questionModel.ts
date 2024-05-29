@@ -13,6 +13,20 @@ export enum UserDegreeEnum {
   "DOCTORATE" = "DOCTORATE"
 }
 
+export enum QuestionTypesEnum {
+  "MULTIPLE_CHOICE"= "MULTIPLE_CHOICE",
+  "TRUE_FALSE"= "TRUE_FALSE",
+  "ESSAY"= "ESSAY",
+  "SHORT_ANSWER"= "SHORT_ANSWER",
+}
+
+export const QUESTION_TYPES = [
+  { label: 'Multiple Choice', value: 'MULTIPLE_CHOICE' },
+  { label: 'True/False', value: 'TRUE_FALSE' },
+  { label: 'Essay', value: 'ESSAY' },
+  { label: 'Short answer', value: 'SHORT_ANSWER' },
+];
+
 export class QuestionClass {
   static questionExtraction(question: IQuestion): IQuestion {
     return {
