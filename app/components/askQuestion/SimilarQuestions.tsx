@@ -95,3 +95,13 @@ export default function SimilarQuestions({
     </Transition>
   )
 }
+
+export async function isThereExactMatch(searchTerm: string) {
+  const searchRes = await searchQuestionsAPI(searchTerm)
+  if (searchRes?.data) {
+    const filteredQuestions = searchRes.data?.filter(
+      item => item?.relevant_score > ASK_QUESTION_SIMILAR_SCORE);
+    return filteredQuestions?.[0]?.relevant_score > 0.9;
+  }
+  return false;
+}

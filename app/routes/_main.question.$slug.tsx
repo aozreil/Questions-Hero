@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, HeadersFunction, json, MetaFunction } from "@remix-run/node";
+import { ActionFunctionArgs, HeadersFunction, json, LinksFunction, MetaFunction } from "@remix-run/node";
 import AnswerCard from "~/components/question/AnswerCard";
 import QuestionSection from "~/components/question/QuestionSection";
 import LearningObjectives from "~/components/question/LearningObjectives";
@@ -17,6 +17,7 @@ import {
 import { redirect, useLoaderData, useLocation } from "@remix-run/react";
 import {
   answersSorterFun,
+  getQuestionBody,
   AnswerStatus,
   IAnswer,
   IConcept,
@@ -46,6 +47,13 @@ import { useAnalytics } from "~/hooks/useAnalytics";
 import Footer from "~/components/UI/Footer";
 import { useTranslation } from "react-i18next";
 
+
+export const links: LinksFunction = () => {
+  return [
+    ...getKatexLink()
+  ];
+};
+
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [];
@@ -58,7 +66,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
       canonical
     }),
     ...getStructuredData(data as LoaderData),
-    ...[question?.includesLatex ? getKatexLink() : {}],
     ...data?.attachments?.map(file => ({
       tagName: "link",
       rel: "preload",
@@ -153,7 +160,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
         }
         return {
           slug: el.slug,
-          text: text
+          text: getCleanText(text),
         };
       }).slice(0, 5)
     });
@@ -213,11 +220,11 @@ export default function QuestionPage() {
 
   return (
     <>
-      <MainContainer>
+      <MainContainer className='flex-1'>
         <PostAnswerModal
           open={postAnswerOpened}
           onClose={() => setPostAnswerOpened(false)}
-          questionText={question?.text}
+          questionText={getQuestionBody(question)}
           questionId={question?.id}
           onSuccess={handlePostAnswerSuccess}
         />

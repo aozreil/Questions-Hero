@@ -1,4 +1,4 @@
-import { json, MetaFunction } from "@remix-run/node";
+import { json, LinksFunction, MetaFunction } from "@remix-run/node";
 import { searchQuestionsDetailsAPI } from "~/apis/searchAPI.service";
 import SuccessAlert from "~/components/UI/SuccessAlert";
 import { Suspense, useEffect, useState } from "react";
@@ -29,10 +29,15 @@ export const meta: MetaFunction<typeof loader> = ({ location }) => {
     ...getSeoMeta({
       title: title,
       canonical: `${BASE_URL}/search`
-    }),
-    ...getKatexLink()
+    })
   ];
 };
+
+export const links: LinksFunction = () => {
+  return [
+    ...getKatexLink()
+  ];
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);

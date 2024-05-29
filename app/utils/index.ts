@@ -1,9 +1,14 @@
-import { IUsers } from "~/models/questionModel";
+import { IUser, IUsers } from "~/models/questionModel";
 import {differenceInDays, formatDistance, format} from "date-fns";
 
 export function getUser (userId?: number, users?: IUsers) {
     if (userId && users?.hasOwnProperty(userId)) return users[userId]?.view_name;
     return 'Askgram User';
+}
+
+
+export function getUserSlug(user: IUser){
+    return user.view_name?.trim().replace(/\s/g, '-') + '-' + user.user_id
 }
 
 export function getTimesAgo (date: string) {

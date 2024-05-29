@@ -8,7 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
+ useLoaderData,
   useRouteError,
   useRouteLoaderData,
 } from "@remix-run/react";
@@ -20,7 +20,7 @@ import { ReactNode } from "react";
 import Header from "~/components/UI/Header";
 import FavIcon from "~/components/UI/FavIcon";
 import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
-import AuthProvider from "~/context/AuthProvider";
+import AuthProvider, { useAuth } from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
 import OverlayProvider from "~/context/OverlayProvider";
 import ModalsProvider from "~/context/ModalsProvider";
@@ -30,13 +30,13 @@ import { useChangeLanguage } from "remix-i18next/react";
 import i18next from "~/i18next.server";
 
 export const meta: MetaFunction = () => ([
-  ...getSeoMeta({}),
+  ...getSeoMeta({})
 ]);
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
-  { rel: "preload", href: stylesheet, as: "style"},
-  { rel: "stylesheet", href: stylesheet },
+  { rel: "preload", href: stylesheet, as: "style" },
+  { rel: "stylesheet", href: stylesheet }
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -44,42 +44,39 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({ locale });
 }
 
-export let handle = { i18n: "common" };
-
-function Document({ children, locale }: { children: ReactNode, locale?: string }) {
+export let handle = { i18n: "common" };function Document({ children , locale}: { children: ReactNode , locale?: string }) {
   let { i18n } = useTranslation();
 
   return (
     <html lang={locale ?? "en"} dir={i18n.dir()}>
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-        <FavIcon />
-        <title>Ask Gram</title>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_KEY}`}></script>
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-    
-          gtag('config', '${GOOGLE_ANALYTICS_KEY}');`
-        }}>
-        </script>
-      </head>
-      <body>
-        <AuthProvider>
-          <OverlayProvider>
-            <ModalsProvider>
+  <head>
+    <meta charSet="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Meta />
+    <Links />
+    <FavIcon />
+    <title>Ask Gram</title>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_KEY}`}></script>
+    <script dangerouslySetInnerHTML={{
+      __html: `
+        window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '${GOOGLE_ANALYTICS_KEY}');`
+    }}>
+    </script>
+  </head>
+  <body>
+  <AuthProvider>
+    <OverlayProvider>
+      <ModalsProvider>
           {children}
         </ModalsProvider>
-          </OverlayProvider>
-        </AuthProvider>
-      </body>
-    </html>
-  );
+    </OverlayProvider>
+  </AuthProvider>
+  </body>
+  </html>);
 }
 
 export default function App() {
@@ -89,12 +86,17 @@ export default function App() {
 
   return (
     <Document locale={locale}>
-      <Outlet />
+      <RouterOutletWithContext />
       <ScrollRestoration />
       {isBot ? null : <Scripts />}
       <LiveReload />
     </Document>
   );
+}
+
+export function RouterOutletWithContext() {
+  const { user } = useAuth();
+  return <Outlet context={user} />;
 }
 
 export function ErrorBoundary() {

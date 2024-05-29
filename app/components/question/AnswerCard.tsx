@@ -1,9 +1,12 @@
-import { AnswerStatus, IAnswer, IUser } from "~/models/questionModel";
+import { AnswerStatus, getAnswerBody, IAnswer, IUser } from "~/models/questionModel";
 import {useState} from "react";
 import UserProfile from "~/components/UI/UserProfile";
 import { getCreatedAt } from "~/utils";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
+import SanitizedText from "~/components/question/SanitizedText";
+import { Link } from "@remix-run/react";
+import { UserNameLink } from "~/components/UI/UserNameLink";
 
 interface Props {
     answer?: IAnswer;
@@ -31,26 +34,26 @@ export default function AnswerCard({ answer, user }: Props) {
           )}
           <div className='flex gap-3 w-full p-5 mt-3'>
             <UserProfile user={user} />
-            <div className='flex flex-col text-sm text-black pr-2 overflow-x-hidden'>
-              <p className='text-sm font-bold capitalize'>{user?.view_name ?? 'Answered By Askgram User'}</p>
+            <div className='flex flex-col text-sm text-black pr-2 h-auto w-full overflow-hidden'>
+              <UserNameLink user={user} className="text-sm font-bold capitalize"/>
               {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
               {answer?.text && (
-                <p data-cy="final-answer">
+                <div data-cy="final-answer">
                   <span className='font-medium'>Final Answer : </span>
-                  <span className='relative' dangerouslySetInnerHTML={{ __html: answer?.text }} />
-                </p>
+                  <SanitizedText html={getAnswerBody(answer)} className='inline' />
+                </div>
               )}
               {!!answer?.answer_steps?.length && (
                 answer.answer_steps.map((step, index) => (
                   step?.text ? (
-                    <p
+                    <div
                         className='mt-2'
                         key={index}
                         data-cy="explanation"
                     >
                       <span className='font-medium'>Explanation : </span>
-                      <span dangerouslySetInnerHTML={{ __html: step?.text }} />
-                    </p>
+                      <SanitizedText html={step?.text} className='inline' />
+                    </div>
                   ) :null
                 ))
               )}

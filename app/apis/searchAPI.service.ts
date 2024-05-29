@@ -2,7 +2,7 @@ import axios from "axios";
 import { SEARCH_CLUSTER } from "~/config/enviroment.server";
 import { getQuestionsById, getQuestionsInfo } from "~/apis/questionsAPI.server";
 import { SearchResponseInterface } from "~/models/searchModel";
-import { AnswerStatus } from "~/models/questionModel";
+import { AnswerStatus, QuestionClass } from "~/models/questionModel";
 import { clientGetQuestionsById, clientGetQuestionsInfo } from "~/apis/questionsAPI";
 
 export async function searchQuestionsDetailsAPI(term: string) {
@@ -24,14 +24,17 @@ export async function getSearchResultsWithDetails(searchResponse: SearchResponse
   }
 
   const questionIds = searchResponse.data.map(el => el.id);
-  let questionMapper: { [key: string]: string } = {};
+  let questionMapper: { [key: string]: { question_slug: string, rendered_text?: string } } = {};
   let questionInfoMapper: { [key: string]: { answers_count: number, answers_statuses: AnswerStatus[] } } = {};
 
   const handleQuestionDetails = async () => {
     const questionDetails = clientSide
       ? await clientGetQuestionsById({ params: { ids: questionIds }})
       : await getQuestionsById({ params: { ids: questionIds }})
-    questionDetails?.forEach((question) => questionMapper[question.id] = question.slug );
+    questionDetails?.forEach((question) => questionMapper[question.id] = {
+      question_slug: question.slug,
+      rendered_text: question?.rendered_text,
+    });
   }
 
   const handleQuestionsInfo = async () => {
@@ -50,9 +53,12 @@ export async function getSearchResultsWithDetails(searchResponse: SearchResponse
     ...searchResponse,
     data: searchResponse.data.map(question => ({
       ...question,
-      slug: questionMapper.hasOwnProperty(question.id) ? questionMapper[question.id] : question.id,
+      text: QuestionClass.questionTextExtraction(question?.text),
+      slug: questionMapper.hasOwnProperty(question.id) ? questionMapper[question.id]?.question_slug : question.id,
       answerCount: questionInfoMapper.hasOwnProperty(question.id) ? questionInfoMapper[question.id]?.answers_count : 0,
       answerStatuses: questionInfoMapper.hasOwnProperty(question.id) ? questionInfoMapper[question.id]?.answers_statuses : [],
+      rendered_text: questionMapper.hasOwnProperty(question.id)
+        ? QuestionClass.questionTextExtraction(questionMapper[question.id]?.rendered_text) : undefined,
     })),
     count: searchResponse.count
   }
