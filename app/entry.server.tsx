@@ -72,11 +72,13 @@ async function handleBotRequest(
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
       <I18nextProvider i18n={instance}>
-        <RemixServer
-          context={remixContext}
-          url={request.url}
-          abortDelay={ABORT_DELAY}
-        />
+        <IsBotProvider isBot={isbot(request.headers.get("User-Agent") ?? "")}>
+          <RemixServer
+            context={remixContext}
+            url={request.url}
+            abortDelay={ABORT_DELAY}
+          />
+        </IsBotProvider>
       </I18nextProvider>,
       {
         onAllReady() {
