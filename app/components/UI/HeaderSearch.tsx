@@ -78,7 +78,7 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
     e.preventDefault();
 
     if (textareaRef.current?.getValue()) {
-      const term = textareaRef.current?.getValue()?.replaceAll('\n', ' ');
+      const term = textareaRef.current?.getValue()?.replaceAll('\n', '%0A');
       navigate({ pathname: '/search', search: `?term=${term}` })
     }
 
