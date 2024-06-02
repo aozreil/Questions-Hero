@@ -20,17 +20,23 @@ export const ExpandableTextarea = forwardRef<
   ((props, ref) => {
   const [hasValue, setHasValue] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [isUserInitiated, setIsUserInitiated] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const cashedInputText = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (props.setHasValue) props.setHasValue(hasValue);
   }, [hasValue]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (hasValue && !e?.target?.value) setHasValue(false);
-    if (!hasValue && e?.target?.value) setHasValue(true);
+    const eventText = e.target?.value
+    if (cashedInputText.current === eventText) return;
 
-    calculateTextareaRows(e?.target?.value);
+    cashedInputText.current = eventText
+    if (hasValue && !eventText) setHasValue(false);
+    if (!hasValue && eventText) setHasValue(true);
+
+    calculateTextareaRows(eventText);
     props.onChange && props.onChange(e);
   }
 
@@ -43,10 +49,11 @@ export const ExpandableTextarea = forwardRef<
   }, []);
 
   const onFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
+    if (!isUserInitiated) return;
     if (textAreaRef.current) calculateTextareaRows(textAreaRef.current.value)
     setIsFocused(true);
     props.onFocus && props.onFocus(e);
-  }, []);
+  }, [isUserInitiated]);
 
   const onBlur = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
     setIsFocused(false);
@@ -85,6 +92,8 @@ export const ExpandableTextarea = forwardRef<
       onKeyDown={handleKeyDown}
       onFocus={onFocus}
       onBlur={onBlur}
+      onMouseEnter={() => setIsUserInitiated(true)}
+      onMouseLeave={() => setIsUserInitiated(false)}
       className={clsx(props.className, !isFocused && 'overflow-y-hidden')}
       autoFocus={false}
     />
