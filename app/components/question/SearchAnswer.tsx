@@ -16,10 +16,10 @@ interface Props {
   close: () => void;
   handleAnswerOpen?: () => void;
   mobileVersion?: boolean;
+  onlyHaveAIAnswer?: boolean;
 }
 
-export default function SearchAnswer({ answers, userProfiles, slug, close, handleAnswerOpen, mobileVersion }: Props) {
-  const verifiedAnswer = answers?.[0];
+export default function SearchAnswer({ answers, userProfiles, slug, close, handleAnswerOpen, mobileVersion, onlyHaveAIAnswer }: Props) {
   useEffect(() => {
     handleAnswerOpen && handleAnswerOpen();
   }, []);
@@ -27,10 +27,11 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
     <div data-cy="search-answer-card" className="relative flex h-fit max-sm:w-full items-end justify-center lg:p-4 pr-0 lg:pt-0 text-center">
       <div className={clsx(
         "thin-scrollbar h-fit lg:max-h-[83vh] lg:overflow-y-auto bg-white w-full lg:w-[28rem] 2xl:w-[34rem] z-20",
-        mobileVersion ? "px-0" : "border-2 border-[#5fc9a2] rounded-xl pb-4"
+        mobileVersion ? 'px-0' :  `border-2 ${onlyHaveAIAnswer ? 'border-[#ff9700]' : 'border-[#5fc9a2]'} rounded-xl pb-4`,
+        answers === undefined && 'border-none',
       )}>
         {
-          !!answers?.length
+          answers !== undefined
             ? (
               <>
                 {!mobileVersion && (
@@ -49,13 +50,16 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
                 {answers?.map((answer, index) => (
                   <Fragment key={answer?.created_at}>
                     {!!index && <div className="w-full border-t border-t-0.5 border-t-[#c4c5c5] mb-2" />}
-                    <Answer
-                      answer={answer}
-                      askedBy={userProfiles?.[answer?.user_id ?? 0]}
-                    />
+                    {answer?.answer_status === AnswerStatus.AI_ANSWER
+                      ? <AIAnswer aiAnswer={answer?.text} />
+                      : <Answer
+                        answer={answer}
+                        askedBy={userProfiles?.[answer?.user_id ?? 0]}
+                      />
+                    }
                   </Fragment>
                 ))}
-                {!!slug && (
+                {!!slug && !onlyHaveAIAnswer && (
                   <>
                     <Link to={`/question/${slug}`} onClick={close}
                          data-cy='go-to-question'
@@ -81,6 +85,31 @@ export default function SearchAnswer({ answers, userProfiles, slug, close, handl
   );
 }
 
+const AIAnswer = ({ aiAnswer }: { aiAnswer?: string }) => (
+  <div className='flex flex-col space-y-4 p-4 pb-2'>
+    <div className='flex space-x-3'>
+      <div className='rounded-full h-12 w-12 bg-[#ff9700] flex items-center justify-center'>
+        <img src='/assets/images/ai-robot.svg' alt='ai-robot' className='w-9 mb-1'  />
+      </div>
+      <div className='flex flex-col items-start text-black'>
+        <p className='font-bold'>Askgram AI</p>
+      </div>
+    </div>
+    <div className='w-full max-sm:pb-5'>
+      <div className="f2f4f5 text-left p-4 rounded-xl mb-3 bg-[#ffeddd]">
+        <div className="flex items-center space-x-2 text-[#ff9700] font-bold  mb-5 sm:mb-2">
+          <img src="/assets/images/ai-answered.svg" alt="verifed" />
+          <p>Verified by Askgram AI</p>
+        </div>
+        <p className='max-sm:text-lg'>
+          <span className='font-medium'>Final Answer : </span>
+          <span>{aiAnswer}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+)
+
 const Answer = ({ askedBy, answer }: {
   askedBy?: IUser;
   answer: IAnswer;
@@ -105,7 +134,7 @@ const Answer = ({ askedBy, answer }: {
           clsx("f2f4f5 text-left p-4 rounded-xl mb-3 overflow-x-hidden", isVerified ? "bg-[#d3f0e5]" : "bg-[#f2f4f5]")}
         >
           {isVerified && (
-            <div className="flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0">
+            <div className="flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-2">
               <img src="/assets/images/verified.svg" alt="verifed" />
               <p>Verified Answer</p>
             </div>

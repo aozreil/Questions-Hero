@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Form } from "@remix-run/react";
 import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
@@ -6,6 +6,7 @@ import CloseIcon from "~/components/icons/CloseIcon";
 import { useSlides } from "~/context/SlidesProvider";
 import { ExpandableTextarea, IExpandableTextarea } from "~/components/UI/ExpandableTextarea";
 import { useNavigate } from "react-router";
+import { useModals } from "~/context/ModalsProvider";
 
 export default function ExpandableSearch() {
     const [hasValue, setHasValue] = useState(false);
@@ -14,7 +15,12 @@ export default function ExpandableSearch() {
     const submitButton = useRef<HTMLButtonElement>(null);
     const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
     const { setPauseSlideNavigation } = useSlides();
+    const { ocrOpened, setOcrOpened } = useModals();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setPauseSlideNavigation(true);
+    }, [ocrOpened]);
 
     const onFocus = useCallback(() => {
         setPauseSlideNavigation(true);
@@ -31,6 +37,7 @@ export default function ExpandableSearch() {
       (e: any) => {
           const currentTarget = e.currentTarget;
 
+          if (ocrOpened) return;
           // Give browser time to focus the next element
           requestAnimationFrame(() => {
               // Check if the new focused element is a child of the original container
@@ -39,7 +46,7 @@ export default function ExpandableSearch() {
               }
           });
       },
-      [onBlur]
+      [onBlur, ocrOpened]
     );
 
     const onTextareaEnter = useCallback(() => {
@@ -57,20 +64,21 @@ export default function ExpandableSearch() {
         e.preventDefault();
 
         if (textareaRef.current?.getValue()) {
-            const term = textareaRef.current?.getValue()?.replaceAll('\n', '%0A');
+            const term = textareaRef.current?.getValue()?.replaceAll('\n', ' ');
             navigate({ pathname: '/search', search: `?term=${term}` })
         }
         onBlur();
     }, []);
 
     return (
+      <>
         <Form
           action='/search'
           ref={formRef}
           className={clsx(`z-10 py-2 sm:py-3.5 px-5 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%]
            md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
           onBlur={handleBlur}
-          onSubmit={onBlur}
+          onSubmit={handleSubmit}
           data-cy="landing-search"
         >
             <button ref={submitButton} className='flex-shrink-0' type='submit'>
@@ -89,11 +97,16 @@ export default function ExpandableSearch() {
               onFocus={onFocus}
               setHasValue={setHasValue}
             />
-            {hasValue && (
+            {hasValue ? (
               <button type='button' className='h-full flex items-center' onClick={handleCancelClick}>
                 <CloseIcon colorfill='#000' className='mt-2.5 w-3.5 h-3.5' />
               </button>
+            ) : (
+              <button type='button' onClick={() => setOcrOpened(true)}>
+                  <img src='/assets/images/search-ocr.svg' alt='search-by-image' className='w-7 h-7 mt-1' />
+              </button>
             )}
         </Form>
+      </>
     )
 }

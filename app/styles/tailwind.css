@@ -246,6 +246,10 @@ input[type="search"]:focus::-webkit-search-cancel-button {
     background: white;
 }
 
+.cropper-crop-box {
+    background: white;
+}
+
 .lexicalEditorTheme-text-bold {
     font-weight: bold;
 }

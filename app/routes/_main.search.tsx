@@ -8,11 +8,14 @@ import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
 import { BASE_URL } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
-import { Await, defer, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
+import { Await, defer, useLoaderData, useLocation, useNavigation, useSearchParams } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { useAnalytics } from "~/hooks/useAnalytics";
 import { useOverlay } from "~/context/OverlayProvider";
+import { AnswerStatus, ISearchQuestion } from "~/models/questionModel";
+import { OCRSearchResponseInterface } from "~/models/searchModel";
+import { getTextFormatted } from "~/utils/text-formatting-utils";
 
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
@@ -39,7 +42,8 @@ export const links: LinksFunction = () => {
 export async function loader({ request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("term");
-  if (!query) {
+  const ocr = searchParams.get("ocr");
+  if (!query || ocr) {
     return json({ data: { data: [], count: 0 } });
   }
 
@@ -54,8 +58,11 @@ export default function SearchPage() {
   const navigation = useNavigation();
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname === '/search'
   const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get('term');
+  const fromOcrSearch = searchParams.get('ocr');
   const { trackEvent } = useAnalytics();
   const { overlayVisible } = useOverlay();
+  const location = useLocation();
 
   useEffect(() => {
     const search_term = searchParams.get('term');
@@ -74,6 +81,30 @@ export default function SearchPage() {
     }
   }
 
+  const getDataWithAiAnswer = (data: ISearchQuestion[]): ISearchQuestion[] => {
+    const ocrResponse = location?.state?.ocr_res as OCRSearchResponseInterface;
+    const ocrSearchResults = ocrResponse?.data as ISearchQuestion[];
+    if (!searchTerm || !ocrSearchResults) return data;
+
+    const ocrQuestionBody = ocrResponse?.aiImageAnalysis?.ocr_result ?? searchTerm;
+    const aiAnswer = ocrResponse?.aiImageAnalysis?.answer;
+    if (aiAnswer) {
+      return [
+        {
+          id: 'ai-answer',
+          text: ocrQuestionBody ? getTextFormatted(ocrQuestionBody) : '',
+          slug: './',
+          answerCount: 1,
+          aiAnswer: aiAnswer ? getTextFormatted(aiAnswer) : '',
+          answerStatuses: [AnswerStatus.AI_ANSWER],
+        },
+        ...ocrSearchResults,
+      ];
+    } else {
+      return ocrSearchResults;
+    }
+  }
+
   return (
     <section
       className={`pb-40 search-page-scroll max-h-[calc(100vh-6rem)] ${overlayVisible ? 'overflow-hidden pr-[12px]' : 'overflow-y-auto'}`}
@@ -86,12 +117,15 @@ export default function SearchPage() {
         }>
           {isLoadingData ? <SearchLoading /> : (
           ({ data, count }) => {
+            const dataWithAiAnswer = getDataWithAiAnswer(data as ISearchQuestion[]);
+            const resultsCount = count ? count : dataWithAiAnswer?.length;
+
             return <>
-              {data.length === 0 && <>
+              {(dataWithAiAnswer.length === 0 && !fromOcrSearch) && <>
                 <EmptyResultsSearch />
               </>}
 
-              {data.length > 0 && <>
+              {dataWithAiAnswer.length > 0 && <>
                 {showVerifiedAnswer &&
                   <SuccessAlert className='sm:px-0'>
                     <section className={`container aligned-with-search max-sm:px-2 max-md:px-4 max-xl:px-10 w-full flex items-center`}>
@@ -109,10 +143,10 @@ export default function SearchPage() {
                 }
                 <div className="container aligned-with-search max-sm:px-2 max-md:px-4 max-xl:px-10 w-full mt-4">
                   <p>
-                    {count} <span className="font-bold">Result{count > 1 ? "s" : ""} found</span>
+                    {resultsCount} <span className="font-bold">Result{resultsCount > 1 ? "s" : ""} found</span>
                   </p>
                   <div className="pt-4 space-y-4">
-                    {data.map((el) => {
+                    {dataWithAiAnswer.map((el) => {
                       if(!el){
                         return <></>
                       }

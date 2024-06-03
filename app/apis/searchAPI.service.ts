@@ -3,10 +3,19 @@ import { SEARCH_CLUSTER } from "~/config/enviroment.server";
 import { getQuestionsById, getQuestionsInfo } from "~/apis/questionsAPI.server";
 import { SearchResponseInterface } from "~/models/searchModel";
 import { AnswerStatus, QuestionClass } from "~/models/questionModel";
+import { clientGetQuestionsById, clientGetQuestionsInfo } from "~/apis/questionsAPI";
 
 export async function searchQuestionsDetailsAPI(term: string) {
   try {
-  const searchResponse = await searchQuestionsAPI(term)
+    const searchResponse = await searchQuestionsAPI(term)
+    return getSearchResultsWithDetails(searchResponse);
+  } catch (e) {
+    console.log(e);
+    return { data: [], count: 0 }
+  }
+}
+
+export async function getSearchResultsWithDetails(searchResponse: SearchResponseInterface, clientSide?: boolean) {
   if(searchResponse.data.length === 0){
     return {
       data: [],
@@ -19,7 +28,9 @@ export async function searchQuestionsDetailsAPI(term: string) {
   let questionInfoMapper: { [key: string]: { answers_count: number, answers_statuses: AnswerStatus[] } } = {};
 
   const handleQuestionDetails = async () => {
-    const questionDetails = await getQuestionsById({ params: { ids: questionIds }})
+    const questionDetails = clientSide
+      ? await clientGetQuestionsById({ params: { ids: questionIds }})
+      : await getQuestionsById({ params: { ids: questionIds }})
     questionDetails?.forEach((question) => questionMapper[question.id] = {
       question_slug: question.slug,
       rendered_text: question?.rendered_text,
@@ -27,7 +38,9 @@ export async function searchQuestionsDetailsAPI(term: string) {
   }
 
   const handleQuestionsInfo = async () => {
-    const questionInfo = await getQuestionsInfo({ params: { ids: questionIds }});
+    const questionInfo = clientSide
+      ? await clientGetQuestionsInfo({ params: { ids: questionIds }})
+      : await getQuestionsInfo({ params: { ids: questionIds }});
     questionInfo?.forEach((question) => questionInfoMapper[question.id] = {
       answers_count: question?.answers_count,
       answers_statuses: question?.answers_statuses,
@@ -37,6 +50,7 @@ export async function searchQuestionsDetailsAPI(term: string) {
   await Promise.allSettled([handleQuestionDetails(), handleQuestionsInfo()]);
 
   return {
+    ...searchResponse,
     data: searchResponse.data.map(question => ({
       ...question,
       text: QuestionClass.questionTextExtraction(question?.text),
@@ -47,10 +61,6 @@ export async function searchQuestionsDetailsAPI(term: string) {
         ? QuestionClass.questionTextExtraction(questionMapper[question.id]?.rendered_text) : undefined,
     })),
     count: searchResponse.count
-  }
-  } catch (e) {
-    console.log(e);
-    return { data: [], count: 0 }
   }
 }
 

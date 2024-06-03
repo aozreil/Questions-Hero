@@ -129,10 +129,16 @@ export interface IQuestion {
   created_at?: string,
   error?: string;
 
-  // Derived Props
-  title?: string;
-  includesLatex?: boolean;
-  answerCount?: number;
+    // Derived Props
+    title?: string;
+    includesLatex?: boolean;
+}
+
+export interface ISearchQuestion extends IQuestion {
+    // Derived Props
+    answerCount: number;
+    aiAnswer?: string;
+    relevant_score?: number;
 }
 
 export interface IQuestionInfo {

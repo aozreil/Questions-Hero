@@ -22,3 +22,10 @@ export interface SearchResponseInterface {
   "term": string,
   "uuid": string,
 }
+
+export interface OCRSearchResponseInterface extends SearchResponseInterface {
+  aiImageAnalysis: {
+    ocr_result?: string,
+    answer?: string,
+  },
+}

@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useOverlay } from "~/context/OverlayProvider";
 import { useSlides } from "~/context/SlidesProvider";
+import { useModals } from "~/context/ModalsProvider";
 import { ExpandableTextarea, IExpandableTextarea } from "~/components/UI/ExpandableTextarea";
 import { useNavigate } from "react-router";
 import CloseIcon from "~/components/icons/CloseIcon";
@@ -18,6 +19,7 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
   const formRef = useRef<HTMLFormElement>(null);
   const submitButton = useRef<HTMLButtonElement>(null);
   const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
+  const { ocrOpened, setOcrOpened } = useModals();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -30,6 +32,10 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
       textareaRef.current && textareaRef.current.setValue(searchParams.get('term') ?? '');
     }
   }, [location?.pathname]);
+
+  useEffect(() => {
+    slides?.setPauseSlideNavigation && slides?.setPauseSlideNavigation(ocrOpened);
+  }, [ocrOpened]);
 
   const onFocus = useCallback(() => {
     slides?.setPauseSlideNavigation && slides?.setPauseSlideNavigation(true);
@@ -52,6 +58,7 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
     (e: any) => {
       const currentTarget = e.currentTarget;
 
+      if (ocrOpened) return;
       // Give browser time to focus the next element
       requestAnimationFrame(() => {
         // Check if the new focused element is a child of the original container
@@ -60,7 +67,7 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
         }
       });
     },
-    [onBlur]
+    [onBlur, ocrOpened]
   );
 
   const onTextareaEnter = useCallback(() => {
@@ -78,7 +85,7 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
     e.preventDefault();
 
     if (textareaRef.current?.getValue()) {
-      const term = textareaRef.current?.getValue()?.replaceAll('\n', '%0A');
+      const term = textareaRef.current?.getValue()?.replaceAll('\n', ' ');
       navigate({ pathname: '/search', search: `?term=${term}` })
     }
 
@@ -112,9 +119,13 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
           onFocus={onFocus}
           setHasValue={setHasValue}
         />
-        {hasValue && (
+        {hasValue ? (
           <button type='button' className='h-full flex items-center' onClick={handleCancelClick}>
             <CloseIcon colorfill='#000' className='mt-2 w-3.5 h-3.5' />
+          </button>
+        ) : (
+          <button type='button' onClick={() => setOcrOpened(true)}>
+            <img src='/assets/images/search-ocr.svg' alt='search-by-image' className='w-6 h-6 mt-1' />
           </button>
         )}
       </Form>

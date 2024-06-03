@@ -26,18 +26,18 @@ export default function QuestionType({ answerCount, hasAiAnswer, hasVerifiedAnsw
     switch (getType()) {
       case AnswerStatus.VERIFIED: return (
         <div className="flex items-center space-x-2 text-[#25b680] font-bold">
-            <img src="/assets/images/verified.svg" alt="verifed" />
-            <p>Has Verified Answer</p>
-          </div>
+          <img src="/assets/images/verified.svg" alt="verifed" />
+          <p>Has Verified Answer</p>
+        </div>
         );
       case AnswerStatus.AI_ANSWER: return (
         <div className="flex items-center space-x-2 text-[#ff9700] font-bold">
-              <img src="/assets/images/ai-answered.svg" alt="verifed" />
-              <p>Verified by Askgram AI</p>
-            </div>
+            <img src="/assets/images/ai-answered.svg" alt="verifed" />
+            <p>Verified by Askgram AI</p>
+          </div>
           )
       default: return ( <p className='text-[#99a7af] font-medium'>{`${answerCount} ${answerCount === 1 ? 'Answer' : 'Answers'}`}</p>
-    )
+      )
     }
   }
 

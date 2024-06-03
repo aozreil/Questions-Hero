@@ -6,6 +6,7 @@ import { useSlides } from "~/context/SlidesProvider";
 import { useOverlay } from "~/context/OverlayProvider";
 import CloseIcon from "~/components/icons/CloseIcon";
 import BackArrow from "~/components/icons/BackArrow";
+import { useModals } from "~/context/ModalsProvider";
 import { useNavigate } from "react-router";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 
 export default function HeaderSearchMobile({ setIsSearchExpanded, isSearchExpanded }: Props) {
   const textareaRef = useRef<IExpandableTextarea>(null);
+  const { ocrOpened, setOcrOpened } = useModals();
   const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -28,6 +30,10 @@ export default function HeaderSearchMobile({ setIsSearchExpanded, isSearchExpand
       textareaRef.current && textareaRef.current.setValue(searchParams.get('term') ?? '');
     }
   }, [location?.pathname]);
+
+  useEffect(() => {
+    slides?.setPauseSlideNavigation && slides?.setPauseSlideNavigation(ocrOpened);
+  }, [ocrOpened]);
 
   const onFocus = useCallback(() => {
     slides?.setPauseSlideNavigation && slides?.setPauseSlideNavigation(true);
@@ -48,7 +54,7 @@ export default function HeaderSearchMobile({ setIsSearchExpanded, isSearchExpand
     e.preventDefault();
 
     if (textareaRef.current?.getValue()) {
-      const term = textareaRef.current?.getValue()?.replaceAll('\n', '%0A');
+      const term = textareaRef.current?.getValue()?.replaceAll('\n', ' ');
       navigate({ pathname: '/search', search: `?term=${term}` })
     }
 
@@ -59,6 +65,7 @@ export default function HeaderSearchMobile({ setIsSearchExpanded, isSearchExpand
     (e: any) => {
       const currentTarget = e.currentTarget;
 
+      if (ocrOpened) return;
       // Give browser time to focus the next element
       requestAnimationFrame(() => {
         // Check if the new focused element is a child of the original container
@@ -67,12 +74,12 @@ export default function HeaderSearchMobile({ setIsSearchExpanded, isSearchExpand
         }
       });
     },
-    [onBlur]
+    [onBlur, ocrOpened]
   );
 
   const onTextareaEnter = useCallback(() => {
     if (textareaRef.current?.getValue()) {
-      const term = textareaRef.current?.getValue()?.replaceAll('\n', '%0A');
+      const term = textareaRef.current?.getValue()?.replaceAll('\n', ' ');
       navigate({ pathname: '/search', search: `?term=${term}` })
     }
 
@@ -107,10 +114,14 @@ export default function HeaderSearchMobile({ setIsSearchExpanded, isSearchExpand
           onFocus={onFocus}
           onEnter={onTextareaEnter}
         />
-        {isSearchExpanded &&
-          (
+        {isSearchExpanded
+          ? (
             <button type='button' className='h-full flex items-center' onClick={handleCancelClick}>
               <CloseIcon colorfill='#000' className='mt-2 w-3.5 h-3.5' />
+            </button>
+          ) : (
+            <button type='button' onClick={() => setOcrOpened(true)}>
+              <img src='/assets/images/search-ocr.svg' alt='search-by-image' className='w-6 h-6 mt-0.5' />
             </button>
           )
         }

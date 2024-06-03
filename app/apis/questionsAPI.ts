@@ -83,7 +83,7 @@ export async function getPreSignedUrls(
 
 export async function uploadFile(
   preSignedUrl: string,
-  file: File,
+  file: File | Blob,
   onProgress: (progress?: number) => void,
   config?: AxiosRequestConfig
 ) {

@@ -23,6 +23,7 @@ import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
 import AuthProvider, { useAuth } from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
 import OverlayProvider from "~/context/OverlayProvider";
+import ModalsProvider from "~/context/ModalsProvider";
 import { LoaderFunctionArgs } from "@remix-run/router";
 import { useTranslation } from "react-i18next";
 import { useChangeLanguage } from "remix-i18next/react";
@@ -69,7 +70,9 @@ export let handle = { i18n: "common" };function Document({ children , locale}: {
   <body>
   <AuthProvider>
     <OverlayProvider>
-      {children}
+      <ModalsProvider>
+          {children}
+        </ModalsProvider>
     </OverlayProvider>
   </AuthProvider>
   </body>

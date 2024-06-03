@@ -21,7 +21,7 @@ export default function Header() {
     return (
       <header data-cy="header" className={clsx(
         `sticky top-0 z-40 h-24 w-full bg-[#f7f8fa] border-t-[3px] border-t-[#070707] max-sm:px-4 pt-7 pb-6`,
-        location?.pathname !== '/' && `bg-white ${isSearchFocused ? 'border-b-0' : 'border-b-[1px] sm:border-b-[2px]'} border-[#ebf2f6]`,
+        location?.pathname !== '/' && `bg-white border-b-[1px] ${isSearchFocused ? 'border-b-0' : 'sm:border-b-[2px]'} border-[#ebf2f6]`,
         isSearchExpanded && focusedOverlayStyles,
         isSearchFocused && 'z-50',
       )}>
