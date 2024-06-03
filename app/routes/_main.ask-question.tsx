@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { FormEvent, lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Loader from "~/components/UI/Loader";
 import { postQuestion } from "~/apis/questionsAPI";
 import { useNavigate } from "react-router";
@@ -15,6 +15,9 @@ import { getKatexLink } from "~/utils/external-links";
 import SimilarQuestions, { isThereExactMatch } from "~/components/askQuestion/SimilarQuestions";
 import { useAnalytics } from "~/hooks/useAnalytics";
 import { LexicalExportRef } from "~/components/lexical/plugins/ExportHtmlPlugin";
+import QuestionTypeDropdown from "~/components/widgets/QuestionTypeDropdown";
+import QuestionTopicDropdown from "~/components/widgets/QuestionTopicDropdown";
+import { Form } from "@remix-run/react";
 const LexicalEditor = lazy(() => import("~/components/lexical/LexicalEditor"));
 
 export const meta: MetaFunction<typeof loader> = () => {
@@ -41,12 +44,15 @@ export default function AskQuestion() {
   const [postPendingOnUser, setPostPendingOnUser] = useState(false);
   const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(true);
+  const [isTypeSelected, setIsTypeSelected] = useState(false);
+  const [isTopicSelected, setIsTopicSelected] = useState(false);
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { user, openSignUpModal } = useAuth();
   const lexicalRef = useRef<LexicalExportRef>(null);
   const hasValue = !!searchTerm;
-  const isPostingDisabled = !hasValue || isPosting || isSearchingForSimilar;
+  const isPostingDisabled = !isTypeSelected || !isTopicSelected ||
+    !hasValue || isPosting || isSearchingForSimilar;
   const { trackEvent } = useAnalytics();
 
   useEffect(() => {
@@ -72,7 +78,7 @@ export default function AskQuestion() {
     }
   }, [user, postPendingOnUser]);
 
-  const handleQuestionPost = useCallback(async () => {
+  const handleQuestionPost = useCallback(async (questionType?: string, questionTopicId?: number) => {
     if (!user) {
       setPostPendingOnUser(true);
       openSignUpModal();
@@ -107,7 +113,7 @@ export default function AskQuestion() {
       setIsPosting(true);
       try {
         const token = await recaptchaRef.current.executeAsync();
-        const res = await postQuestion(htmlOutput, textOutput, token);
+        const res = await postQuestion(htmlOutput, textOutput, token, questionType, questionTopicId);
         if (res?.slug || res?.id) {
           trackEvent("ask-question-post-success");
           toast.success('Your question added successfully!');
@@ -122,7 +128,24 @@ export default function AskQuestion() {
     }
   }, [hasValue, user, hasExactMatch]);
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.target as any);
+    const type = formData.get("type") as string;
+    const topic = formData.get("topic");
+    if (type && topic) {
+      handleQuestionPost(type, Number(topic))
+    }
+  }
+
+  const getButtonTitle = () => {
+    if (!hasValue) return 'Please write at least 10 characters to explain your question.';
+    if (!isTypeSelected) return 'Please select question type';
+    if (!isTopicSelected) return 'Please select question subject';
+  }
+
   return (
+    <>
     <div className='flex-1 relative max-h-[calc(100vh-6rem)] flex flex-col overflow-y-auto bg-[#070707] pt-4 sm:pt-14'>
       {shouldLoadRecaptcha && (
         <ReCAPTCHA
@@ -144,7 +167,7 @@ export default function AskQuestion() {
         </Transition>
         <section className='w-full flex max-lg:flex-col max-lg:space-y-12 lg:space-x-5 pb-40 sm:pb-10'>
           <div className='relative w-full lg:w-[60%] flex flex-col justify-between h-fit min-h-[8rem] sm:min-h-[13rem] pb-0 bg-[#f8f8f8] rounded-lg border border-[#99a7af]'>
-            <section data-cy='question-editor' className='text-black h-[8rem] sm:h-[13rem]'>
+            <section data-cy='question-editor' className='text-black h-[10rem] sm:h-[35vh]'>
               <Suspense>
                 <LexicalEditor
                   ref={lexicalRef}
@@ -154,18 +177,22 @@ export default function AskQuestion() {
                 />
               </Suspense>
             </section>
-            <section className='w-full p-4 flex-1 py-2 flex items-start justify-between text-sm'>
+            <Form onSubmit={handleSubmit} className='w-full p-4 flex-1 py-2 flex items-center justify-between text-sm'>
+              <div className='flex space-x-2'>
+                <QuestionTypeDropdown setIsTypeSelected={setIsTypeSelected} />
+                <QuestionTopicDropdown setIsTopicSelected={setIsTopicSelected} />
+              </div>
               <button
                 disabled={isPostingDisabled}
-                className={`${!isPostingDisabled ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} ml-auto flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
-                onClick={handleQuestionPost}
-                title={hasExactMatch ? 'An exact match to your question is found.' : ''}
+                className={`${!isPostingDisabled ? 'bg-[#163bf3]' : 'bg-[#afafb0]'} flex items-center space-x-2 rounded-lg text-white font-bold px-3.5 py-1.5`}
+                title={getButtonTitle()}
                 data-cy='post-question-button'
+                type='submit'
               >
                 {isPosting && <Loader className="w-5 h-5" />}
                 <p>{isPosting ? 'Posting...' : isSearchingForSimilar ? 'Searching for similar questions' : 'Ask your question'}</p>
               </button>
-            </section>
+            </Form>
             {showMatchError && (
               <div className='absolute -bottom-10 right-0 w-fit bg-red-500 p-1 px-4 rounded-md'>
                 <p className='text-base text-white'>An exact match to your question is found!</p>
@@ -181,9 +208,8 @@ export default function AskQuestion() {
           />
         </section>
       </div>
-      <div className='mt-auto w-full'>
-        <Footer />
-      </div>
     </div>
+    <Footer />
+  </>
   )
 }

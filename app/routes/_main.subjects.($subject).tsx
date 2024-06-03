@@ -208,15 +208,16 @@ clientLoader.hydrate = true;
 
 const getFilteredSubjects = (subjects?: ISubjectFilter[], mainSubjectId?: string, selectedCount?: number) => {
   const isSelected = (id: number) => !!mainSubjectId && !!id && id === Number(mainSubjectId);
-  return subjects
-    ?.filter(subject => subject?.questions_count > 0)
+  const list = subjects
+    ?.filter(subject => SUBJECTS_MAPPER.hasOwnProperty(subject?.id))
     ?.map(subject => ({
       label: subject?.title,
       value: subject?.id?.toString(),
       count: isSelected(subject?.id) && selectedCount !== undefined ? selectedCount : subject?.questions_count?.toString(),
       defaultChecked: isSelected(subject?.id),
     }))
-    ?.sort((a, b) => b?.defaultChecked ? 1 : -1)
+  list && makeSelectedFirst(list);
+  return list;
 }
 
 export default function _mainSubjectsSubject() {
@@ -543,8 +544,19 @@ const STATUS_FILTERS: IFilter[] = [
 ];
 
 const TYPE_FILTERS: IFilter[] = [
-  { label: 'Multiple answers', value: 'MULTIPLE_CHOICE' },
+  { label: 'Multiple Choice', value: 'MULTIPLE_CHOICE' },
   { label: 'True/False', value: 'TRUE_FALSE' },
   { label: 'Essay', value: 'ESSAY' },
   { label: 'Short answer', value: 'SHORT_ANSWER' },
 ];
+
+function makeSelectedFirst(array: IFilter[]) {
+  // Find the index of the item with the desired property value
+  let index = array.findIndex(item => item.defaultChecked);
+
+  // If the item is found, move it to the beginning of the array
+  if (index !== -1) {
+    let item = array.splice(index, 1)[0]; // Remove the item from the array
+    array.unshift(item); // Add the item to the beginning of the array
+  }
+}

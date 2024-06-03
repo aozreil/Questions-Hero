@@ -100,6 +100,23 @@ export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string, sho
   118: {
     "label": "Engineering",
     "slug": "engineering"
+  },
+  127: {
+    "label": "Certification",
+    "slug": "certification"
+  },
+  119: {
+    "label": "Information Technology",
+    "slug": "information-technology"
+  },
+  109: {
+    "label": "Physics & Astronomy",
+    "slug": "physics-astronomy"
+  },
+  116: {
+    "label": "Culinary, Hospitality, Travel & Tourism",
+    "shortTitle": "Hospitality & Travel",
+    "slug": "hospitality-travel"
   }
 }
 

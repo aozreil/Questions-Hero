@@ -29,13 +29,15 @@ export async function postQuestion(
   htmlBody: string,
   innerText: string,
   recaptchaToken: string | null,
-  attachments: { key: string; filename: string }[]
+  questionType?: string,
+  topicId?: number,
 ) {
   const response = await axiosApiInstance.post<IPostQuestion>(`${ASKGRAM_BASE}/api/content/questions`, {
     question_body: innerText,
     rendered_body: htmlBody,
     recaptcha_token: recaptchaToken,
-    attachments
+    question_type: questionType,
+    topic_id: topicId,
   }, {
     withCredentials: true,
     headers: {
