@@ -1,122 +1,123 @@
-import { Form, useLocation, useSearchParams, useNavigation } from "@remix-run/react";
+import { Form, useLocation, useSearchParams } from "@remix-run/react";
 import clsx from "clsx";
-import Loader from "~/components/UI/Loader";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useOverlay } from "~/context/OverlayProvider";
 import { useSlides } from "~/context/SlidesProvider";
+import { ExpandableTextarea, IExpandableTextarea } from "~/components/UI/ExpandableTextarea";
+import { useNavigate } from "react-router";
+import CloseIcon from "~/components/icons/CloseIcon";
 
 interface Props {
-  className?: string;
-  setIsSearchExpanded?: (expanded: boolean) => void;
-  isSearchExpanded?: boolean;
+  setIsSearchFocused?: (focused: boolean) => void;
+  isSearchFocused?: boolean;
 }
 
-export default function HeaderSearch({ className, setIsSearchExpanded, isSearchExpanded }: Props) {
-  const [searchParams] = useSearchParams();
-  const navigation = useNavigation();
+export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Props) {
+  const [hasValue, setHasValue] = useState(false);
+  const textareaRef = useRef<IExpandableTextarea>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const submitButton = useRef<HTMLButtonElement>(null);
+  const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
+  const navigate = useNavigate();
   const location = useLocation();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const submitButtonRef = useRef<HTMLButtonElement>(null);
-  const { setOverlayVisible, overlayVisible } = useOverlay();
-  const isSearching = navigation.state === 'loading' && navigation.formAction === '/search';
-  const searchOutsideSearchPage = !location?.pathname?.includes('search')
+  const [searchParams] = useSearchParams();
   const slides = location?.pathname === '/' ? useSlides() : undefined;
 
   useEffect(() => {
-    const searchTerm = searchParams?.get('term') ?? undefined;
-    if (inputRef.current && location?.pathname !== '/search') {
-      inputRef.current.value = '';
-    } else if (searchTerm && inputRef.current && location?.pathname === '/search') {
-      inputRef.current.value = searchTerm;
+    if (location?.pathname !== '/search' && textareaRef.current) {
+      textareaRef.current.clearValue();
+    } else if (location?.pathname === '/search' && searchParams.get('term')) {
+      textareaRef.current && textareaRef.current.setValue(searchParams.get('term') ?? '');
     }
-  }, [location]);
+  }, [location?.pathname]);
 
-  useEffect(() => {
-    // if mobile remove styles applied by input[type=search]::-webkit-search-cancel-button
-    if (window.innerWidth <= 640 && inputRef?.current) {
-      inputRef.current.type = 'text';
-      inputRef.current.placeholder = 'Search';
+  const onFocus = useCallback(() => {
+    slides?.setPauseSlideNavigation && slides?.setPauseSlideNavigation(true);
+    setOverlayVisible(true);
+    setIsSearchFocused && setIsSearchFocused(true);
+  }, []);
+
+  const onBlur = useCallback(() => {
+    slides?.setPauseSlideNavigation && slides?.setPauseSlideNavigation(false);
+    setOverlayVisible(false);
+    setIsSearchFocused && setIsSearchFocused(false);
+    if (textareaRef.current) {
+      textareaRef.current.collapseRows();
+      textareaRef.current.blur();
+      textareaRef.current.scrollToTop();
     }
   }, []);
 
-  const onFocus = () => {
-    slides?.setPauseSlideNavigation && slides.setPauseSlideNavigation(true);
-    if (setIsSearchExpanded && window.innerWidth <= 640) {
-      setIsSearchExpanded(true);
-      setOverlayVisible(true);
+  const handleBlur = useCallback(
+    (e: any) => {
+      const currentTarget = e.currentTarget;
+
+      // Give browser time to focus the next element
+      requestAnimationFrame(() => {
+        // Check if the new focused element is a child of the original container
+        if (!currentTarget.contains(document.activeElement)) {
+          onBlur();
+        }
+      });
+    },
+    [onBlur]
+  );
+
+  const onTextareaEnter = useCallback(() => {
+    onBlur();
+    !!textareaRef.current?.getValue() && submitButton?.current?.click();
+  }, []);
+
+  const handleCancelClick = useCallback(() => {
+    setHasValue(false);
+    if (textareaRef.current) textareaRef.current.clearValue();
+    onBlur();
+  }, []);
+
+  const handleSubmit = useCallback((e: any) => {
+    e.preventDefault();
+
+    if (textareaRef.current?.getValue()) {
+      const term = textareaRef.current?.getValue()?.replaceAll('\n', '%0A');
+      navigate({ pathname: '/search', search: `?term=${term}` })
     }
-  }
 
-  const onBlur = useCallback(() => {
-    slides?.setPauseSlideNavigation && slides.setPauseSlideNavigation(false);
-  }, [slides?.setPauseSlideNavigation])
-
-  const onSubmit = () => {
-    setOverlayVisible(false);
-    isSearchExpanded && setIsSearchExpanded && setIsSearchExpanded(false);
-    inputRef.current?.blur();
-  }
-
-  const clearExpandedSearch = () => {
-    if (setIsSearchExpanded) {
-      setOverlayVisible(false);
-      setIsSearchExpanded(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!overlayVisible && isSearchExpanded && setIsSearchExpanded) {
-      setIsSearchExpanded(false);
-    }
-  }, [overlayVisible]);
-
-  const searchClickHandler = () => {
-    submitButtonRef?.current?.click();
-    if (setIsSearchExpanded && isSearchExpanded && overlayVisible) {
-      setIsSearchExpanded(false);
-      setOverlayVisible(false);
-    }
-  }
+    onBlur();
+  }, []);
 
   return (
-    <Form
-      action="/search"
-      className={clsx(`relative rounded-md max-sm:flex-1 sm:w-[22rem] lg:w-[34rem]`, className)}
-      onSubmit={onSubmit}
-      data-cy="header-search"
-    >
-      <div className={clsx("absolute inset-y-0 sm:left-3 flex items-center", isSearchExpanded ? 'right-14' : 'max-sm:right-3')}>
-        {isSearching && searchOutsideSearchPage
-          ? <Loader className='w-5 h-5' />
-          : <img
-            src="/assets/images/search-icon.svg"
-            alt="search"
-            className="cursor-pointer w-5 h-5"
-            onClick={searchClickHandler}
+    <div className='max-sm:hidden max-h-10 overflow-y-visible'>
+      <Form
+        action='/search'
+        ref={formRef}
+        className={clsx(`relative z-10 py-1 px-3 bg-[#f8f8f8] border border-[#99a7af] min-h-[36px] h-fit sm:w-[22rem] xl:w-[34rem]
+         rounded-md flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
+        onBlur={handleBlur}
+        onSubmit={handleSubmit}
+        data-cy="header-search"
+      >
+        <button ref={submitButton} className='flex-shrink-0' type='submit'>
+          <img
+            src='/assets/images/search-icon.svg'
+            alt='search'
+            className='cursor-pointer flex-shrink-0 mt-2 sm:mt-1 w-5 h-5'
           />
-        }
-      </div>
-      <div className='w-full flex space-x-2 items-center'>
-        <input
-          ref={inputRef}
-          type="search"
-          name="term"
-          className={`w-full border-none py-1.5 bg-[#f8f8f8] placeholder:text-gray-400 focus:outline-none max-sm:text-2xl
-            rounded-full max-sm:pr-10 max-sm:pl-3 focus:ring-1 focus:ring-inset max-sm:focus:ring-gray-300
-            sm:rounded-md sm:pl-10 sm:pr-2 sm:bg-[#f2f4f5] sm:ring-1 sm:ring-inset sm:ring-[#99a7af] sm:focus:ring-[#070707] sm:text-sm sm:leading-6`}
-          placeholder="Search for acadmic answers"
+        </button>
+        <ExpandableTextarea
+          ref={textareaRef}
+          className='textarea-scrollable max-sm:mt-0.5 rounded-lg cursor-text resize-none w-full bg-transparent text-left py-0.5 flex-1 mx-3 max-h-[158px] outline-none border-none focus:ring-0'
+          name='term'
+          placeholder='Search for acadmic answers…'
+          onEnter={onTextareaEnter}
           onFocus={onFocus}
-          onBlur={onBlur}
-          autoComplete='off'
-          required={true}
+          setHasValue={setHasValue}
         />
-        {isSearchExpanded && <img
-          src='/assets/images/close-button.svg'
-          alt='close' className='h-7 w-7'
-          onClick={clearExpandedSearch}
-        />}
-      </div>
-      <button ref={submitButtonRef} type='submit' className='hidden' />
-    </Form>
+        {hasValue && (
+          <button type='button' className='h-full flex items-center' onClick={handleCancelClick}>
+            <CloseIcon colorfill='#000' className='mt-2 w-3.5 h-3.5' />
+          </button>
+        )}
+      </Form>
+    </div>
   );
 }

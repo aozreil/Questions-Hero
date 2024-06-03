@@ -4,26 +4,27 @@ import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import CloseIcon from "~/components/icons/CloseIcon";
 import { useSlides } from "~/context/SlidesProvider";
+import { ExpandableTextarea, IExpandableTextarea } from "~/components/UI/ExpandableTextarea";
+import { useNavigate } from "react-router";
 
 export default function ExpandableSearch() {
     const [hasValue, setHasValue] = useState(false);
-    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const textareaRef = useRef<IExpandableTextarea>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const submitButton = useRef<HTMLButtonElement>(null);
     const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
     const { setPauseSlideNavigation } = useSlides();
+    const navigate = useNavigate();
 
     const onFocus = useCallback(() => {
         setPauseSlideNavigation(true);
         setOverlayVisible(true);
-        if (textAreaRef.current) calculateTextareaRows(textAreaRef.current.value)
-
     }, []);
 
     const onBlur = useCallback(() => {
         setPauseSlideNavigation(false);
         setOverlayVisible(false);
-        if (textAreaRef.current) textAreaRef.current.rows = 1;
+        if (textareaRef.current) textareaRef.current.collapseRows();
     }, []);
 
     const handleBlur = useCallback(
@@ -41,38 +42,24 @@ export default function ExpandableSearch() {
       [onBlur]
     );
 
-    const calculateTextareaRows = useCallback((text?: string) => {
-        if (textAreaRef.current && text !== undefined) {
-            const charactersCapacity = window.innerWidth > 600 ? 55 : 35;
-            const rows = Math.min(Math.floor(text.length / charactersCapacity), 3) + 1;
-            const hasNewLines = text.includes('\n');
-
-            if (hasNewLines) {
-                textAreaRef.current.rows = 3;
-            } else if (rows !== textAreaRef.current.rows) {
-                textAreaRef.current.rows = rows <= 3 ? rows : 3;
-            }
-        }
-    }, [])
-
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        if (hasValue && !e?.target?.value) setHasValue(false);
-        if (!hasValue && e?.target?.value) setHasValue(true);
-
-        calculateTextareaRows(e?.target?.value);
-    }
-
-    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-        if(e.key == 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            onBlur();
-            !!textAreaRef?.current?.value && submitButton?.current?.click();
-        }
+    const onTextareaEnter = useCallback(() => {
+        onBlur();
+        !!textareaRef.current?.getValue() && submitButton?.current?.click();
     }, []);
 
     const handleCancelClick = useCallback(() => {
         setHasValue(false);
-        if (textAreaRef.current) textAreaRef.current.value = '';
+        if (textareaRef.current) textareaRef.current.clearValue();
+        onBlur();
+    }, []);
+
+    const handleSubmit = useCallback((e: any) => {
+        e.preventDefault();
+
+        if (textareaRef.current?.getValue()) {
+            const term = textareaRef.current?.getValue()?.replaceAll('\n', '%0A');
+            navigate({ pathname: '/search', search: `?term=${term}` })
+        }
         onBlur();
     }, []);
 
@@ -93,16 +80,14 @@ export default function ExpandableSearch() {
                   className='cursor-pointer flex-shrink-0 mt-2 sm:mt-1 w-6 h-6 sm:w-7 sm:h-7'
                 />
             </button>
-            <textarea
+            <ExpandableTextarea
+              ref={textareaRef}
               className='textarea-scrollable max-sm:mt-0.5 border-0 rounded-lg cursor-text resize-none w-full text-left py-0.5 flex-1 mx-3 max-h-[158px] bg-white outline-none text-xl border-none focus:ring-0'
-              rows={1}
               name='term'
               placeholder='Search for acadmic answers…'
-              ref={textAreaRef}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
+              onEnter={onTextareaEnter}
               onFocus={onFocus}
-              required={true}
+              setHasValue={setHasValue}
             />
             {hasValue && (
               <button type='button' className='h-full flex items-center' onClick={handleCancelClick}>
