@@ -27,7 +27,7 @@ export default function QuestionSection({title, content, defaultExpanded, classN
                         className={`w-4 mr-2 transition-all duration-200 ${open ? '-rotate-90' : 'rotate-90'}`}
                       />
                   </Disclosure.Button>
-                  <p>{content}</p>
+                  <div>{content}</div>
               </div>
             )}
         </Disclosure>

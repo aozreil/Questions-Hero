@@ -291,7 +291,7 @@ export default function _mainSubjectsSubject() {
             <img src='/assets/images/subjects-header-icon.png' alt='subjects-header' className='max-lg:hidden absolute z-10 h-[80%] top-0 bottom-0 my-auto right-12' />
             <div className='relative flex flex-col max-sm:items-center max-sm:justify-center gap-y-3 h-full z-20'>
               <h1 className='text-2xl sm:text-3xl text-white font-bold'>{`${selectedSubject?.title} Expert Q&A`}</h1>
-              <h2 className='text-lg text-white'>{`Find detailed step-by-step explanations for your ${selectedSubject?.title} questions.`}</h2>
+              <p className='text-lg text-white'>{`Find detailed step-by-step explanations for your ${selectedSubject?.title} questions.`}</p>
               <Link to='/ask-question' target='_blank' className='btn-primary w-fit'>
                 <p className='text-lg mx-10 sm:mx-16 my-2'>Ask away - we've got answers</p>
               </Link>

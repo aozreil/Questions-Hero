@@ -85,7 +85,8 @@ export const ExpandableTextarea = forwardRef<
 
   return (
     <textarea
-      {...props}
+      placeholder={props.placeholder}
+      name={props.name}
       rows={1}
       ref={textAreaRef}
       onChange={handleChange}
