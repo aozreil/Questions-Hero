@@ -32,7 +32,11 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
                 )}
             </div>
             {question?.text && (
-              <SanitizedText className='lg:text-xl font-medium mb-3' html={getQuestionBody(question)} />
+              <SanitizedText
+                className='lg:text-xl font-medium mb-3'
+                html={getQuestionBody(question)}
+                tag='h1'
+              />
             )}
         </div>
     )

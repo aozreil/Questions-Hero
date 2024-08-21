@@ -11,7 +11,7 @@ import { LoaderFunctionArgs } from "@remix-run/router";
 import { json, MetaFunction } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
 import { getQuestionsByIdV1, getQuestionsInfo, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getSubjectIdBySlug, getSubjectSlugById, SUBJECTS_MAPPER } from "~/models/subjectsMapper";
 import clsx from "clsx";
 import {
@@ -245,6 +245,10 @@ export default function _mainSubjectsSubject() {
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname?.includes('subjects');
   const { user } = useAuth();
 
+  const selectedSubject = useMemo(() => {
+    return subjects?.find(item => item?.id === Number(mainSubjectId))
+  }, [subjects, mainSubjectId]);
+  
   useEffect(() => {
     if (containerDiv.current) {
       containerDiv.current.scrollTo({
@@ -282,11 +286,12 @@ export default function _mainSubjectsSubject() {
     <div ref={containerDiv} className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
       <div className='flex flex-col items-center'>
         <div className='w-[95vw] sm:w-[70vw] max-w-[70rem] flex flex-col items-center mt-3'>
-          <div className='relative w-full h-[10.6rem] rounded-xl mb-3 py-5 px-8'>
+          <div className='relative w-full rounded-xl mb-3 py-5 px-8'>
             <img src='/assets/images/subjects-header.png' alt='subjects-header' className='absolute z-10 w-full h-full top-0 left-0' />
             <img src='/assets/images/subjects-header-icon.png' alt='subjects-header' className='max-lg:hidden absolute z-10 h-[80%] top-0 bottom-0 my-auto right-12' />
-            <div className='relative flex flex-col max-sm:items-center max-sm:justify-center space-y-6 h-full z-20'>
-              <p className='text-2xl sm:text-3xl text-white font-bold'>Curious minds want to know!</p>
+            <div className='relative flex flex-col max-sm:items-center max-sm:justify-center gap-y-3 h-full z-20'>
+              <h1 className='text-2xl sm:text-3xl text-white font-bold'>{`${selectedSubject?.title} Expert Q&A`}</h1>
+              <h2 className='text-lg text-white'>{`Find detailed step-by-step explanations for your ${selectedSubject?.title} questions.`}</h2>
               <Link to='/ask-question' target='_blank' className='btn-primary w-fit'>
                 <p className='text-lg mx-10 sm:mx-16 my-2'>Ask away - we've got answers</p>
               </Link>

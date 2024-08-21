@@ -20,14 +20,14 @@ export default function QuestionSection({title, content, defaultExpanded, classN
                 className,
               )}>
                   <Disclosure.Button className='cursor-pointer w-full flex justify-between items-center'>
-                      <h2 className='font-medium mb-1'>{title}</h2>
+                      <h3 className='font-medium mb-1'>{title}</h3>
                       <img
                         src='/assets/images/drop-down.svg'
                         alt='arrow-down'
                         className={`w-4 mr-2 transition-all duration-200 ${open ? '-rotate-90' : 'rotate-90'}`}
                       />
                   </Disclosure.Button>
-                  {content}
+                  <p>{content}</p>
               </div>
             )}
         </Disclosure>

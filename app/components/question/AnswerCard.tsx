@@ -40,7 +40,7 @@ export default function AnswerCard({ answer, user }: Props) {
               {answer?.text && (
                 <div data-cy="final-answer">
                   <span className='font-medium'>Final Answer : </span>
-                  <SanitizedText html={getAnswerBody(answer)} className='inline' />
+                  <SanitizedText tag='p' html={getAnswerBody(answer)} className='inline' />
                 </div>
               )}
               {!!answer?.answer_steps?.length && (
@@ -52,7 +52,7 @@ export default function AnswerCard({ answer, user }: Props) {
                         data-cy="explanation"
                     >
                       <span className='font-medium'>Explanation : </span>
-                      <SanitizedText html={step?.text} className='inline' />
+                      <SanitizedText tag='p' html={step?.text} className='inline' />
                     </div>
                   ) :null
                 ))

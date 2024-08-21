@@ -8,11 +8,12 @@ export default function LandingSearchSlide() {
   const { t } = useTranslation();
   return (
     <section className="w-full flex flex-col items-center max-sm:mt-16 text-[#070707] text-center">
-      <h4
-        className="max-sm:font-bold text-2xl sm:text-3xl lg:text-4xl font-medium">{t("Unlocking Knowledge Guiding Futures")}</h4>
-      <h3 className="text-[2.6rem] mt-5 lg:text-5xl font-bold z-20">
-        Your Ultimate University<br className="md:hidden" /> Resource Hub!
-      </h3>
+      <h1 className="max-sm:font-bold text-2xl sm:text-3xl lg:text-4xl font-medium">
+        Ask Your Questions,<br className='md:hidden' /> Achieve Academic Excellence
+      </h1>
+      <p className="text-xl w-[80%] lg:w-[50%] mt-5 font-medium z-20">
+        Access millions of step-by-step solutions and connect with a community of experts to excel in your studies!
+      </p>
       <BackgroundEffect>
         <ExpandableSearch />
       </BackgroundEffect>
