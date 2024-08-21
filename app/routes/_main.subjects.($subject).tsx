@@ -11,8 +11,8 @@ import { LoaderFunctionArgs } from "@remix-run/router";
 import { json, MetaFunction } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
 import { getQuestionsByIdV1, getQuestionsInfo, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getSubjectIdBySlug, getSubjectSlugById, SUBJECTS_MAPPER } from "~/models/subjectsMapper";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getSubjectById, getSubjectIdBySlug, getSubjectSlugById, SUBJECTS_MAPPER } from "~/models/subjectsMapper";
 import clsx from "clsx";
 import {
   AnswerStatus,
@@ -244,10 +244,6 @@ export default function _mainSubjectsSubject() {
   const navigate = useNavigate();
   const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname?.includes('subjects');
   const { user } = useAuth();
-
-  const selectedSubject = useMemo(() => {
-    return subjects?.find(item => item?.id === Number(mainSubjectId))
-  }, [subjects, mainSubjectId]);
   
   useEffect(() => {
     if (containerDiv.current) {
@@ -281,6 +277,10 @@ export default function _mainSubjectsSubject() {
       relative: "path",
     });
   }, []);
+  
+  const selectedSubjectTitle = getSubjectById(Number(mainSubjectId))?.shortTitle
+    ? getSubjectById(Number(mainSubjectId))?.shortTitle
+    : getSubjectById(Number(mainSubjectId))?.label ?? '';
 
   return (
     <div ref={containerDiv} className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
@@ -290,8 +290,8 @@ export default function _mainSubjectsSubject() {
             <img src='/assets/images/subjects-header.png' alt='subjects-header' className='absolute z-10 w-full h-full top-0 left-0' />
             <img src='/assets/images/subjects-header-icon.png' alt='subjects-header' className='max-lg:hidden absolute z-10 h-[80%] top-0 bottom-0 my-auto right-12' />
             <div className='relative flex flex-col max-sm:items-center max-sm:justify-center gap-y-3 h-full z-20'>
-              <h1 className='text-2xl sm:text-3xl text-white font-bold'>{`${selectedSubject?.title} Expert Q&A`}</h1>
-              <p className='text-lg text-white'>{`Find detailed step-by-step explanations for your ${selectedSubject?.title} questions.`}</p>
+              <h1 className='text-2xl sm:text-3xl text-white font-bold'>{`${selectedSubjectTitle} Expert Q&A`}</h1>
+              <p className='text-lg text-white'>{`Find detailed step-by-step explanations for your ${selectedSubjectTitle} questions.`}</p>
               <Link to='/ask-question' target='_blank' className='btn-primary w-fit'>
                 <p className='text-lg mx-10 sm:mx-16 my-2'>Ask away - we've got answers</p>
               </Link>
