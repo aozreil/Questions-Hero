@@ -41,7 +41,7 @@ export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string, sho
   },
   101: {
     "label": "Social Work / Family Therapy / Human Services",
-    "shortTitle": "Social Work",
+    "shortTitle": "Human Services",
     "slug": "social"
   },
   111: {
@@ -70,7 +70,7 @@ export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string, sho
   },
   106: {
     "label": "Geology / Geography / Oceanography / Atmospheric Sciences",
-    "shortTitle": "Geology & Geography",
+    "shortTitle": "Earth Science",
     "slug": "geology"
   },
   121: {
@@ -135,4 +135,9 @@ export function getSubjectSlugById(id?: number | string) {
   if (!id) return '/';
   const subjId = typeof id === "string" ? Number(id) : id;
   return SUBJECTS_MAPPER?.hasOwnProperty(subjId) ? SUBJECTS_MAPPER[subjId].slug : '/';
+}
+
+export function getSubjectById(id?: number) {
+  if (!id) return undefined;
+  return SUBJECTS_MAPPER[id];
 }
