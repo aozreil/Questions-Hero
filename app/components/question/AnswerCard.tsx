@@ -36,10 +36,10 @@ export default function AnswerCard({ answer, user }: Props) {
             <UserProfile user={user} />
             <div className='flex flex-col text-sm text-black pr-2 h-auto w-full overflow-hidden'>
               <UserNameLink user={user} className="text-sm font-bold capitalize"/>
-              {!!createdAt && <p className='mt-1 mb-4 text-xs'>{createdAt}</p>}
+              {!!createdAt && <span className='mt-1 mb-4 text-xs'>{createdAt}</span>}
               {answer?.text && (
                 <div data-cy="final-answer">
-                  <span className='font-medium'>Final Answer : </span>
+                  <span className='font-medium inline'>Final Answer : </span>
                   <SanitizedText html={getAnswerBody(answer)} className='inline' />
                 </div>
               )}
@@ -51,7 +51,7 @@ export default function AnswerCard({ answer, user }: Props) {
                         key={index}
                         data-cy="explanation"
                     >
-                      <span className='font-medium'>Explanation : </span>
+                      <span className='font-medium inline'>Explanation : </span>
                       <SanitizedText html={step?.text} className='inline' />
                     </div>
                   ) :null
