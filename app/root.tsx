@@ -16,10 +16,10 @@ import stylesheet from "~/styles/tailwind.css";
 import { json, MetaFunction } from "@remix-run/node";
 import {getSeoMeta} from "~/utils/seo";
 import NotFoundPage from "~/components/UI/NotFoundPage";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import Header from "~/components/UI/Header";
 import FavIcon from "~/components/UI/FavIcon";
-import { GOOGLE_ANALYTICS_KEY } from "~/config/enviromenet";
+import { GOOGLE_ANALYTICS_KEY, SMARTLOOK_KEY } from "~/config/enviromenet";
 import AuthProvider, { useAuth } from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
 import OverlayProvider from "~/context/OverlayProvider";
@@ -28,6 +28,8 @@ import { LoaderFunctionArgs } from "@remix-run/router";
 import { useTranslation } from "react-i18next";
 import { useChangeLanguage } from "remix-i18next/react";
 import i18next from "~/i18next.server";
+import Smartlook from 'smartlook-client'
+
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({})
@@ -46,6 +48,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export let handle = { i18n: "common" };function Document({ children , locale}: { children: ReactNode , locale?: string }) {
   let { i18n } = useTranslation();
+
+  useEffect(()=>{
+    if(!Smartlook.initialized()){
+      Smartlook.init(SMARTLOOK_KEY)
+    }
+  }, [])
 
   return (
     <html lang={locale ?? "en"} dir={i18n.dir()}>
