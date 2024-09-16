@@ -101,10 +101,6 @@ export const SUBJECTS_MAPPER: {[key: number]: { label: string, slug: string, sho
     "label": "Engineering",
     "slug": "engineering"
   },
-  127: {
-    "label": "Certification",
-    "slug": "certification"
-  },
   119: {
     "label": "Information Technology",
     "slug": "information-technology"
