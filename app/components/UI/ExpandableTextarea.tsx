@@ -49,7 +49,7 @@ export const ExpandableTextarea = forwardRef<
   }, []);
 
   const onFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
-    if (!isUserInitiated) return;
+    if (!isUserInitiated && window.innerWidth > 768) return;
     if (textAreaRef.current) calculateTextareaRows(textAreaRef.current.value)
     setIsFocused(true);
     props.onFocus && props.onFocus(e);
