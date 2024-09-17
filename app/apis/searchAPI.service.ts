@@ -2,7 +2,7 @@ import axios from "axios";
 import { SEARCH_CLUSTER } from "~/config/enviroment.server";
 import { getQuestionsById, getQuestionsInfo } from "~/apis/questionsAPI.server";
 import { SearchResponseInterface } from "~/models/searchModel";
-import { AnswerStatus, QuestionClass } from "~/models/questionModel";
+import { AnswerStatus, getQuestionBody, QuestionClass } from "~/models/questionModel";
 import { clientGetQuestionsById, clientGetQuestionsInfo } from "~/apis/questionsAPI";
 
 export async function searchQuestionsDetailsAPI(term: string) {
@@ -33,7 +33,7 @@ export async function getSearchResultsWithDetails(searchResponse: SearchResponse
       : await getQuestionsById({ params: { ids: questionIds }})
     questionDetails?.forEach((question) => questionMapper[question.id] = {
       question_slug: question.slug,
-      rendered_text: question?.rendered_text,
+      rendered_text: getQuestionBody(question),
     });
   }
 
