@@ -51,7 +51,10 @@ export let handle = { i18n: "common" };function Document({ children , locale}: {
 
   useEffect(()=>{
     if(!Smartlook.initialized()){
-      Smartlook.init(SMARTLOOK_KEY)
+      Smartlook.init(SMARTLOOK_KEY);
+      Smartlook.record({
+        emails: true, api: true, ips: true, forms: true, numbers: true
+      })
     }
   }, [])
 
