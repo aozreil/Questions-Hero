@@ -283,7 +283,7 @@ export default function _mainSubjectsSubject() {
     : getSubjectById(Number(mainSubjectId))?.label ?? '';
 
   return (
-    <div ref={containerDiv} className='flex-1 overflow-y-auto h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
+    <div ref={containerDiv} className='flex-1 search-page-scroll overflow-scroll h-full w-full max-h-[calc(100vh-6rem)] pb-5'>
       <div className='flex flex-col items-center'>
         <div className='w-[95vw] sm:w-[70vw] max-w-[70rem] flex flex-col items-center mt-3'>
           <div className='relative w-full rounded-xl mb-3 py-5 px-8'>
