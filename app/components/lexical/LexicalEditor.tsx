@@ -14,6 +14,7 @@ import { OnUpdatePlugin } from "~/components/lexical/plugins/OnUpdatePlugin";
 import clsx from "clsx";
 import DragDropPaste from "~/components/lexical/plugins/DragDropPaste";
 import ToolbarActions from "~/components/lexical/actions/ToolbarActions";
+import { PRODUCT_NAME } from "~/config/enviromenet";
 
 interface Props {
   onFocus?: () => void;
@@ -46,7 +47,7 @@ const LexicalEditor = forwardRef(({
   }, []);
 
   const lexicalConfig: InitialConfigType = {
-    namespace: 'AskGram Rich Text Editor',
+    namespace: `${PRODUCT_NAME} Rich Text Editor`,
     theme: {
       text: {
         bold: "lexicalEditorTheme-text-bold",

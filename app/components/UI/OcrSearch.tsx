@@ -65,6 +65,7 @@ export default function OcrSearch({ onClose }: Props) {
   }, []);
 
   const handleImageChange = useCallback(() => {
+    inputFileRef.current?.setAttribute('capture', 'environment');
     inputFileRef.current && inputFileRef.current.click();
   }, []);
 
@@ -151,7 +152,8 @@ export default function OcrSearch({ onClose }: Props) {
             type="file"
             onChange={onChange}
             className='hidden'
-            accept="image/png, image/jpeg"
+            accept="image/*"
+            capture="user"
             id="ocr-image"
           />
           <div className='flex-1 rounded-md overflow-hidden'>

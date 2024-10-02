@@ -2,7 +2,7 @@ import axios from "axios";
 import type { AxiosRequestConfig } from "axios";
 import { isbot } from "isbot";
 import {getCookie} from "~/services/cookie.service";
-import { BASE_URL } from "~/config/enviromenet";
+import { BASE_URL, PRODUCT_NAME } from "~/config/enviromenet";
 import { VERSION_DATE } from "~/config/enviroment.server";
 import qs from "qs";
 
@@ -55,7 +55,7 @@ function prepareConfig(config?: RequestConfigCustomize) {
     headers: {
       ...config?.headers,
       'web-version':VERSION_DATE,
-      "User-Agent": `AskgramServer - ${config?.req?.headers.get("User-Agent")?? ''}` ,
+      "User-Agent": `${PRODUCT_NAME}Server - ${config?.req?.headers.get("User-Agent")?? ''}` ,
     },
     params: {
       ...config?.params,

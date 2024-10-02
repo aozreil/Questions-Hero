@@ -1,7 +1,7 @@
 import { getLatestAddedQuestions } from "~/apis/questionsAPI.server";
 import { Feed } from "feed";
 import { DEFAULT_META_DESCRIPTION, DEFAULT_META_TITLE } from "~/utils/seo";
-import { BASE_URL } from "~/config/enviromenet";
+import { BASE_URL, PRODUCT_NAME } from "~/config/enviromenet";
 import { QuestionClass } from "~/models/questionModel";
 import { LoaderFunctionArgs } from "@remix-run/router";
 
@@ -29,7 +29,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       id: BASE_URL,
       link: BASE_URL,
       favicon: `${BASE_URL}/favicon.ico`,
-      copyright: `All rights reserved ${new Date().getFullYear()}, AskGram`,
+      copyright: `All rights reserved ${new Date().getFullYear()}, ${PRODUCT_NAME}`,
       updated: lastUpdateDate,
       generator: "Feed for Node.js",
       feedLinks: {
@@ -37,7 +37,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
         atom: `${BASE_URL}/feeds/atom`,
       },
       author: {
-        name: "AskGram",
+        name: PRODUCT_NAME,
         link: BASE_URL
       }
     });

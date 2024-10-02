@@ -100,7 +100,7 @@ export default function HeaderSearchMobile({ setIsSearchExpanded, isSearchExpand
       )}
       <Form
         action='/search'
-        className={clsx(`sm:hidden z-10 py-1 px-3 bg-[#f2f4f5] min-h-[27px] h-fit flex-1
+        className={clsx(`sm:hidden z-10 py-1 px-3 bg-[#f2f4f5] min-h-[27px] h-fit flex-1 xs:w-[150px]
            rounded-2xl flex items-start justify-between flex-shrink-0`, isSearchExpanded && 'border border-[#99a7af]')}
         data-cy="header-search"
         onSubmit={handleSubmit}
@@ -108,7 +108,7 @@ export default function HeaderSearchMobile({ setIsSearchExpanded, isSearchExpand
       >
         <ExpandableTextarea
           ref={textareaRef}
-          className='textarea-scrollable rounded-lg cursor-text resize-none bg-transparent text-left py-0.5 flex-1 mr-3 max-h-[158px] outline-none border-none focus:ring-0'
+          className='textarea-scrollable rounded-lg cursor-text text-[16px] resize-none bg-transparent text-left py-0.5 flex-1 mr-3 max-h-[158px] outline-none border-none focus:ring-0'
           name='term'
           placeholder='Search'
           onFocus={onFocus}

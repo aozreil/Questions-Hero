@@ -1,9 +1,10 @@
 import { IUser, IUsers } from "~/models/questionModel";
 import {differenceInDays, formatDistance, format} from "date-fns";
+import { PRODUCT_NAME } from "~/config/enviromenet";
 
 export function getUser (userId?: number, users?: IUsers) {
     if (userId && users?.hasOwnProperty(userId)) return users[userId]?.view_name;
-    return 'Askgram User';
+    return `${PRODUCT_NAME} User`;
 }
 
 

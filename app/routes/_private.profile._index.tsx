@@ -8,12 +8,13 @@ import { IUserInfo, UserDegreeEnum } from "~/models/questionModel";
 import { AxiosError } from "axios";
 import { MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
+import { PRODUCT_NAME } from "~/config/enviromenet";
 
 
 export const meta: MetaFunction = () => {
   return [
     ...getSeoMeta({
-      title: "My Askgram Profile"
+      title: `My ${PRODUCT_NAME} Profile`
     })
   ];
 };

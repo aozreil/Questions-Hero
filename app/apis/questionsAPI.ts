@@ -4,21 +4,21 @@ import { IAnswer, IPostQuestion, IPreSignedURL, IQuestion,
   IQuestionsResponse,
   IUser
 } from "~/models/questionModel";
-import { ASKGRAM_BASE } from "~/config/enviromenet";
+import { SITE_BASE } from "~/config/enviromenet";
 import { axiosApiInstance, paramsSerializerComma } from "~/interceptors/client-interceptors";
 
 export async function clientGetAnswer(id: string) {
-  const response = await axios.get<IAnswer[]>(`${ASKGRAM_BASE}/api/content/answers/question/${id}`);
+  const response = await axios.get<IAnswer[]>(`${SITE_BASE}/api/content/answers/question/${id}`);
   return response?.data;
 }
 
 export async function clientGetUsers(ids: number[]) {
-  const response = await axios.get<IUser[]>(`${ASKGRAM_BASE}/api/users/users/public?ids=${ids?.join()}`);
+  const response = await axios.get<IUser[]>(`${SITE_BASE}/api/users/users/public?ids=${ids?.join()}`);
   return response?.data;
 }
 
 export async function clientGetQuestionsInfo(config: AxiosRequestConfig): Promise<IQuestionInfo[]> {
-  const response = await axios.get<IQuestionInfo[]>(`${ASKGRAM_BASE}/api/content/questions/info`, {
+  const response = await axios.get<IQuestionInfo[]>(`${SITE_BASE}/api/content/questions/info`, {
     ...config,
     paramsSerializer: paramsSerializerComma
   });
@@ -32,7 +32,7 @@ export async function postQuestion(
   questionType?: string,
   topicId?: number,
 ) {
-  const response = await axiosApiInstance.post<IPostQuestion>(`${ASKGRAM_BASE}/api/content/questions`, {
+  const response = await axiosApiInstance.post<IPostQuestion>(`${SITE_BASE}/api/content/questions`, {
     question_body: innerText,
     rendered_body: htmlBody,
     recaptcha_token: recaptchaToken,
@@ -49,7 +49,7 @@ export async function postQuestion(
 }
 
 export async function postAnswer(htmlBody: string, innerText: string, questionId: string, recaptchaToken: string | null) {
-  const response = await axiosApiInstance.post<IUser[]>(`${ASKGRAM_BASE}/api/content/answers`, {
+  const response = await axiosApiInstance.post<IUser[]>(`${SITE_BASE}/api/content/answers`, {
     answer_body: innerText,
     rendered_body: htmlBody,
     question_id: questionId,
@@ -69,7 +69,7 @@ export async function getPreSignedUrls(
     filename: string,
   }[]
 ) {
-  const response = await axiosApiInstance.post<IPreSignedURL[]>(`${ASKGRAM_BASE}/api/content/storage/attachments/pre-signed-url`, {
+  const response = await axiosApiInstance.post<IPreSignedURL[]>(`${SITE_BASE}/api/content/storage/attachments/pre-signed-url`, {
     attachments
   }, {
     withCredentials: true,
@@ -100,7 +100,7 @@ export async function getMyAskedQuestions(config?: AxiosRequestConfig) {
     count: number,
     page: number,
     size: number
-  }>(`${ASKGRAM_BASE}/api/content/me/questions`, {
+  }>(`${SITE_BASE}/api/content/me/questions`, {
     ...config,
     withCredentials: true
   });
@@ -113,7 +113,7 @@ export async function getAskedQuestionsByUserId(id: number, config?: AxiosReques
     count: number,
     page: number,
     size: number
-  }>(`${ASKGRAM_BASE}/api/content/users/${id}/questions`, {
+  }>(`${SITE_BASE}/api/content/users/${id}/questions`, {
     ...config,
     withCredentials: true
   });
@@ -121,7 +121,7 @@ export async function getAskedQuestionsByUserId(id: number, config?: AxiosReques
 }
 
 export async function getQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
-  const response = await axios.get<IQuestion[]>(`${ASKGRAM_BASE}/api/content/questions`, {
+  const response = await axios.get<IQuestion[]>(`${SITE_BASE}/api/content/questions`, {
     ...config,
     paramsSerializer: paramsSerializerComma
   });
@@ -134,7 +134,7 @@ export async function getMyAnswersForQuestions(config?: AxiosRequestConfig) {
     count: number,
     page: number,
     size: number
-  }>(`${ASKGRAM_BASE}/api/content/me/answers`, {
+  }>(`${SITE_BASE}/api/content/me/answers`, {
     ...config,
     withCredentials: true
   });
@@ -147,7 +147,7 @@ export async function getUserAnswersForQuestionsByUserId(id: number, config?: Ax
     count: number,
     page: number,
     size: number
-  }>(`${ASKGRAM_BASE}/api/content/users/${id}/answers`, {
+  }>(`${SITE_BASE}/api/content/users/${id}/answers`, {
     ...config,
     withCredentials: true
   });
@@ -158,7 +158,7 @@ export async function getMeStats(config?: AxiosRequestConfig) {
   const response = await axios.get<{
     "answers_count": number,
     "questions_count": number
-  }>(`${ASKGRAM_BASE}/api/content/me/stats`, {
+  }>(`${SITE_BASE}/api/content/me/stats`, {
     ...config,
     withCredentials: true
   });
@@ -169,7 +169,7 @@ export async function getUSerStatsByUserId(id: number, config?: AxiosRequestConf
   const response = await axios.get<{
     "answers_count": number,
     "questions_count": number
-  }>(`${ASKGRAM_BASE}/api/content/users/${id}/stats`, {
+  }>(`${SITE_BASE}/api/content/users/${id}/stats`, {
     ...config,
     withCredentials: true
   });
@@ -179,7 +179,7 @@ export async function getUSerStatsByUserId(id: number, config?: AxiosRequestConf
 export async function postUniversity(
   name: string,
 ) {
-  const response = await axiosApiInstance.post<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/universities`, {
+  const response = await axiosApiInstance.post<{ id: number; name: string }>(`${SITE_BASE}/api/content/universities`, {
     "name": name,
   });
   return response.data;
@@ -188,14 +188,14 @@ export async function postUniversity(
 export async function getUniversityById(
   id: number | string,
 ) {
-  const response = await axiosApiInstance.get<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/universities/${id}`);
+  const response = await axiosApiInstance.get<{ id: number; name: string }>(`${SITE_BASE}/api/content/universities/${id}`);
   return response.data;
 }
 
 export async function postMajor(
   name: string,
 ) {
-  const response = await axiosApiInstance.post<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/study-fields`, {
+  const response = await axiosApiInstance.post<{ id: number; name: string }>(`${SITE_BASE}/api/content/study-fields`, {
     "name": name,
   });
   return response.data;
@@ -204,12 +204,12 @@ export async function postMajor(
 export async function getMajorById(
   id: number | string,
 ) {
-  const response = await axiosApiInstance.get<{ id: number; name: string }>(`${ASKGRAM_BASE}/api/content/study-fields/${id}`);
+  const response = await axiosApiInstance.get<{ id: number; name: string }>(`${SITE_BASE}/api/content/study-fields/${id}`);
   return response.data;
 }
 
 export async function clientGetQuestionsById(config: AxiosRequestConfig): Promise<IQuestion[]> {
-  const response = await axios.get<IQuestion[]>(`${ASKGRAM_BASE}/api/content/questions`, {
+  const response = await axios.get<IQuestion[]>(`${SITE_BASE}/api/content/questions`, {
     ...config,
     paramsSerializer: paramsSerializerComma
   });
@@ -217,7 +217,7 @@ export async function clientGetQuestionsById(config: AxiosRequestConfig): Promis
 }
 
 export async function clientGetQuestionsByIdV1(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
-  const response = await axios.get<IQuestionsResponse>(`${ASKGRAM_BASE}/api/content/v1/questions`, {
+  const response = await axios.get<IQuestionsResponse>(`${SITE_BASE}/api/content/v1/questions`, {
     ...config,
     paramsSerializer: paramsSerializerComma
   });

@@ -6,7 +6,7 @@ import { useAuth } from "~/context/AuthProvider";
 import toast from "react-hot-toast";
 import { Transition } from "@headlessui/react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { BASE_URL, RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
+import { BASE_URL, PRODUCT_NAME, RECAPTCHA_PUBLIC_KEY } from "~/config/enviromenet";
 import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
 import { loader } from "~/routes/_main.search";
@@ -23,7 +23,7 @@ const LexicalEditor = lazy(() => import("~/components/lexical/LexicalEditor"));
 export const meta: MetaFunction<typeof loader> = () => {
   return [
     ...getSeoMeta({
-      title: 'Askgram - Ask Question',
+      title: `${PRODUCT_NAME} - Ask Question`,
       canonical: `${BASE_URL}/ask-question`
     })
   ];

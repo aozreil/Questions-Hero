@@ -1,6 +1,7 @@
 import { Link } from "@remix-run/react";
 import { TERMS_NAVIGATION_LINKS } from "~/components/UI/Terms";
 import React, { Fragment } from "react";
+import { PRODUCT_NAME } from "~/config/enviromenet";
 
 interface Props {
   slidesNavigator?: React.ReactNode;
@@ -16,7 +17,7 @@ export default function Footer({ slidesNavigator }: Props) {
       <div className='container w-full flex justify-center sm:justify-between items-center gap-y-4 max-lg:flex-col px-4 md:px-10 py-4 max-sm:pb-8'>
         <p>
           All copyrights are reserved to{" "}
-          <span className="font-bold">{`Askgram ® ${currentYear}`}</span>
+          <span className="font-bold">{`${PRODUCT_NAME} ® ${currentYear}`}</span>
         </p>
         {!!slidesNavigator && slidesNavigator}
         <div className="flex items-center space-x-3 [&>*:last-child]:hidden">

@@ -4,7 +4,7 @@ import clsx from "clsx";
 import SignInWithGoogle from "~/components/UI/SignInWithGoogle";
 import { useScript } from "usehooks-ts";
 import { useEffect, useState } from "react";
-import { GOOGLE_SIGN_IN_CLIENT_ID } from "~/config/enviromenet";
+import { GOOGLE_SIGN_IN_CLIENT_ID, PRODUCT_NAME } from "~/config/enviromenet";
 
 interface Props {
   closeModal: () => void;
@@ -126,7 +126,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
           </section>
           {type === "SIGNUP" && (
             <p className="max-sm:w-[90%] text-center sm:text-sm text-[#4d6473] mt-6 sm:mt-12">
-              By creating an account, you accept the Askgram
+              By creating an account, you accept the {PRODUCT_NAME}
               <Link to={"/terms/terms-of-use"} target="_blank" className="text-black font-medium ml-1">Terms of Service</Link>
               <span className="mx-1">&amp;</span>
               <Link to="/terms/privacy-policy" target="_blank" className="text-black font-medium ml-1">Privacy

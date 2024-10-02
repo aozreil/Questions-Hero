@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@remix-run/react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export interface ITerms {
   title: string;
@@ -13,8 +13,9 @@ export interface ITerms {
   highlightedSections?: {
     title: string;
     terms: {
+      key: number;
       type: string;
-      text: string;
+      text: string | React.ReactNode;
       pointedList?: string[];
     }[];
   }[]
@@ -126,17 +127,17 @@ function TermsHighlightedRenderer({ sections }: { sections: ITerms["highlightedS
           <h2 className='text-2xl font-bold mb-5'>{section.title}</h2>
           {section.terms?.map(term =>
             term?.type === 'NORMAL'
-              ? <p key={term?.text} className='mb-5' dangerouslySetInnerHTML={{ __html: term.text }} />
+              ? <p key={term?.key} className='mb-5'>{term.text}</p>
               : term?.pointedList
                 ? (
-                  <div key={term?.text} className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
+                  <div key={term?.key} className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
                     <ul className='list-disc'>
                       {term?.pointedList?.map(text => <li key={text} dangerouslySetInnerHTML={{ __html: text }} />)}
                     </ul>
                   </div>
                 ) : (
-                  <div key={term?.text} className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
-                    <p dangerouslySetInnerHTML={{ __html: term.text }} />
+                  <div key={term?.key} className='mb-5 bg-[#f2f4f5] p-9 rounded-2xl'>
+                    <p>{term.text}</p>
                   </div>
                 )
           )}

@@ -3,6 +3,7 @@ import {format} from "date-fns";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import SanitizedText from "~/components/question/SanitizedText";
+import { PRODUCT_NAME } from "~/config/enviromenet";
 
 interface Props {
     question?: IQuestion;
@@ -44,7 +45,7 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
 
 const getAskedBy = (createdAt?: string, userName?: string) => {
     if (createdAt) {
-        return userName ?`${userName} on ${createdAt}` : `Askgram User on ${createdAt}`;
+        return userName ?`${userName} on ${createdAt}` : `${PRODUCT_NAME} User on ${createdAt}`;
     } else {
         return userName;
     }
