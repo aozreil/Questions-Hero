@@ -9,3 +9,4 @@ export const AI_ANSWER_ACCEPTED_SCORE = 0.9;
 export const ASK_QUESTION_SIMILAR_SCORE = 0.8;
 export const SMARTLOOK_KEY = "64a350d5c07475af6006460f48ce83de08d80caa";
 export const PRODUCT_NAME = "Asklix";
+export const SUPPORT_EMAIL = "support@asklix.com";
