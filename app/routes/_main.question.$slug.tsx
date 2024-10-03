@@ -366,7 +366,7 @@ const getStructuredData = (data: LoaderData) => {
         "text": questionBody,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": getAnswerText(verifiedAnswer) ?? answerFallback,
+          "text": verifiedAnswer ? getAnswerText(verifiedAnswer) : answerFallback,
           "url": canonical
         }
       }
@@ -380,7 +380,7 @@ const getStructuredData = (data: LoaderData) => {
         "suggestedAnswer": [
           suggestedAnswers?.map(answer => ({
             "@type": "Answer",
-            "text": getAnswerText(answer) ?? answerFallback,
+            "text": answer?.text ? getAnswerText(answer) : answerFallback,
             "datePublished": answer?.created_at,
             "author": {
               "@type": "Person",
@@ -411,7 +411,7 @@ const getStructuredData = (data: LoaderData) => {
       },
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": getAnswerText(verifiedAnswer) ?? answerFallback,
+        "text": verifiedAnswer ? getAnswerText(verifiedAnswer) : answerFallback,
         "url": `${canonical}#acceptedAnswer`,
         "datePublished": verifiedAnswer?.created_at,
         "author": {
