@@ -51,7 +51,8 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
 
   const getPrevNextLinks = () => {
     if (page === undefined || size === undefined || count === undefined) return[];
-    const prevLink = page > 0 && `${BASE_URL}${location?.pathname}?page=${page - 1}`;
+    const prevPageParam = page - 1 === 0 ? '' : `?page=${page - 1}`;
+    const prevLink = page > 0 && `${BASE_URL}${location?.pathname}${prevPageParam}`;
     const nextLink = ((page + 1) * size) < (count) && `${BASE_URL}${location?.pathname}?page=${page + 1}`;
 
     let links = [];
