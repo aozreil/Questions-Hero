@@ -334,8 +334,8 @@ const getStructuredData = (data: LoaderData) => {
     answers,
     internalAnswers,
     internalQuestion, canonical,
-    users
-
+    users,
+    concepts
   } = data;
 
   const questionData = internalQuestion?.text ? internalQuestion : question;
@@ -349,7 +349,9 @@ const getStructuredData = (data: LoaderData) => {
   const suggestedAnswers = filterSuggestedAnswers(answersData).filter(
     question => question?.created_at !== verifiedAnswer?.created_at
   );
-  const answerFallback = `The Answer of ${questionBody}`;
+  const answerFallback = concepts?.length
+    ? getConceptsText(concepts)
+    : `The Answer of ${questionBody}`;
 
   const Educational = {
     "@context": "https://schema.org/",
@@ -413,7 +415,7 @@ const getStructuredData = (data: LoaderData) => {
         "@type": "Answer",
         "text": verifiedAnswer ? getAnswerText(verifiedAnswer) : answerFallback,
         "url": `${canonical}#acceptedAnswer`,
-        "datePublished": verifiedAnswer?.created_at,
+        "datePublished": verifiedAnswer?.created_at ?? question?.created_at,
         "author": {
           "@type": "Person",
           "name": getUser(verifiedAnswer?.user_id, users)
@@ -449,3 +451,13 @@ const getAnswerText = (answer: IAnswer | IInternalAnswer) => {
 
   return getCleanText(answerText);
 };
+
+const getConceptsText = (concepts: IConcept[]) => {
+  let text = '';
+  
+  for (const concept of concepts) {
+    text = text + `${concept.concept} : ${concept.definition}`;
+  }
+  
+  return text;
+}
