@@ -27,7 +27,7 @@ const Data: ITerms = {
   "title": "Terms of Use",
   "description": `Welcome to <b>${PRODUCT_NAME}!</b><br /> These terms of use govern your use of the ${PRODUCT_NAME} website and any services provided therein (collectively, the "Service"). By accessing or using the Service, you agree to be bound by these terms of use. If you do not agree with any part of these terms, then you may not access the Service.\n`,
   "pageDescription": `Welcome to ${PRODUCT_NAME}!, These terms of use govern your use of the ${PRODUCT_NAME} website and any services provided therein (collectively, the "Service"). By accessing or using the Service, you agree to be bound by these terms of use. If you do not agree with any part of these terms, then you may not access the Service.`,
-  "lastUpdated": "Last updated: Feb 13, 2024",
+  "lastUpdated": "Last updated: Oct 5, 2024",
   "sections": [
     {
       "title": "Use of Service",

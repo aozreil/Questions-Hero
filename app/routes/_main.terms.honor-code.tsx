@@ -27,7 +27,7 @@ const Data: ITerms = {
   "title": "Honor Code",
   "description": `${PRODUCT_NAME} is committed to fostering a community where users can seek knowledge, share information, and engage in meaningful discussions in a respectful and ethical manner. Our platform is designed to facilitate learning and collaboration while upholding the highest standards of academic integrity. By utilizing ${PRODUCT_NAME}, you agree to abide by the following Honor Code:`,
   "pageDescription": `${PRODUCT_NAME} is committed to fostering a community where users can seek knowledge, share information, and engage in meaningful discussions in a respectful and ethical manner. Our platform is designed to facilitate learning and collaboration while upholding the highest standards of academic integrity. By utilizing ${PRODUCT_NAME}, you agree to abide by the following Honor Code:`,
-  "lastUpdated": "Last updated: Feb 13, 2024",
+  "lastUpdated": "Last updated: Oct 5, 2024",
   "highlightedSections": [
     {
       "title": "Academic Integrity",
