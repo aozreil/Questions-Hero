@@ -6,7 +6,7 @@ import SearchQuestion from "~/components/question/SearchQuestion";
 import Loader from "~/components/UI/Loader";
 import CloseModal from "~/components/icons/CloseModal";
 import { getKatexLink } from "~/utils/external-links";
-import { BASE_URL } from "~/config/enviromenet";
+import { BASE_URL, PRODUCT_NAME } from "~/config/enviromenet";
 import { getSeoMeta } from "~/utils/seo";
 import { Await, defer, useLoaderData, useLocation, useNavigation, useSearchParams } from "@remix-run/react";
 import EmptyResultsSearch from "~/components/UI/EmptyResultsSearch";
@@ -20,7 +20,7 @@ import { getTextFormatted } from "~/utils/text-formatting-utils";
 export const meta: MetaFunction<typeof loader> = ({ location }) => {
   const params = new URLSearchParams(location.search);
   const query = params.get("term");
-  let title = "Search | AskGram";
+  let title = `Search | ${PRODUCT_NAME}`;
   if (query?.trim()) {
     title = `Search results of ${query}`;
   }

@@ -8,6 +8,7 @@ import clsx from "clsx";
 import UserProfile from "~/components/UI/UserProfile";
 import { UserNameLink } from "~/components/UI/UserNameLink";
 import SanitizedText from "~/components/question/SanitizedText";
+import { PRODUCT_NAME } from "~/config/enviromenet";
 
 interface Props {
   answers?: IAnswer[];
@@ -92,14 +93,14 @@ const AIAnswer = ({ aiAnswer }: { aiAnswer?: string }) => (
         <img src='/assets/images/ai-robot.svg' alt='ai-robot' className='w-9 mb-1'  />
       </div>
       <div className='flex flex-col items-start text-black'>
-        <p className='font-bold'>Askgram AI</p>
+        <p className='font-bold'>{PRODUCT_NAME} AI</p>
       </div>
     </div>
     <div className='w-full max-sm:pb-5'>
       <div className="f2f4f5 text-left p-4 rounded-xl mb-3 bg-[#ffeddd]">
         <div className="flex items-center space-x-2 text-[#ff9700] font-bold  mb-5 sm:mb-2">
           <img src="/assets/images/ai-answered.svg" alt="verifed" />
-          <p>Verified by Askgram AI</p>
+          <p>Verified by {PRODUCT_NAME} AI</p>
         </div>
         <p className='max-sm:text-lg'>
           <span className='font-medium'>Final Answer : </span>

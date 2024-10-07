@@ -73,7 +73,7 @@ export let handle = { i18n: "common" };function Document({ children , locale}: {
         window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
+    
       gtag('config', '${GOOGLE_ANALYTICS_KEY}');`
     }}>
     </script>

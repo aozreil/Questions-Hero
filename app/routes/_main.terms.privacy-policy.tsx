@@ -1,6 +1,6 @@
 import Terms, { ITerms } from "~/components/UI/Terms";
 import { getSeoMeta } from "~/utils/seo";
-import { BASE_URL } from "~/config/enviromenet";
+import { BASE_URL, PRODUCT_NAME } from "~/config/enviromenet";
 import { HeadersFunction } from "@remix-run/node";
 
 export const meta = () => {
@@ -25,9 +25,9 @@ export default function PrivacyPolicy() {
 
 const Data: ITerms = {
   "title": "Privacy Policy",
-  "description": "Thank you for using Askgram! This Privacy Policy describes how Askgram (\"we,\" \"us,\" or \"our\") collects, uses, and shares your information when you use our website and any services provided therein (collectively, the \"Service\"). By accessing or using the Service, you agree to the terms of this Privacy Policy.",
-  "pageDescription": "Thank you for using Askgram! This Privacy Policy describes how Askgram (\"we,\" \"us,\" or \"our\") collects, uses, and shares your information when you use our website and any services provided therein (collectively, the \"Service\"). By accessing or using the Service, you agree to the terms of this Privacy Policy.",
-  "lastUpdated": "Last updated: Feb 13, 2024",
+  "description": `Thank you for using ${PRODUCT_NAME}! This Privacy Policy describes how ${PRODUCT_NAME} ("we," "us," or "our") collects, uses, and shares your information when you use our website and any services provided therein (collectively, the "Service"). By accessing or using the Service, you agree to the terms of this Privacy Policy.`,
+  "pageDescription": `Thank you for using ${PRODUCT_NAME}! This Privacy Policy describes how ${PRODUCT_NAME} ("we," "us," or "our") collects, uses, and shares your information when you use our website and any services provided therein (collectively, the "Service"). By accessing or using the Service, you agree to the terms of this Privacy Policy.`,
+  "lastUpdated": "Last updated: Oct 5, 2024",
   "sections": [
     {
       "title": "Information We Collect",

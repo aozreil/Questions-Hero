@@ -1,6 +1,7 @@
 import { Link } from "@remix-run/react";
 import { IUser } from "~/models/questionModel";
 import { getUserSlug } from "~/utils";
+import { PRODUCT_NAME } from "~/config/enviromenet";
 
 
 interface IProps {
@@ -16,6 +17,6 @@ export function UserNameLink({ user, className }: IProps) {
   }
 
   return <p className={className}>
-    Answered By Askgram User
+    Answered By {PRODUCT_NAME} User
   </p>;
 }

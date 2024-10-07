@@ -21,14 +21,14 @@ export default function Header() {
     return (
       <header data-cy="header" className={clsx(
         `sticky top-0 z-40 h-24 w-full bg-[#f7f8fa] border-t-[3px] border-t-[#070707] max-sm:px-4 pt-7 pb-6`,
-        location?.pathname !== '/' && `bg-white border-b-[1px] ${isSearchFocused ? 'border-b-0' : 'sm:border-b-[2px]'} border-[#ebf2f6]`,
+        location?.pathname !== '/' && `bg-white ${isSearchFocused ? 'border-b-0' : 'border-b-[1px] sm:border-b-[2px]'} border-[#ebf2f6]`,
         isSearchExpanded && focusedOverlayStyles,
         isSearchFocused && 'z-50',
       )}>
         <div className={`container sm:px-4 md:px-10 flex items-center justify-between`}>
           <div className='flex items-center pr-2 flex-1'>
             <Link to={user ? '/subjects' : '/'} className={clsx('block w-fit mr-5 sm:mr-6', isSearchExpanded && 'hidden')}>
-                <img src='/assets/images/logo.svg' alt='logo' className='h-6 sm:h-7 w-44 object-contain' height={28} width={180} />
+                <img src='/assets/images/asklix-logo.png' alt='logo' className='h-6 sm:h-8 w-fit object-contain' height={32} />
             </Link>
             {!shouldHideSearch &&
               <HeaderSearch

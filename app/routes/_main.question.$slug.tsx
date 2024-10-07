@@ -196,7 +196,7 @@ export default function QuestionPage() {
     relatedQuestions
   } = useLoaderData<typeof loader>();
   const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED));
-  const { user } = useAuth();
+  const { user, openSignUpModal } = useAuth();
   const { trackEvent } = useAnalytics();
   const { t } = useTranslation();
   const location = useLocation();
@@ -273,21 +273,31 @@ export default function QuestionPage() {
                       )}
                     />
                   )}
-                  {user && (
-                    <div
-                      className="w-full p-4 border-t-[3px] border-[#ebf2f6] cursor-pointer"
-                      onClick={() => setPostAnswerOpened(true)}
-                    >
-                      <div
-                        className="bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center">
-                        <div className="flex space-x-2.5 items-center">
-                          <UserProfile user={user} className="w-7 h-7 border-none" />
-                          <p className="text-[#4d6473]">{t("Add your answer")}</p>
-                        </div>
-                        <img src="/assets/images/right-arrow.svg" alt="arrow" className="w-4 h-4 mr-2" />
-                      </div>
+                <div
+                  className="w-full p-4 border-t-[3px] border-[#ebf2f6] cursor-pointer"
+                  onClick={() => {
+                    user
+                      ? setPostAnswerOpened(true)
+                      : openSignUpModal();
+                  }}
+                >
+                  <div
+                    className="bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center">
+                    <div className="flex space-x-2.5 items-center">
+                      {
+                        user
+                        ? <UserProfile user={user} className="w-7 h-7 border-none" />
+                        : <img
+                            src='/assets/images/user-profile.png'
+                            alt='user-profile'
+                            className='w-7 h-7 rounded-full object-contain'
+                          />
+                      }
+                      <p className="text-[#4d6473]">{t("Add your answer")}</p>
                     </div>
-                  )}
+                    <img src="/assets/images/right-arrow.svg" alt="arrow" className="w-4 h-4 mr-2" />
+                  </div>
+                </div>
                 </div>
                 {!!answers?.length && (
                   <div className="mb-2 mt-3 px-3 flex flex-col items-center space-y-2.5">
@@ -324,8 +334,8 @@ const getStructuredData = (data: LoaderData) => {
     answers,
     internalAnswers,
     internalQuestion, canonical,
-    users
-
+    users,
+    concepts
   } = data;
 
   const questionData = internalQuestion?.text ? internalQuestion : question;
@@ -339,7 +349,9 @@ const getStructuredData = (data: LoaderData) => {
   const suggestedAnswers = filterSuggestedAnswers(answersData).filter(
     question => question?.created_at !== verifiedAnswer?.created_at
   );
-  const answerFallback = `The Answer of ${questionBody}`;
+  const answerFallback = concepts?.length
+    ? getConceptsText(concepts)
+    : `The Answer of ${questionBody}`;
 
   const Educational = {
     "@context": "https://schema.org/",
@@ -356,7 +368,7 @@ const getStructuredData = (data: LoaderData) => {
         "text": questionBody,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": getAnswerText(verifiedAnswer) ?? answerFallback,
+          "text": verifiedAnswer ? getAnswerText(verifiedAnswer) : answerFallback,
           "url": canonical
         }
       }
@@ -370,7 +382,7 @@ const getStructuredData = (data: LoaderData) => {
         "suggestedAnswer": [
           suggestedAnswers?.map(answer => ({
             "@type": "Answer",
-            "text": getAnswerText(answer) ?? answerFallback,
+            "text": answer?.text ? getAnswerText(answer) : answerFallback,
             "datePublished": answer?.created_at,
             "author": {
               "@type": "Person",
@@ -401,9 +413,9 @@ const getStructuredData = (data: LoaderData) => {
       },
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": getAnswerText(verifiedAnswer) ?? answerFallback,
+        "text": verifiedAnswer ? getAnswerText(verifiedAnswer) : answerFallback,
         "url": `${canonical}#acceptedAnswer`,
-        "datePublished": verifiedAnswer?.created_at,
+        "datePublished": verifiedAnswer?.created_at ?? question?.created_at,
         "author": {
           "@type": "Person",
           "name": getUser(verifiedAnswer?.user_id, users)
@@ -439,3 +451,13 @@ const getAnswerText = (answer: IAnswer | IInternalAnswer) => {
 
   return getCleanText(answerText);
 };
+
+const getConceptsText = (concepts: IConcept[]) => {
+  let text = '';
+  
+  for (const concept of concepts) {
+    text = text + `${concept.concept} : ${concept.definition}`;
+  }
+  
+  return text;
+}

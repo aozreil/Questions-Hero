@@ -1,6 +1,6 @@
 export const BASE_URL = "https://askgramdev.work";
 export const GOOGLE_ANALYTICS_KEY = "G-SMNPKG0RR4";
-export const ASKGRAM_BASE = "https://askgramdev.work";
+export const SITE_BASE = "https://askgramdev.work";
 export const GOOGLE_SIGN_IN_CLIENT_ID =
   "761946262599-ru0jcosed1hrfcjca25g6fmt7v75dfnr.apps.googleusercontent.com";
 export const RECAPTCHA_PUBLIC_KEY = "6LeX-aopAAAAAPy0X1xw3m4hdT0TDvSLyX4aT7xM";
@@ -8,3 +8,5 @@ export const ATTACHMENTS_BASE = "https://attachments.askgramdev.work";
 export const AI_ANSWER_ACCEPTED_SCORE = 0.9;
 export const ASK_QUESTION_SIMILAR_SCORE = 0.8;
 export const SMARTLOOK_KEY = "";
+export const PRODUCT_NAME = "Asklix";
+export const SUPPORT_EMAIL = "support@asklix.com";
