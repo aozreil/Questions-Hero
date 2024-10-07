@@ -49,14 +49,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export let handle = { i18n: "common" };function Document({ children , locale}: { children: ReactNode , locale?: string }) {
   let { i18n } = useTranslation();
 
-  // useEffect(()=>{
-  //   if(!Smartlook.initialized()){
-  //     Smartlook.init(SMARTLOOK_KEY);
-  //     Smartlook.record({
-  //       emails: true, api: true, ips: true, forms: true, numbers: true
-  //     })
-  //   }
-  // }, [])
+  useEffect(()=>{
+    if(!Smartlook.initialized()){
+      Smartlook.init(SMARTLOOK_KEY);
+      Smartlook.record({
+        emails: true, api: true, ips: true, forms: true, numbers: true
+      })
+    }
+  }, [])
 
   return (
     <html lang={locale ?? "en"} dir={i18n.dir()}>
@@ -67,16 +67,16 @@ export let handle = { i18n: "common" };function Document({ children , locale}: {
     <Links />
     <FavIcon />
     <title>Ask Gram</title>
-    {/*<script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_KEY}`}></script>*/}
-    {/*<script dangerouslySetInnerHTML={{*/}
-    {/*  __html: `*/}
-    {/*    window.dataLayer = window.dataLayer || [];*/}
-    {/*  function gtag(){dataLayer.push(arguments);}*/}
-    {/*  gtag('js', new Date());*/}
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_KEY}`}></script>
+    <script dangerouslySetInnerHTML={{
+      __html: `
+        window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
     
-    {/*  gtag('config', '${GOOGLE_ANALYTICS_KEY}');`*/}
-    {/*}}>*/}
-    {/*</script>*/}
+      gtag('config', '${GOOGLE_ANALYTICS_KEY}');`
+    }}>
+    </script>
   </head>
   <body>
   <AuthProvider>
