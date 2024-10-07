@@ -89,11 +89,11 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
           onClick={closeModal}
         />
         <div
-          className="max-sm:absolute bottom-0 w-full h-fit sm:min-h-[100vh] max-sm:rounded-t-3xl bg-[#f7f8fa] flex flex-col items-center">
+          className="max-sm:absolute bottom-0 w-full h-fit sm:min-h-[100vh] max-sm:rounded-t-3xl bg-[#f7f8fa] flex flex-col items-center border-t-[3px] border-t-[#070707]">
           <section
-            className="w-full hidden sm:flex justify-between items-center border-t-[3px] border-t-[#070707] px-4 md:px-14 pt-7 pb-6">
+            className="sm:px-4 md:px-10 container w-full hidden sm:flex justify-between items-center pt-7 pb-6">
             <Link to="/" className="block w-fit" onClick={closeModal}>
-              <img src="/assets/images/logo.svg" alt="logo" className="h-7" />
+              <img src="/assets/images/asklix-logo.png" alt="logo" className="h-6 sm:h-8 w-fit object-contain" />
             </Link>
             <button onClick={closeModal}>
               <img
