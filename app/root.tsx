@@ -29,7 +29,8 @@ import { useTranslation } from "react-i18next";
 import { useChangeLanguage } from "remix-i18next/react";
 import i18next from "~/i18next.server";
 import Smartlook from 'smartlook-client'
-
+import { getRequestCookie } from "~/utils/text-formatting-utils";
+import { CookieConstants } from "~/services/cookie.service";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({})
@@ -43,10 +44,19 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
   let locale = await i18next.getLocale(request);
-  return json({ locale });
+  const prefersDarkColorScheme = getRequestCookie(CookieConstants.PREFERS_DARK_COLOR_SCHEME, request);
+
+  return json({ locale, prefersDarkColorScheme });
 }
 
-export let handle = { i18n: "common" };function Document({ children , locale}: { children: ReactNode , locale?: string }) {
+export let handle = { i18n: "common" };
+
+function Document({ children , locale, prefersDarkColorScheme }:
+{ 
+  children: ReactNode,
+  locale?: string,
+  prefersDarkColorScheme?: string,
+}) {
   let { i18n } = useTranslation();
 
   useEffect(()=>{
@@ -60,43 +70,44 @@ export let handle = { i18n: "common" };function Document({ children , locale}: {
 
   return (
     <html lang={locale ?? "en"} dir={i18n.dir()}>
-  <head>
-    <meta charSet="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <Meta />
-    <Links />
-    <FavIcon />
-    <title>Ask Gram</title>
-    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_KEY}`}></script>
-    <script dangerouslySetInnerHTML={{
-      __html: `
-        window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', '${GOOGLE_ANALYTICS_KEY}');`
-    }}>
-    </script>
-  </head>
-  <body>
-  <AuthProvider>
-    <OverlayProvider>
-      <ModalsProvider>
-          {children}
-        </ModalsProvider>
-    </OverlayProvider>
-  </AuthProvider>
-  </body>
-  </html>);
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+        <FavIcon prefersDarkColorScheme={prefersDarkColorScheme} />
+        <title>Ask Gram</title>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_KEY}`}></script>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', '${GOOGLE_ANALYTICS_KEY}');`
+        }}>
+        </script>
+      </head>
+      <body>
+        <AuthProvider>
+          <OverlayProvider>
+            <ModalsProvider>
+                {children}
+              </ModalsProvider>
+          </OverlayProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  );
 }
 
 export default function App() {
-  let { locale } = useLoaderData<typeof loader>();
+  let { locale, prefersDarkColorScheme } = useLoaderData<typeof loader>();
   const isBot = useIsBot();
   useChangeLanguage(locale)
 
   return (
-    <Document locale={locale}>
+    <Document locale={locale} prefersDarkColorScheme={prefersDarkColorScheme}>
       <RouterOutletWithContext />
       <ScrollRestoration />
       {isBot ? null : <Scripts />}

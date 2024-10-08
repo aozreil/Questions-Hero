@@ -1,20 +1,29 @@
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { CookieConstants } from "~/services/cookie.service";
 
 const getFaviconPath = (isDarkMode = false) => {
   return `/assets/favicon-${isDarkMode ? "light" : "dark"}.ico`;
 };
 
-export default function FavIcon() {
-  const [faviconHref, setFaviconHref] = useState("/assets/favicon-dark.ico");
+interface Props {
+  prefersDarkColorScheme?: string;
+}
+
+export default function FavIcon({ prefersDarkColorScheme }: Props) {
+  const [faviconHref, setFaviconHref] = useState(() => {
+    return getFaviconPath(prefersDarkColorScheme === 'true');
+  });
 
   useEffect(() => {
-    // Get current color scheme.
     const matcher = window.matchMedia("(prefers-color-scheme: dark)");
-    // Set favicon initially.
-    setFaviconHref(getFaviconPath(matcher.matches));
-    // Change favicon if the color scheme changes.
-    matcher.onchange = () => setFaviconHref(getFaviconPath(matcher.matches));
-  }, [faviconHref]);
+    const isDarkMode = matcher.matches;
+    
+    if (Cookies.get(CookieConstants.PREFERS_DARK_COLOR_SCHEME) !== String(isDarkMode)) {
+      Cookies.set(CookieConstants.PREFERS_DARK_COLOR_SCHEME, String(isDarkMode));
+      setFaviconHref(getFaviconPath(matcher.matches));
+    }
+  }, []);
 
   return (
     <link rel="icon" href={faviconHref} />
