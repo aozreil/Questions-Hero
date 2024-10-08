@@ -19,7 +19,7 @@ import NotFoundPage from "~/components/UI/NotFoundPage";
 import { ReactNode, useEffect } from "react";
 import Header from "~/components/UI/Header";
 import FavIcon from "~/components/UI/FavIcon";
-import { GOOGLE_ANALYTICS_KEY, SMARTLOOK_KEY } from "~/config/enviromenet";
+import { GOOGLE_ANALYTICS_KEY, PRODUCT_NAME, SMARTLOOK_KEY } from "~/config/enviromenet";
 import AuthProvider, { useAuth } from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
 import OverlayProvider from "~/context/OverlayProvider";
@@ -76,7 +76,7 @@ function Document({ children , locale, prefersDarkColorScheme }:
         <Meta />
         <Links />
         <FavIcon prefersDarkColorScheme={prefersDarkColorScheme} />
-        <title>Ask Gram</title>
+        <title>{PRODUCT_NAME}</title>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_KEY}`}></script>
         <script dangerouslySetInnerHTML={{
           __html: `
