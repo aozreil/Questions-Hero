@@ -13,7 +13,8 @@ export default function HeaderJoin() {
           <div className="bg-[#dfe4ea] h-5 w-0.5 max-lg:hidden" />
           <button data-cy="header-login" onClick={openLoginModal} className={"hidden sm:block"}>Log in</button>
           <button data-cy="header-join" onClick={openSignUpModal} className="text-white px-5 py-2 rounded-2xl bg-[#070707]">
-            Join for free
+            <span className='max-sm:hidden'>Join for free</span>
+            <span className='sm:hidden whitespace-nowrap'>Join Us</span>
           </button>
         </>
       ) : (
