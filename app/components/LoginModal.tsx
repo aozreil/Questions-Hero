@@ -93,7 +93,7 @@ export default function LoginModal({ closeModal, openLoginModal, openSignupModal
           <section
             className="sm:px-4 md:px-10 container w-full hidden sm:flex justify-between items-center pt-7 pb-6">
             <Link to="/" className="block w-fit" onClick={closeModal}>
-              <img src="/assets/images/asklix-logo.png" alt="logo" className="h-6 sm:h-8 w-fit object-contain" />
+              <img src="/assets/images/asklix-logo.png" alt="logo" className="h-6 sm:h-8 w-fit min-w-14 object-contain" />
             </Link>
             <button onClick={closeModal}>
               <img
