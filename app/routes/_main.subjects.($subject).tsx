@@ -376,7 +376,7 @@ export default function _mainSubjectsSubject() {
               questions?.map(question => (
                 <Question
                   key={question?.id}
-                  questionBody={question?.text}
+                  questionBody={question?.rendered_text ?? question?.text}
                   createdAt={question?.created_at}
                   user={question?.user_id ? users[question.user_id] : undefined}
                   slug={question?.slug}
