@@ -8,7 +8,7 @@ import {
   useNavigation
 } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@remix-run/router";
-import { json, MetaFunction } from "@remix-run/node";
+import { json, LinksFunction, MetaFunction } from "@remix-run/node";
 import CheckboxWithLabel from "~/components/UI/CheckboxWithLabel";
 import { getQuestionsByIdV1, getQuestionsInfo, getSubjectsFilter, getUsersInfo } from "~/apis/questionsAPI.server";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -67,9 +67,14 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
       canonical
     }),
     ...getPrevNextLinks(),
-    ...getKatexLink(),
   ];
 }
+
+export const links: LinksFunction = () => {
+  return [
+    ...getKatexLink()
+  ];
+};
 
 interface QuestionsInfoMapper { [key: string]: { answers_count: number, answers_statuses: AnswerStatus[] } };
 
