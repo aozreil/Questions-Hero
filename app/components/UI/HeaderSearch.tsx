@@ -28,8 +28,10 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
   useEffect(() => {
     if (location?.pathname !== '/search' && textareaRef.current) {
       textareaRef.current.clearValue();
+      setHasValue(false);
     } else if (location?.pathname === '/search' && searchParams.get('term')) {
       textareaRef.current && textareaRef.current.setValue(searchParams.get('term') ?? '');
+      setHasValue(true);
     }
   }, [location?.pathname]);
 
@@ -103,7 +105,7 @@ export default function HeaderSearch({ setIsSearchFocused, isSearchFocused }: Pr
         onSubmit={handleSubmit}
         data-cy="header-search"
       >
-        <button ref={submitButton} className='flex-shrink-0' type='submit'>
+        <button ref={submitButton} className='flex-shrink-0' type='submit' autoFocus={false}>
           <img
             src='/assets/images/search-icon.svg'
             alt='search'
