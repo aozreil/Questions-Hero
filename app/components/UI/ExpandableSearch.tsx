@@ -19,7 +19,9 @@ export default function ExpandableSearch() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setPauseSlideNavigation(true);
+        if (ocrOpened) {
+            setPauseSlideNavigation(true);
+        }
     }, [ocrOpened]);
 
     const onFocus = useCallback(() => {
