@@ -16,7 +16,6 @@ import AxiosServerInstance, {
 } from "~/interceptors/http-interceptors.server";
 import { ATTACHMENTS_BASE, CONTENT_CLUSTER, USERS_CLUSTER } from "~/config/enviroment.server";
 import axios, { AxiosRequestConfig } from "axios";
-import { ASKGRAM_BASE } from "~/config/enviromenet";
 
 export async function getQuestionById(id: string): Promise<IQuestion> {
    const response = await AxiosServerInstance.get<IQuestion>(`${CONTENT_CLUSTER}/questions/${id}`);
