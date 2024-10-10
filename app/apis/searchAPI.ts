@@ -4,7 +4,7 @@ import { OCRSearchResponseInterface, SearchQuestionResponse } from "~/models/sea
 import { getSearchResultsWithDetails } from "~/apis/searchAPI.service";
 
 export async function searchQuestionsAPI(term: string) {
-  const res =  await axios.post<{ data: SearchQuestionResponse[] }>(`${SITE_BASE}/api/search/askgram/search/questions?size=5`, {
+  const res =  await axios.post<{ data: SearchQuestionResponse[] }>(`${SITE_BASE}/api/search/asklix/search/questions?size=5`, {
     term,
   });
   return res.data
@@ -12,7 +12,7 @@ export async function searchQuestionsAPI(term: string) {
 
 export async function searchByImage(recaptchaToken: string, config?: AxiosRequestConfig): Promise<OCRSearchResponseInterface> {
   const res =  await axios.post<OCRSearchResponseInterface>
-    (`${SITE_BASE}/api/search/askgram/image/search`, {
+    (`${SITE_BASE}/api/search/asklix/image/search`, {
       recaptcha_token: recaptchaToken,
     }, { ...config });
 
@@ -40,7 +40,7 @@ export async function getUniversities(config?: AxiosRequestConfig) {
 export async function getMajors(config?: AxiosRequestConfig) {
   const response = await axios.get<
     { data: { studyFields: {id: number; name: string}[] } }
-  >(`${SITE_BASE}/api/search/askgram/study-fields/autocomplete`, {
+  >(`${SITE_BASE}/api/search/asklix/study-fields/autocomplete`, {
     ...config,
     withCredentials: true,
   });
