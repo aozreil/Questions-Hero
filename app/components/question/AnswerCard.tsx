@@ -39,7 +39,9 @@ export default function AnswerCard({ answer, user }: Props) {
               {!!createdAt && <span className='mt-1 mb-4 text-xs'>{createdAt}</span>}
               {answer?.text && (
                 <div data-cy="final-answer">
-                  <span className='font-medium inline'>Final Answer : </span>
+                  {!!answer?.answer_steps?.length && (
+                    <span className='font-medium inline'>Final Answer : </span>
+                  )}
                   <SanitizedText html={getAnswerBody(answer)} className='inline' />
                 </div>
               )}
