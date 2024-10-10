@@ -65,6 +65,6 @@ export async function getSearchResultsWithDetails(searchResponse: SearchResponse
 }
 
 export async function searchQuestionsAPI(term: string) {
-  const res =  await axios.post<SearchResponseInterface>(`${SEARCH_CLUSTER}/askgram/search/questions`, { term });
+  const res =  await axios.post<SearchResponseInterface>(`${SEARCH_CLUSTER}/asklix/search/questions`, { term });
   return res.data
 }
