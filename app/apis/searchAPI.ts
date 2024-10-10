@@ -30,7 +30,7 @@ export async function searchByImage(recaptchaToken: string, config?: AxiosReques
 export async function getUniversities(config?: AxiosRequestConfig) {
   const response = await axios.get<
     { data: { universities: {id: number; name: string}[] } }
-  >(`${SITE_BASE}/api/search/askgram/universities/autocomplete`, {
+  >(`${SITE_BASE}/api/search/asklix/universities/autocomplete`, {
     ...config,
     withCredentials: true,
   });
