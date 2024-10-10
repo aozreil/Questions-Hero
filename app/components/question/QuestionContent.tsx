@@ -4,6 +4,8 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import SanitizedText from "~/components/question/SanitizedText";
 import { PRODUCT_NAME } from "~/config/enviromenet";
+import { getUserSlug } from "~/utils";
+import { Link } from "@remix-run/react";
 
 interface Props {
     question?: IQuestion;
@@ -18,12 +20,10 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
         <div data-cy="question-content" className='flex flex-col w-full p-4'>
             <div className='w-full flex flex-col-reverse sm:flex-row flex-wrap sm:justify-between sm:items-center mb-3'>
                 {(question?.created_at || user) && (
-                    <p className='text-[#667a87] text-sm'>
-                        {`Asked by `}
-                        <span className='font-bold'>
-                            {getAskedBy(createdAt, user?.view_name)}
-                        </span>
-                    </p>
+                    <AskedBy
+                      user={user}
+                      createdAt={createdAt}
+                    />
                 )}
                 {isVerified && (
                   <div className='flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0'>
@@ -43,12 +43,28 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
     )
 }
 
-const getAskedBy = (createdAt?: string, userName?: string) => {
-    if (createdAt) {
-        return userName ?`${userName} on ${createdAt}` : `${PRODUCT_NAME} User on ${createdAt}`;
-    } else {
-        return userName;
-    }
+const AskedBy = ({ user, createdAt } :{
+    user?: IUser, createdAt?: string
+}) => {
+    const userName = user?.view_name ? user?.view_name : `${PRODUCT_NAME} User`;
+    
+    return (
+      <p className='text-[#667a87] text-sm'>
+          {`Asked by `}
+          {user?.user_id
+            ? (
+              <Link className='font-bold' to={`/user/${getUserSlug(user)}`}>
+                {userName}
+              </Link>
+            ) : (
+              <span className='font-bold'>
+                {userName}
+              </span>
+            )
+          }
+          {` on ${createdAt}`}
+      </p>
+    );
 }
 
 const getCreatedAtDate = (question?: IQuestion) => (
