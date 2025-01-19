@@ -20,15 +20,8 @@ import { ReactNode, useEffect } from "react";
 import Header from "~/components/UI/Header";
 import FavIcon from "~/components/UI/FavIcon";
 import { GOOGLE_ANALYTICS_KEY, PRODUCT_NAME, SMARTLOOK_KEY } from "~/config/enviromenet";
-import AuthProvider, { useAuth } from "~/context/AuthProvider";
 import { useIsBot } from "~/context/IsBotContext";
-import OverlayProvider from "~/context/OverlayProvider";
-import ModalsProvider from "~/context/ModalsProvider";
 import { LoaderFunctionArgs } from "@remix-run/router";
-import { useTranslation } from "react-i18next";
-import { useChangeLanguage } from "remix-i18next/react";
-import i18next from "~/i18next.server";
-import Smartlook from 'smartlook-client'
 import { getRequestCookie } from "~/utils/text-formatting-utils";
 import { CookieConstants } from "~/services/cookie.service";
 
@@ -43,13 +36,11 @@ export const links: LinksFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  let locale = await i18next.getLocale(request);
   const prefersDarkColorScheme = getRequestCookie(CookieConstants.PREFERS_DARK_COLOR_SCHEME, request);
 
-  return json({ locale, prefersDarkColorScheme });
+  return json({ prefersDarkColorScheme });
 }
 
-export let handle = { i18n: "common" };
 
 function Document({ children , locale, prefersDarkColorScheme }:
 { 
@@ -57,19 +48,9 @@ function Document({ children , locale, prefersDarkColorScheme }:
   locale?: string,
   prefersDarkColorScheme?: string,
 }) {
-  let { i18n } = useTranslation();
-
-  useEffect(()=>{
-    if(!Smartlook.initialized()){
-      Smartlook.init(SMARTLOOK_KEY);
-      Smartlook.record({
-        emails: true, api: true, ips: true, forms: true, numbers: true
-      })
-    }
-  }, [])
 
   return (
-    <html lang={locale ?? "en"} dir={i18n.dir()}>
+    <html>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -89,25 +70,18 @@ function Document({ children , locale, prefersDarkColorScheme }:
         </script>
       </head>
       <body>
-        <AuthProvider>
-          <OverlayProvider>
-            <ModalsProvider>
-                {children}
-              </ModalsProvider>
-          </OverlayProvider>
-        </AuthProvider>
+          {children}
       </body>
     </html>
   );
 }
 
 export default function App() {
-  let { locale, prefersDarkColorScheme } = useLoaderData<typeof loader>();
+  let { prefersDarkColorScheme } = useLoaderData<typeof loader>();
   const isBot = useIsBot();
-  useChangeLanguage(locale)
 
   return (
-    <Document locale={locale} prefersDarkColorScheme={prefersDarkColorScheme}>
+    <Document prefersDarkColorScheme={prefersDarkColorScheme}>
       <RouterOutletWithContext />
       <ScrollRestoration />
       {isBot ? null : <Scripts />}
@@ -117,14 +91,12 @@ export default function App() {
 }
 
 export function RouterOutletWithContext() {
-  const { user } = useAuth();
-  return <Outlet context={user} />;
+  return <Outlet />;
 }
 
 export function ErrorBoundary() {
   const error = useRouteError();
   const loaderData = useRouteLoaderData<typeof loader>("root");
-  const locale = loaderData?.locale;
 
   const getErrorBody = () => {
     if (isRouteErrorResponse(error)) {
@@ -157,7 +129,7 @@ export function ErrorBoundary() {
   }
 
   return (
-    <Document locale={locale}>
+    <Document>
       {getErrorBody()}
     </Document>
   )

@@ -37,15 +37,9 @@ import invariant from "tiny-invariant";
 import { getKatexLink } from "~/utils/external-links";
 import { getCleanText, title } from "~/utils/text-formatting-utils";
 import { LoaderFunctionArgs } from "@remix-run/router";
-import UserProfile from "~/components/UI/UserProfile";
-import { useAuth } from "~/context/AuthProvider";
-import PostAnswerModal from "~/components/UI/PostAnswerModal";
 import AttachmentsViewer from "~/components/question/AttachmentsViewer";
-import MainContainer from "~/components/UI/MainContainer";
 import RelatedQuestions from "~/components/question/RelatedQuestions";
-import { useAnalytics } from "~/hooks/useAnalytics";
 import Footer from "~/components/UI/Footer";
-import { useTranslation } from "react-i18next";
 
 
 export const links: LinksFunction = () => {
@@ -196,22 +190,15 @@ export default function QuestionPage() {
     relatedQuestions
   } = useLoaderData<typeof loader>();
   const [isVerified] = useState(() => !!answers?.find(answer => answer?.answer_status === AnswerStatus.VERIFIED));
-  const { user, openSignUpModal } = useAuth();
-  const { trackEvent } = useAnalytics();
-  const { t } = useTranslation();
   const location = useLocation();
 
   useEffect(() => {
-    if (location.state?.fromSubjectsPage && user) {
+    if (location.state?.fromSubjectsPage) {
       setTimeout(() => {
         setPostAnswerOpened(true);
         window.history.pushState({}, "", null);
       }, 600);
     }
-  }, []);
-
-  useEffect(() => {
-    trackEvent("question-page-view");
   }, []);
 
   const handlePostAnswerSuccess = useCallback(() => {
@@ -220,14 +207,6 @@ export default function QuestionPage() {
 
   return (
     <>
-      <MainContainer className='flex-1'>
-        <PostAnswerModal
-          open={postAnswerOpened}
-          onClose={() => setPostAnswerOpened(false)}
-          questionText={getQuestionBody(question)}
-          questionId={question?.id}
-          onSuccess={handlePostAnswerSuccess}
-        />
         <main
           className="container max-sm:max-w-full max-sm:mx-0 aligned-with-search max-xs:mx-0 w-full h-fit flex flex-col max-lg:items-center sm:pt-4 sm:py-4">
           <div className="w-full max-lg:max-w-[34rem] flex-shrink lg:w-fit xl:-ml-2">
@@ -244,7 +223,7 @@ export default function QuestionPage() {
                   <AttachmentsViewer attachments={attachments} />
                   {!!concepts?.length && (
                     <QuestionSection
-                      title={t("Definitions")}
+                      title="Definitions"
                       content={(
                         <>
                           {concepts?.map((concept) => (
@@ -261,7 +240,7 @@ export default function QuestionPage() {
                   )}
                   {!!objectives?.length && (
                     <QuestionSection
-                      title={t("Learning Objectives")}
+                      title={"Learning Objectives"}
                       className="lg:hidden"
                       content={(
                         <div className="text-sm mt-4">
@@ -322,7 +301,6 @@ export default function QuestionPage() {
           </div>
         </main>
 
-      </MainContainer>
       <Footer />
     </>
   );
