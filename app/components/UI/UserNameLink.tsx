@@ -11,9 +11,9 @@ interface IProps {
 
 export function UserNameLink({ user, className }: IProps) {
   if (user?.view_name && user?.user_id) {
-    return <Link className={className} to={`/user/${getUserSlug(user)}`}>
+    return <din className={className}>
       {user?.view_name}
-    </Link>;
+    </din>;
   }
 
   return <p className={className}>

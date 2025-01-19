@@ -10,8 +10,7 @@ interface Props {
 
 export default function UserProfile({ user, className }: Props) {
   return (
-    <Link
-      to={user?.user_id ? `/user/${getUserSlug(user)}` : ''}
+    <div
       data-cy={'UserProfile'}
       className={clsx(`overflow-hidden h-11 w-11 bg-[#002237] text-white text-sm flex items-center justify-center
         rounded-full border border-[#070707] flex-shrink-0 font-semibold`, className,
@@ -22,6 +21,6 @@ export default function UserProfile({ user, className }: Props) {
         ? <img src={user.picture} alt='user-profile' className='w-full h-full' />
         : getUserInitials(user?.view_name)
       }
-    </Link>
+    </div>
   )
 }

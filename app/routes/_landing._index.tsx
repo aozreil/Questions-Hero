@@ -1,12 +1,9 @@
 import { MetaFunction } from "@remix-run/node";
 import { getSeoMeta } from "~/utils/seo";
 import Footer from "~/components/UI/Footer";
-import LandingAboutSlide from "~/components/widgets/LandingAboutSlide";
-import LandingSearchSlide from "~/components/widgets/LandingSearchSlide";
-import { useCallback } from "react";
+import {useEffect} from "react";
 import { BASE_URL } from "~/config/enviromenet";
-import SlidesNavigator from "~/components/UI/SlidesNavigator";
-import { useSlides } from "~/context/SlidesProvider";
+import {useNavigate} from "@remix-run/react";
 
 export const meta: MetaFunction = () => ([
   ...getSeoMeta({
@@ -14,46 +11,19 @@ export const meta: MetaFunction = () => ([
   }),
 ]);
 
-const NUMBER_OF_SLIDES = 2;
-
 export default function Index() {
-  const { currentSlide, setCurrentSlide, setPauseSlideNavigation } = useSlides();
 
-  const setSlideByUser = useCallback((slideNumber: number) => {
-    setCurrentSlide(slideNumber);
-    setPauseSlideNavigation(true);
-  }, []);
-
-  const getHomeContent = () => {
-    switch (currentSlide) {
-      case 0: return <LandingSearchSlide />;
-      case 1: return  <LandingAboutSlide />;
-      default: return <LandingAboutSlide />;
-    }
-  }
+    const navigate = useNavigate();
+    useEffect(( ) => {
+        navigate("/question/maintains-that-a-client-s-problems-develop-in-the-context-of-family-are-sustained-by-family-interactions-and-that-any-change-made-by-the-client-will-affect-all-the-family-members-a-salvado-01HQR347SGT0M302AGRDDST58T")
+    },[])
 
   return (
     <div className='flex-1 flex flex-col relative'>
       <div className={`flex-1 flex items-start sm:pt-[5vh] 2xl:pt-[10vh] overflow-y-auto max-xl:pb-10`}>
-        {getHomeContent()}
       </div>
       <div className='sticky w-full bottom-0 z-40 bg-[#f7f8fa] h-fit flex flex-col items-center'>
-        <SlidesNavigator
-          currentSlide={currentSlide}
-          setCurrentSlide={setSlideByUser}
-          numberOfSlides={NUMBER_OF_SLIDES}
-          className='lg:hidden w-fit mb-4'
-        />
-        <Footer
-          slidesNavigator={
-            <SlidesNavigator
-              currentSlide={currentSlide}
-              setCurrentSlide={setSlideByUser}
-              numberOfSlides={NUMBER_OF_SLIDES}
-              className='max-lg:hidden'
-            />
-          }
-        />
+        <Footer/>
       </div>
     </div>
   );

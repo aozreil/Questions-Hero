@@ -1,11 +1,8 @@
 import { getQuestionBody, IQuestion, IUser } from "~/models/questionModel";
 import {format} from "date-fns";
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import SanitizedText from "~/components/question/SanitizedText";
 import { PRODUCT_NAME } from "~/config/enviromenet";
-import { getUserSlug } from "~/utils";
-import { Link } from "@remix-run/react";
 
 interface Props {
     question?: IQuestion;
@@ -15,7 +12,6 @@ interface Props {
 
 export default function QuestionContent({ question, user, isVerified }: Props) {
     const createdAt = useMemo(() => getCreatedAtDate(question), [question]);
-    const { t } = useTranslation();
     return (
         <div data-cy="question-content" className='flex flex-col w-full p-4'>
             <div className='w-full flex flex-col-reverse sm:flex-row flex-wrap sm:justify-between sm:items-center mb-3'>
@@ -28,7 +24,7 @@ export default function QuestionContent({ question, user, isVerified }: Props) {
                 {isVerified && (
                   <div className='flex items-center gap-1.5 text-[#25b680] font-bold mb-5 sm:mb-0'>
                       <img src='/assets/images/verified.svg' alt='verifed' />
-                      <p>{t('Verified')}</p>
+                      <p>{'Verified'}</p>
                   </div>
                 )}
             </div>
@@ -53,9 +49,9 @@ const AskedBy = ({ user, createdAt } :{
           {`Asked by `}
           {user?.user_id
             ? (
-              <Link className='font-bold' to={`/user/${getUserSlug(user)}`}>
+              <div className='font-bold inline'>
                 {userName}
-              </Link>
+              </div>
             ) : (
               <span className='font-bold'>
                 {userName}
