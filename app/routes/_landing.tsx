@@ -1,12 +1,11 @@
 import Header from "~/components/UI/Header";
-import { Outlet } from "@remix-run/react";
-import SlidesProvider from "~/context/SlidesProvider";
+import {Outlet} from "@remix-run/react";
 
 export default function Landing() {
-  return (
-    <SlidesProvider>
+    return (
+    <div>
       <Header />
       <Outlet />
-    </SlidesProvider>
+    </div>
   );
 }

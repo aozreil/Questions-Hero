@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Form } from "@remix-run/react";
-import { useOverlay } from "~/context/OverlayProvider";
 import clsx from "clsx";
 import CloseIcon from "~/components/icons/CloseIcon";
-import { useSlides } from "~/context/SlidesProvider";
 import { ExpandableTextarea, IExpandableTextarea } from "~/components/UI/ExpandableTextarea";
 import { useNavigate } from "react-router";
 import { useModals } from "~/context/ModalsProvider";
@@ -13,27 +11,13 @@ export default function ExpandableSearch() {
     const textareaRef = useRef<IExpandableTextarea>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const submitButton = useRef<HTMLButtonElement>(null);
-    const { setOverlayVisible, focusedOverlayStyles } = useOverlay();
-    const { setPauseSlideNavigation } = useSlides();
     const { ocrOpened, setOcrOpened } = useModals();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (ocrOpened) {
-            setPauseSlideNavigation(true);
         }
     }, [ocrOpened]);
-
-    const onFocus = useCallback(() => {
-        setPauseSlideNavigation(true);
-        setOverlayVisible(true);
-    }, []);
-
-    const onBlur = useCallback(() => {
-        setPauseSlideNavigation(false);
-        setOverlayVisible(false);
-        if (textareaRef.current) textareaRef.current.collapseRows();
-    }, []);
 
     const handleBlur = useCallback(
       (e: any) => {
@@ -43,23 +27,18 @@ export default function ExpandableSearch() {
           // Give browser time to focus the next element
           requestAnimationFrame(() => {
               // Check if the new focused element is a child of the original container
-              if (!currentTarget.contains(document.activeElement)) {
-                  onBlur();
-              }
           });
       },
-      [onBlur, ocrOpened]
+      [ocrOpened]
     );
 
     const onTextareaEnter = useCallback(() => {
-        onBlur();
         !!textareaRef.current?.getValue() && submitButton?.current?.click();
     }, []);
 
     const handleCancelClick = useCallback(() => {
         setHasValue(false);
         if (textareaRef.current) textareaRef.current.clearValue();
-        onBlur();
     }, []);
 
     const handleSubmit = useCallback((e: any) => {
@@ -78,7 +57,7 @@ export default function ExpandableSearch() {
           action='/search'
           ref={formRef}
           className={clsx(`z-10 py-2 sm:py-3.5 px-5 bg-white border border-[#2b2b2b] min-h-[40px] sm:min-h-[60px] h-fit w-[90%]
-           md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between flex-shrink-0`, focusedOverlayStyles)}
+           md:w-[46rem] max-w-[46rem] rounded-[30px] flex items-start justify-between flex-shrink-0`)}
           onBlur={handleBlur}
           onSubmit={handleSubmit}
           data-cy="landing-search"

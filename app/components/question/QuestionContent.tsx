@@ -53,9 +53,9 @@ const AskedBy = ({ user, createdAt } :{
           {`Asked by `}
           {user?.user_id
             ? (
-              <Link className='font-bold' to={`/user/${getUserSlug(user)}`}>
+              <div className='font-bold inline'>
                 {userName}
-              </Link>
+              </div>
             ) : (
               <span className='font-bold'>
                 {userName}

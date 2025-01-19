@@ -2,7 +2,6 @@ import CloseIcon from "~/components/icons/CloseIcon";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPreSignedUrls, uploadFile } from "~/apis/questionsAPI";
 import toast from "react-hot-toast";
-import { useAuth } from "~/context/AuthProvider";
 import { useAnalytics } from "~/hooks/useAnalytics";
 
 export enum AttachmentsStatus {

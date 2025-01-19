@@ -5,7 +5,6 @@ import { getCreatedAt } from "~/utils";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import SanitizedText from "~/components/question/SanitizedText";
-import { Link } from "@remix-run/react";
 import { UserNameLink } from "~/components/UI/UserNameLink";
 
 interface Props {

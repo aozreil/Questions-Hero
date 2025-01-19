@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 export default function Main() {
   return (
     <>
-      <Toaster position='bottom-right' />
+      {/*<Toaster position='bottom-right' />*/}
       <Header />
       <Outlet />
     </>

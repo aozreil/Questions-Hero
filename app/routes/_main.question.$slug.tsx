@@ -273,31 +273,31 @@ export default function QuestionPage() {
                       )}
                     />
                   )}
-                <div
-                  className="w-full p-4 border-t-[3px] border-[#ebf2f6] cursor-pointer"
-                  onClick={() => {
-                    user
-                      ? setPostAnswerOpened(true)
-                      : openSignUpModal();
-                  }}
-                >
-                  <div
-                    className="bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center">
-                    <div className="flex space-x-2.5 items-center">
-                      {
-                        user
-                        ? <UserProfile user={user} className="w-7 h-7 border-none" />
-                        : <img
-                            src='/assets/images/user-profile.png'
-                            alt='user-profile'
-                            className='w-7 h-7 rounded-full object-contain'
-                          />
-                      }
-                      <p className="text-[#4d6473]">{t("Add your answer")}</p>
-                    </div>
-                    <img src="/assets/images/right-arrow.svg" alt="arrow" className="w-4 h-4 mr-2" />
-                  </div>
-                </div>
+                {/*<div*/}
+                {/*  className="w-full p-4 border-t-[3px] border-[#ebf2f6] cursor-pointer"*/}
+                {/*  onClick={() => {*/}
+                {/*    user*/}
+                {/*      ? setPostAnswerOpened(true)*/}
+                {/*      : openSignUpModal();*/}
+                {/*  }}*/}
+                {/*>*/}
+                {/*  <div*/}
+                {/*    className="bg-[#f7fbff] border border-[#99a7af] rounded-xl p-1.5 flex justify-between items-center">*/}
+                {/*    <div className="flex space-x-2.5 items-center">*/}
+                {/*      {*/}
+                {/*        user*/}
+                {/*        ? <UserProfile user={user} className="w-7 h-7 border-none" />*/}
+                {/*        : <img*/}
+                {/*            src='/assets/images/user-profile.png'*/}
+                {/*            alt='user-profile'*/}
+                {/*            className='w-7 h-7 rounded-full object-contain'*/}
+                {/*          />*/}
+                {/*      }*/}
+                {/*      <p className="text-[#4d6473]">{t("Add your answer")}</p>*/}
+                {/*    </div>*/}
+                {/*    <img src="/assets/images/right-arrow.svg" alt="arrow" className="w-4 h-4 mr-2" />*/}
+                {/*  </div>*/}
+                {/*</div>*/}
                 </div>
                 {!!answers?.length && (
                   <div className="mb-2 mt-3 px-3 flex flex-col items-center space-y-2.5">
