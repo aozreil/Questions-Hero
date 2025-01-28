@@ -13,10 +13,10 @@ export const meta: MetaFunction = () => ([
 
 export default function Index() {
 
-    const navigate = useNavigate();
-    useEffect(( ) => {
-        navigate("/question/maintains-that-a-client-s-problems-develop-in-the-context-of-family-are-sustained-by-family-interactions-and-that-any-change-made-by-the-client-will-affect-all-the-family-members-a-salvado-01HQR347SGT0M302AGRDDST58T")
-    },[])
+    // const navigate = useNavigate();
+    // useEffect(( ) => {
+    //     navigate("/question/maintains-that-a-client-s-problems-develop-in-the-context-of-family-are-sustained-by-family-interactions-and-that-any-change-made-by-the-client-will-affect-all-the-family-members-a-salvado-01HQR347SGT0M302AGRDDST58T")
+    // },[])
 
   return (
     <div className='flex-1 flex flex-col relative'>

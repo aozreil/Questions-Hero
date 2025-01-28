@@ -8,6 +8,6 @@ export const ATTACHMENTS_BASE = "https://attachments.questions-hero.com";
 export const AI_ANSWER_ACCEPTED_SCORE = 0.9;
 export const ASK_QUESTION_SIMILAR_SCORE = 0.8;
 export const SMARTLOOK_KEY = "9abda499bf4199d20e5e1b4df3f33340794c5e40";
-export const PRODUCT_NAME = "Questions Hero";
+export const PRODUCT_NAME = "studyques";
 export const PRODUCT_LOGO_IMAGE = "https://questions-hero.com/assets/images/logo.png";
 export const SUPPORT_EMAIL = "support@questionsHero.com";
