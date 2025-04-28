@@ -1,5 +1,5 @@
 export const BASE_URL = "http://localhost:3000"; // isDev  ? 'https://askgramdev.work' : 'https://askgram.work';
-export const SITE_BASE = "https://askgramdev.work";
+export const SITE_BASE = "https://prepida.work";
 export const GOOGLE_ANALYTICS_KEY = "G-SMNPKG0RR4";
 export const GOOGLE_SIGN_IN_CLIENT_ID =
   "761946262599-ru0jcosed1hrfcjca25g6fmt7v75dfnr.apps.googleusercontent.com";
@@ -8,6 +8,6 @@ export const ATTACHMENTS_BASE = "https://attachments.askgramdev.work";
 export const AI_ANSWER_ACCEPTED_SCORE = 0.9;
 export const ASK_QUESTION_SIMILAR_SCORE = 0.8;
 export const SMARTLOOK_KEY = "";
-export const PRODUCT_NAME = "studyques";
+export const PRODUCT_NAME = "prepida";
 export const PRODUCT_LOGO_IMAGE = "http://localhost:3000/assets/images/logo.png";
-export const SUPPORT_EMAIL = "support@questionsHero.com";
+export const SUPPORT_EMAIL = "support@prepida.com";

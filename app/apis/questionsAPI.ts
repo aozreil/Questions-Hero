@@ -4,7 +4,7 @@ import { IAnswer, IPostQuestion, IPreSignedURL, IQuestion,
   IQuestionsResponse,
   IUser
 } from "~/models/questionModel";
-import { SITE_BASE } from "~/config/enviromenet";
+import {BASE_URL, SITE_BASE} from "~/config/enviromenet";
 import { axiosApiInstance, paramsSerializerComma } from "~/interceptors/client-interceptors";
 
 export async function clientGetAnswer(id: string) {
@@ -219,6 +219,34 @@ export async function clientGetQuestionsById(config: AxiosRequestConfig): Promis
 export async function clientGetQuestionsByIdV1(config: AxiosRequestConfig): Promise<IQuestionsResponse> {
   const response = await axios.get<IQuestionsResponse>(`${SITE_BASE}/api/content/v1/questions`, {
     ...config,
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
+}
+
+export async function getQuestionsListById(id: number) {
+  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/chapters/${id}`, {
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
+}
+
+export async function getAllChapters() {
+  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/chapters/`, {
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
+}
+
+export async function getRelatedChapters(id: number) {
+  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/related-chapters/${id}`, {
+    paramsSerializer: paramsSerializerComma
+  });
+  return response?.data;
+}
+
+export async function getSearchValue(term: string) {
+  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/search-questions?term=${term}`, {
     paramsSerializer: paramsSerializerComma
   });
   return response?.data;
