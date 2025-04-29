@@ -5,3 +5,4 @@ export const CONTENT_CLUSTER = `${API_URL}/api/content`;
 export const SEARCH_CLUSTER = "https://askgramdev.work/api/search"
 export const VERSION_DATE = `${new Date().toISOString()}`
 export const ATTACHMENTS_BASE = 'https://attachments.askgramdev.work'
+export const DATE_BASE_HOST = '45.61.51.51'

@@ -5,3 +5,4 @@ export const CONTENT_CLUSTER = `http://askgram-content:8080`;
 export const SEARCH_CLUSTER = "http://askgram-search:8080"
 export const VERSION_DATE = `${new Date().toISOString()}`
 export const ATTACHMENTS_BASE = 'https://attachments.askgramdev.work'
+export const DATE_BASE_HOST = '45.61.51.51'

@@ -225,28 +225,28 @@ export async function clientGetQuestionsByIdV1(config: AxiosRequestConfig): Prom
 }
 
 export async function getQuestionsListById(id: number) {
-  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/chapters/${id}`, {
+  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/api/chapters/${id}`, {
     paramsSerializer: paramsSerializerComma
   });
   return response?.data;
 }
 
 export async function getAllChapters() {
-  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/chapters/`, {
+  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/api/chapters/`, {
     paramsSerializer: paramsSerializerComma
   });
   return response?.data;
 }
 
 export async function getRelatedChapters(id: number) {
-  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/related-chapters/${id}`, {
+  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/api/related-chapters/${id}`, {
     paramsSerializer: paramsSerializerComma
   });
   return response?.data;
 }
 
 export async function getSearchValue(term: string) {
-  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/search-questions?term=${term}`, {
+  const response = await axios.get<IQuestionsResponse>(`${BASE_URL}/api/search-questions?term=${term}`, {
     paramsSerializer: paramsSerializerComma
   });
   return response?.data;
