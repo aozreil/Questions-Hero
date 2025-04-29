@@ -163,10 +163,14 @@ export default function _mainSubjectsSubject() {
     const isLoadingData = navigation.state === 'loading' && navigation.location?.pathname?.includes('subjects');
 
     useEffect(() => {
-        if (containerDiv.current) {
-            containerDiv.current.scrollTo({
-                top: 0,
-            });
+        const queryParams = new URLSearchParams(location.search);
+        const questionId = queryParams.get("question_id");
+
+        if (questionId) {
+            const el = document.getElementById(questionId);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
         }
     }, [location]);
 
@@ -293,17 +297,21 @@ export default function _mainSubjectsSubject() {
                             <div className={"flex flex-col gap-4"}>
                                 {!isLoadingData ?
                                     questions?.map(question => (
-                                        <Question
+                                        <span
                                             key={question?.id}
-                                            questionBody={question?.rendered_text ?? question?.text}
-                                            createdAt={question?.created_at}
-                                            slug={question?.slug}
-                                            correctAnswer={question.correct_answer}
-                                            options={question.choices}
-                                            topic={question.topic_name}
-                                            answerCount={questionsInfoMapper?.hasOwnProperty(question?.id) ? questionsInfoMapper[question.id].answers_count : undefined}
-                                            answerStatuses={questionsInfoMapper?.hasOwnProperty(question?.id) ? questionsInfoMapper[question.id].answers_statuses : undefined}
-                                        />
+                                            id={question?.id}
+                                            >
+                                            <Question
+                                                questionBody={question?.rendered_text ?? question?.text}
+                                                createdAt={question?.created_at}
+                                                slug={question?.slug}
+                                                correctAnswer={question.correct_answer}
+                                                options={question.choices}
+                                                topic={question.topic_name}
+                                                answerCount={questionsInfoMapper?.hasOwnProperty(question?.id) ? questionsInfoMapper[question.id].answers_count : undefined}
+                                                answerStatuses={questionsInfoMapper?.hasOwnProperty(question?.id) ? questionsInfoMapper[question.id].answers_statuses : undefined}
+                                            />
+                                        </span>
                                     )) : <ContentLoaderContainer/>}
                             </div>
                             {/*{!isLoadingData*/}

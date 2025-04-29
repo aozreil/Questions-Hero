@@ -26,17 +26,12 @@ export async function loader({ params, request  }: LoaderFunctionArgs) {
             );
             const questions: any = {};
 
+            console.log("questions => ", questionsResults.rows)
+
             for (const row of questionsResults.rows) {
-                if(questions[row.question_id]) {
-                    questions[row.question_id].choices.push({
-                        choice_text: row.choice_text,
-                        is_correct: row.is_correct,
+                if(!questions[row.id]) {
+                    questions[row.id] = {
                         id: row.id,
-                    })
-                }
-                if(!questions[row.question_id]) {
-                    questions[row.question_id] = {
-                        id: row.question_id,
                         text: row.question_text,
                         chapter_id: row.chapter_id,
                         topic_id: row.topic_id,

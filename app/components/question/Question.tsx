@@ -38,10 +38,12 @@ export default function Question({
             {(!!answerStatuses?.length && !!answerCount) && (
                 <>
                     <div className='flex items-center justify-end'>
-                        <QuestionType
-                            answerCount={answerCount}
-                            answerStatuses={answerStatuses}
-                        />
+                        <h2>
+                            <QuestionType
+                                answerCount={answerCount}
+                                answerStatuses={answerStatuses}
+                            />
+                        </h2>
                     </div>
                 </>
             )}
